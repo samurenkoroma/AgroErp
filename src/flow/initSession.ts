@@ -14,7 +14,7 @@ export const initSession = async () => {
 
 
     if(me?.organizations){
-        auth.setCurrentOrganizationId(me.currentOrg.id);
+        auth.setCurrentOrganizationId(me.currentOrgId);
     }
 
     // await queryClient.ensureQueryData({

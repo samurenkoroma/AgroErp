@@ -39,14 +39,13 @@ export interface User {
 export interface AuthResponse {
     tokenPair: TokenPair;
     user: User;
-    organizations: Partial<Organization>[]
-    currentOrg: Partial<Organization>
+    currentOrgId: string
 }
 
 export interface MeInfo {
     user: User;
     organizations: Organization[]
-    currentOrg: Organization
+    currentOrgId: string
 }
 
 export interface ForgotPasswordRequest {

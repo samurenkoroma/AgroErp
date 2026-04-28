@@ -13,7 +13,7 @@ export const loginFlow = async (email: string, password: string) => {
         res.tokenPair.refreshToken
     );
 
-    auth.setCurrentOrganizationId(res.currentOrg.id);
+    auth.setCurrentOrganizationId(res.currentOrgId);
 
     // 👇 прогреваем кеш
     await queryClient.invalidateQueries({ queryKey: ['me'] });
