@@ -17,10 +17,10 @@ export const useSwitchOrganization = () => {
 
             // 🔑 2. обновляем текущую организацию
             setCurrentOrgId(orgId);
-            console.log("switch: ", data!.tokenPair!.accessToken)
             // 🔄 3. инвалидируем данные (права могли измениться)
             await queryClient.invalidateQueries({queryKey: ['me']});
             await queryClient.invalidateQueries({queryKey: ['organizations']});
+            await queryClient.invalidateQueries({queryKey: ['farmObjects']});
         },
     });
 };

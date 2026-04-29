@@ -1,5 +1,4 @@
 import {useFarmUIStore} from '../store/useFarmUIStore';
-import {FarmObject} from "@/entities";
 
 
 import {useFarm} from '../queries/useFarm';
@@ -10,11 +9,11 @@ export const useFarmPage = () => {
     const {setSelectedObjectId} = useFarmUIStore();
 
     const farmQuery = useFarm();
-    const objectsQuery = useFarmObjects(farmQuery.data?.id);
+    const objectsQuery = useFarmObjects();
     const cropPlansQuery = useCropPlans();
     return {
         farm: farmQuery.data,
-        objects: objectsQuery.data as FarmObject[],
+        objects: objectsQuery.data,
         cropPlans: cropPlansQuery.data,
         isLoading: farmQuery.isLoading || objectsQuery.isLoading || cropPlansQuery.isLoading,
         error: farmQuery.error || objectsQuery.error,

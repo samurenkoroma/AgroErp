@@ -10,3 +10,11 @@ export * from './farm';
 export type FarmObject = Greenhouse | Plot | Field;
 export type FarmObjectTypes = 'greenhouse' | 'plot' | 'field';
 export type PlantingAreaTypes = FarmObjectTypes | 'bed';
+
+
+export interface FarmObjectListItem {
+    id: string;
+    name: string;
+    status: string;
+    area: number;
+}

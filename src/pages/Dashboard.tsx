@@ -18,6 +18,8 @@ import {
     TrendingUp,
     Wind
 } from 'lucide-react';
+import {useCurrentOrganization} from "@/features/organization/queries/useCurrentOrganization.ts";
+import Loading from "@/components/shared/Loading.tsx";
 
 // ==================== TYPES ====================
 
@@ -179,29 +181,29 @@ const mockUpcomingTasks: UpcomingTask[] = [
 ];
 
 const mockWeatherForecast: WeatherForecast[] = [
-    { date: '2025-04-20', temp_min: 12, temp_max: 22, condition: 'sunny', precipitation: 0 },
-    { date: '2025-04-21', temp_min: 10, temp_max: 20, condition: 'cloudy', precipitation: 5 },
-    { date: '2025-04-22', temp_min: 8, temp_max: 18, condition: 'rainy', precipitation: 15 },
-    { date: '2025-04-23', temp_min: 9, temp_max: 19, condition: 'cloudy', precipitation: 2 },
-    { date: '2025-04-24', temp_min: 11, temp_max: 23, condition: 'sunny', precipitation: 0 }
+    {date: '2025-04-20', temp_min: 12, temp_max: 22, condition: 'sunny', precipitation: 0},
+    {date: '2025-04-21', temp_min: 10, temp_max: 20, condition: 'cloudy', precipitation: 5},
+    {date: '2025-04-22', temp_min: 8, temp_max: 18, condition: 'rainy', precipitation: 15},
+    {date: '2025-04-23', temp_min: 9, temp_max: 19, condition: 'cloudy', precipitation: 2},
+    {date: '2025-04-24', temp_min: 11, temp_max: 23, condition: 'sunny', precipitation: 0}
 ];
 
 const mockLowStockItems: LowStockItem[] = [
-    { id: '1', name: 'Кассета 40 ячеек', quantity: 45, min_quantity: 50, unit: 'шт', type: 'cassette' },
-    { id: '2', name: 'Торфяные стаканчики 0.3л', quantity: 150, min_quantity: 200, unit: 'шт', type: 'pot' },
-    { id: '3', name: 'Кассета 128 ячеек', quantity: 25, min_quantity: 40, unit: 'шт', type: 'cassette' }
+    {id: '1', name: 'Кассета 40 ячеек', quantity: 45, min_quantity: 50, unit: 'шт', type: 'cassette'},
+    {id: '2', name: 'Торфяные стаканчики 0.3л', quantity: 150, min_quantity: 200, unit: 'шт', type: 'pot'},
+    {id: '3', name: 'Кассета 128 ячеек', quantity: 25, min_quantity: 40, unit: 'шт', type: 'cassette'}
 ];
 
 // ==================== COMPONENTS ====================
 
-const StatCard = ({ title, value, unit, icon: Icon, color, trend, onClick }: any) => (
+const StatCard = ({title, value, unit, icon: Icon, color, trend, onClick}: any) => (
     <div
         onClick={onClick}
         className={`bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-all ${onClick ? 'cursor-pointer' : ''}`}
     >
         <div className="flex items-center justify-between mb-3">
             <div className={`p-2 rounded-lg bg-${color}-100 dark:bg-${color}-900/20`}>
-                <Icon className={`w-5 h-5 text-${color}-600 dark:text-${color}-400`} />
+                <Icon className={`w-5 h-5 text-${color}-600 dark:text-${color}-400`}/>
             </div>
             {trend !== undefined && (
                 <div className={`flex items-center gap-1 text-xs ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -217,12 +219,20 @@ const StatCard = ({ title, value, unit, icon: Icon, color, trend, onClick }: any
     </div>
 );
 
-const PriorityBadge = ({ priority }: { priority: string }) => {
+const PriorityBadge = ({priority}: { priority: string }) => {
     const config = {
-        urgent: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Срочно' },
-        high: { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-400', label: 'Высокий' },
-        medium: { bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-400', label: 'Средний' },
-        low: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400', label: 'Низкий' }
+        urgent: {bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Срочно'},
+        high: {
+            bg: 'bg-orange-100 dark:bg-orange-900/30',
+            text: 'text-orange-700 dark:text-orange-400',
+            label: 'Высокий'
+        },
+        medium: {
+            bg: 'bg-yellow-100 dark:bg-yellow-900/30',
+            text: 'text-yellow-700 dark:text-yellow-400',
+            label: 'Средний'
+        },
+        low: {bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400', label: 'Низкий'}
     };
     const style = config[priority as keyof typeof config] || config.medium;
     return (
@@ -232,13 +242,18 @@ const PriorityBadge = ({ priority }: { priority: string }) => {
     );
 };
 
-const WeatherIcon = ({ condition }: { condition: WeatherForecast['condition'] }) => {
+const WeatherIcon = ({condition}: { condition: WeatherForecast['condition'] }) => {
     switch (condition) {
-        case 'sunny': return <Sun className="w-8 h-8 text-yellow-500" />;
-        case 'cloudy': return <Sun className="w-8 h-8 text-gray-400" />;
-        case 'rainy': return <Droplets className="w-8 h-8 text-blue-500" />;
-        case 'snowy': return <Wind className="w-8 h-8 text-blue-300" />;
-        default: return <Sun className="w-8 h-8 text-yellow-500" />;
+        case 'sunny':
+            return <Sun className="w-8 h-8 text-yellow-500"/>;
+        case 'cloudy':
+            return <Sun className="w-8 h-8 text-gray-400"/>;
+        case 'rainy':
+            return <Droplets className="w-8 h-8 text-blue-500"/>;
+        case 'snowy':
+            return <Wind className="w-8 h-8 text-blue-300"/>;
+        default:
+            return <Sun className="w-8 h-8 text-yellow-500"/>;
     }
 };
 
@@ -247,7 +262,7 @@ const WeatherIcon = ({ condition }: { condition: WeatherForecast['condition'] })
 export const Dashboard = () => {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
-
+    const {organization, isLoading} = useCurrentOrganization()
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 60000);
         return () => clearInterval(timer);
@@ -272,13 +287,14 @@ export const Dashboard = () => {
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('ru', { day: 'numeric', month: 'short' });
+        return new Date(dateStr).toLocaleDateString('ru', {day: 'numeric', month: 'short'});
     };
 
     const isOverdue = (dateStr: string) => {
         return new Date(dateStr) < new Date();
     };
 
+    if (isLoading) return (<Loading text="Загрузка данных..."/>);
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
             {/* Header */}
@@ -287,7 +303,7 @@ export const Dashboard = () => {
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                Дашборд
+                                {organization.name}
                             </h1>
                             <p className="text-sm text-gray-500 mt-1">
                                 Обзор сельскохозяйственной деятельности
@@ -295,7 +311,7 @@ export const Dashboard = () => {
                         </div>
                         <div className="text-right">
                             <p className="text-sm text-gray-500">
-                                {currentTime.toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                {currentTime.toLocaleDateString('ru', {day: 'numeric', month: 'long', year: 'numeric'})}
                             </p>
                             <p className="text-xs text-gray-400">
                                 Сезон 2025
@@ -365,18 +381,21 @@ export const Dashboard = () => {
                     {/* Left Column - Active Crops */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Active Crops Section */}
-                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-                            <div className="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                        <div
+                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                            <div
+                                className="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <Sprout className="w-5 h-5 text-green-600" />
-                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Активные посевы</h2>
+                                    <Sprout className="w-5 h-5 text-green-600"/>
+                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Активные
+                                        посевы</h2>
                                 </div>
                                 <button
                                     onClick={() => navigate('/planning')}
                                     className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
                                 >
                                     Все посевы
-                                    <ArrowRight className="w-4 h-4" />
+                                    <ArrowRight className="w-4 h-4"/>
                                 </button>
                             </div>
                             <div className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -400,10 +419,11 @@ export const Dashboard = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                                 <div
                                                     className={`h-full rounded-full transition-all ${getProgressColor(plan.progress)}`}
-                                                    style={{ width: `${plan.progress}%` }}
+                                                    style={{width: `${plan.progress}%`}}
                                                 />
                                             </div>
                                             <div className="flex justify-between text-xs text-gray-500">
@@ -413,8 +433,9 @@ export const Dashboard = () => {
                                         </div>
                                         {plan.is_seedling && (
                                             <div className="mt-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full text-xs">
-                          <Flower2 className="w-3 h-3" />
+                        <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full text-xs">
+                          <Flower2 className="w-3 h-3"/>
                           Рассада
                         </span>
                                             </div>
@@ -425,11 +446,13 @@ export const Dashboard = () => {
                         </div>
 
                         {/* Weather Forecast */}
-                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                        <div
+                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
                             <div className="p-5 border-b border-gray-200 dark:border-gray-800">
                                 <div className="flex items-center gap-2">
-                                    <Sun className="w-5 h-5 text-amber-500" />
-                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Прогноз погоды</h2>
+                                    <Sun className="w-5 h-5 text-amber-500"/>
+                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Прогноз
+                                        погоды</h2>
                                 </div>
                             </div>
                             <div className="p-4">
@@ -437,10 +460,10 @@ export const Dashboard = () => {
                                     {mockWeatherForecast.map((day, idx) => (
                                         <div key={idx} className="text-center">
                                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                {new Date(day.date).toLocaleDateString('ru', { weekday: 'short' })}
+                                                {new Date(day.date).toLocaleDateString('ru', {weekday: 'short'})}
                                             </p>
                                             <div className="my-2 flex justify-center">
-                                                <WeatherIcon condition={day.condition} />
+                                                <WeatherIcon condition={day.condition}/>
                                             </div>
                                             <p className="text-sm font-semibold">
                                                 {Math.round(day.temp_max)}°/{Math.round(day.temp_min)}°
@@ -458,13 +481,16 @@ export const Dashboard = () => {
                     {/* Right Column */}
                     <div className="space-y-6">
                         {/* Tasks Section */}
-                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-                            <div className="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                        <div
+                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                            <div
+                                className="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <Clock className="w-5 h-5 text-blue-500" />
+                                    <Clock className="w-5 h-5 text-blue-500"/>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Задачи</h2>
                                 </div>
-                                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                                <span
+                                    className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full">
                   {mockUpcomingTasks.length}
                 </span>
                             </div>
@@ -480,12 +506,13 @@ export const Dashboard = () => {
                                                 <h3 className="font-medium text-gray-900 dark:text-white">{task.title}</h3>
                                                 <p className="text-xs text-gray-500 mt-0.5">{task.plan_name}</p>
                                             </div>
-                                            <PriorityBadge priority={task.priority} />
+                                            <PriorityBadge priority={task.priority}/>
                                         </div>
                                         <p className="text-sm text-gray-500 mb-2 line-clamp-1">{task.description}</p>
                                         <div className="flex items-center gap-2 text-xs">
-                                            <Calendar className="w-3 h-3 text-gray-400" />
-                                            <span className={isOverdue(task.due_date) ? 'text-red-500' : 'text-gray-500'}>
+                                            <Calendar className="w-3 h-3 text-gray-400"/>
+                                            <span
+                                                className={isOverdue(task.due_date) ? 'text-red-500' : 'text-gray-500'}>
                         {isOverdue(task.due_date) ? 'Просрочено: ' : 'До: '}
                                                 {formatDate(task.due_date)}
                       </span>
@@ -493,7 +520,8 @@ export const Dashboard = () => {
                                     </div>
                                 ))}
                             </div>
-                            <div className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                            <div
+                                className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
                                 <button className="w-full text-center text-sm text-green-600 hover:text-green-700">
                                     Все задачи
                                 </button>
@@ -501,10 +529,11 @@ export const Dashboard = () => {
                         </div>
 
                         {/* Inventory Alert */}
-                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                        <div
+                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
                             <div className="p-5 border-b border-gray-200 dark:border-gray-800">
                                 <div className="flex items-center gap-2">
-                                    <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                                    <AlertTriangle className="w-5 h-5 text-yellow-500"/>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Заканчивается</h2>
                                 </div>
                             </div>
@@ -521,16 +550,18 @@ export const Dashboard = () => {
                                                 <p className="text-xs text-gray-500">мин. {item.min_quantity} {item.unit}</p>
                                             </div>
                                         </div>
-                                        <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full bg-yellow-500 rounded-full"
-                                                style={{ width: `${(item.quantity / item.min_quantity) * 100}%` }}
+                                                style={{width: `${(item.quantity / item.min_quantity) * 100}%`}}
                                             />
                                         </div>
                                     </div>
                                 ))}
                             </div>
-                            <div className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                            <div
+                                className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
                                 <button
                                     onClick={() => navigate('/inventory')}
                                     className="w-full text-center text-sm text-green-600 hover:text-green-700"
@@ -548,7 +579,7 @@ export const Dashboard = () => {
                                 onClick={() => navigate('/planning')}
                                 className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
                             >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-4 h-4"/>
                                 Новый посев
                             </button>
                         </div>

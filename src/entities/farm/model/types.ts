@@ -1,5 +1,6 @@
-import {FarmObjectTypes, Field, Greenhouse, Plot} from '@/entities';
+import {FarmObjectListItem, FarmObjectTypes} from '@/entities';
 import {MultiPolygon, Point, Polygon} from "geojson";
+import {CropPlanListItem} from "@/entities/planting/model/types.ts";
 
 // Геометрия для поля (полигон)
 export interface PolygonGeometry {
@@ -12,11 +13,8 @@ export interface Farm {
     name: string;
     totalArea: number;
     location: { lat: number; lng: number };
-    fields: Field[];
-    plots: Plot[];
-    greenhouses: Greenhouse[];
-    createdAt?: string;
-    updatedAt?: string;
+    objects: FarmObjectListItem[];
+    cropPlans: CropPlanListItem[]
 }
 
 // Команда обновления объекта

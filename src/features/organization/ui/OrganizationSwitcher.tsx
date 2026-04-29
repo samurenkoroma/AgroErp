@@ -6,6 +6,7 @@ import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {useSwitchOrganization} from "@/features/organization/mutations/useSwitchOrganization.ts";
 import {useCurrentOrganization} from "@/features/organization/queries/useCurrentOrganization.ts";
+import {useUIStore} from "@/stores/uiStore.ts";
 
 
 export const OrganizationSwitcher = () => {
@@ -17,7 +18,7 @@ export const OrganizationSwitcher = () => {
     const {mutateAsync} = useCreateOrganization();
     const {mutate: switchOrg} = useSwitchOrganization();
     const {data: organizations, isLoading, error} = useOrganizations();
-    const currentOrganization= useCurrentOrganization();
+    const {organization: currentOrganization}= useCurrentOrganization();
 
     // Закрываем dropdown при клике вне
     useEffect(() => {

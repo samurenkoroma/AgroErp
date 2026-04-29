@@ -10,10 +10,10 @@ export const objectApi = {
         });
     },
 
-    async getAll(farmId: string | undefined): Promise<FarmObject[]> {
+    async getAll(): Promise<FarmObject[]> {
         return await apiClient.post<FarmObject[]>(ENDPOINTS.Queries, {
             query: 'GetObjects',
-            data: {farmId},
+            data: {},
         });
     },
 

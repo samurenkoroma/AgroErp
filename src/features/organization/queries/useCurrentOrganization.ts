@@ -2,8 +2,11 @@ import {useOrganizations} from "@/features/organization/queries/useOrganizations
 import {useAuthStore} from "@/stores/authStore.ts";
 
 export const useCurrentOrganization = () => {
-    const { data: orgs } = useOrganizations();
+    const {data: orgs, isLoading} = useOrganizations();
     const currentId = useAuthStore(s => s.currentOrganizationId);
 
-    return orgs?.find(o => o.id === currentId) || null;
+    return {
+        organization: orgs?.find(o => o.id === currentId) || null,
+        isLoading: isLoading
+    }
 };

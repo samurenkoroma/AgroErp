@@ -15,7 +15,7 @@ import Error from "@/components/shared/Error.tsx";
 
 const FarmPage = () => {
     const {farm: currentFarm, objects, cropPlans, isLoading, error} = useFarmPage();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'objects' | 'plans' | 'crops'>('objects');
     const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const FarmPage = () => {
         if (!currentFarm) return [];
         if (!objects) return [];
         return objects;
-    }, [currentFarm]);
+    }, [currentFarm, objects]);
 
     const handleNavigateToDetails = (obj: Field | Greenhouse | Plot) => {
         if (obj.type === "field") {
@@ -135,9 +135,12 @@ const FarmPage = () => {
                         </button>
                     </div>
 
-                    {/* Закрыть панель */}
-                    <button type='button' onClick={() => navigate('/draw')}>Добавить обьект</button>
-
+                    {activeTab === 'objects' && (
+                        <button type='button' onClick={() => navigate('/draw')}>Добавить обьект</button>
+                    )}
+                    {activeTab === 'plans' && (
+                        <button type='button' onClick={() => navigate('/plan/1')}>Добавить посев</button>
+                    )}
 
                     {/* Контент вкладки "Объекты" */}
                     {activeTab === 'objects' && (

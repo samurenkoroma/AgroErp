@@ -130,3 +130,8 @@ export interface CropPlan {
     completed_at: string | null;
     seedlingInfo?: SeedlingInfo;            // новая секция для рассады
 }
+
+export interface CropPlanListItem {
+    id: string;
+    name: string;
+}

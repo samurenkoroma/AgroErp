@@ -803,7 +803,7 @@ export function MapDrawPage() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button
-                            onClick={() => navigate('/objects')}
+                            onClick={() => navigate('/farm')}
                             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             title="Вернуться к объектам"
                         >

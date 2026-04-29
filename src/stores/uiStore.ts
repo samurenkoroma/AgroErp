@@ -18,21 +18,11 @@ interface UIStore {
     toggleTheme: () => void;
     setTheme: (theme: 'light' | 'dark') => void;
 
-    // Модальные окна
-    modals: Record<string, boolean>;
-    openModal: (modalId: string) => void;
-    closeModal: (modalId: string) => void;
-    closeAllModals: () => void;
-
     // Уведомления
     notifications: Notification[];
     addNotification: (notification: CreateNotification) => string;
     removeNotification: (id: string) => void;
 
-    // Загрузка
-    loadingStates: Record<string, boolean>;
-    setLoading: (key: string, isLoading: boolean) => void;
-    isLoading: (key: string) => boolean;
 }
 
 export const useUIStore = create<UIStore>()(
@@ -46,14 +36,6 @@ export const useUIStore = create<UIStore>()(
             toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
             setTheme: (theme) => set({ theme }),
 
-            modals: {},
-            openModal: (modalId) => set((state) => ({
-                modals: { ...state.modals, [modalId]: true }
-            })),
-            closeModal: (modalId) => set((state) => ({
-                modals: { ...state.modals, [modalId]: false }
-            })),
-            closeAllModals: () => set({ modals: {} }),
 
             notifications: [],
             addNotification: (notification: CreateNotification) => {
@@ -73,12 +55,6 @@ export const useUIStore = create<UIStore>()(
             removeNotification: (id) => set((state) => ({
                 notifications: state.notifications.filter((n) => n.id !== id)
             })),
-
-            loadingStates: {},
-            setLoading: (key, isLoading) => set((state) => ({
-                loadingStates: { ...state.loadingStates, [key]: isLoading }
-            })),
-            isLoading: (key) => get().loadingStates[key] || false,
         }),
         {
             name: 'ui-storage',

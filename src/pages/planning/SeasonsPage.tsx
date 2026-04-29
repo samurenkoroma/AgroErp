@@ -89,7 +89,7 @@ const SeasonsPage = () => {
     };
 
     if (isLoading) return (<Loading text="Загрузка теплицы..."/>);
-    if (error || !seasons) return (<Error text="Теплица не найдена"/>);
+    if (error) return (<Error text="Сезон не найдена"/>);
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
             {/* Header */}
