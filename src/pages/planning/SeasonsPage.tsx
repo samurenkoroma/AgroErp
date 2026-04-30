@@ -17,18 +17,22 @@ import {
     ThermometerIcon,
     Tractor
 } from 'lucide-react';
-import {Season, seasonLib} from "@/entities/season";
+import {CreateSeasonDTO, Season, seasonLib} from "@/entities/season";
 import SeasonCard from "@/features/season/ui/SeasonCard.tsx";
 import CreateSeasonForm from "@/features/season/ui/CreateSeasonForm.tsx";
-import {useSeasonsPage} from "@/features/season/hooks/useSeasonsPage.ts";
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
+import {useSeasons} from "@/features/season/queries/useSeasons.ts";
+import {useSeasonUIStore} from "@/features/season/store/useSeasonUIStore.ts";
+import {useCreateSeason} from "@/features/season/mutations/useCreateSeason.ts";
 
 // ==================== MAIN COMPONENT ====================
 
 const SeasonsPage = () => {
     const navigate = useNavigate();
-    const {seasons, createSeason, refetch, error, isLoading, selectedSeasonId, setSelectedSeasonId} = useSeasonsPage()
+    const {data: seasons, refetch, error, isLoading} = useSeasons()
+    const {selectedSeasonId, setSelectedSeasonId} = useSeasonUIStore();
+    const {mutateAsync} = useCreateSeason()
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingSeason, setEditingSeason] = useState<Season | null>(null);
@@ -42,16 +46,20 @@ const SeasonsPage = () => {
     // Группировка сезонов по типу
     const groupedSeasons = useMemo(() => {
         return {
-            current: seasons?.find(s => s.status === 'active'),
+            current: seasons?.find(s => s.status === 'current'),
             planning: seasons?.filter(s => s.status === 'planning'),
-            past: seasons?.filter(s => s.status === 'archived')
+            past: seasons?.filter(s => s.status === 'completed')
         };
     }, [seasons]);
+
     // Создание нового сезона
-    const handleCreateSeason = (season: Season) => {
-        createSeason(season);
-        refetch()
-        // setSeasons(prev => [...prev, season]);
+    const handleCreateSeason = (season: CreateSeasonDTO) => {
+        mutateAsync({
+            name: season.name,
+            startDate: season.startDate,
+            endDate: season.endDate,
+            status: season.status
+        });
         setIsCreateModalOpen(false);
     };
 
@@ -121,7 +129,7 @@ const SeasonsPage = () => {
                         {/* Левая колонка - список сезонов */}
                         <div className="space-y-6">
                             {/* Текущий сезон */}
-                            {groupedSeasons.current && (
+                            {groupedSeasons?.current && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <Play className="w-4 h-4 text-green-600"/>
@@ -138,7 +146,7 @@ const SeasonsPage = () => {
                             )}
 
                             {/* Планируемые сезоны */}
-                            {groupedSeasons.planning && groupedSeasons.planning.length > 0 && (
+                            {groupedSeasons?.planning && groupedSeasons.planning.length > 0 && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <Calendar className="w-4 h-4 text-blue-600"/>
@@ -161,7 +169,7 @@ const SeasonsPage = () => {
                             )}
 
                             {/* Прошедшие сезоны */}
-                            {groupedSeasons.past && groupedSeasons.past.length > 0 && (
+                            {groupedSeasons?.past && groupedSeasons.past.length > 0 && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <CheckCircle className="w-4 h-4 text-gray-500"/>
@@ -486,7 +494,7 @@ const SeasonsPage = () => {
                             )}
                         </div>
                     </div>
-                </div>): (
+                </div>) : (
                 <div
                     className=" p-12 text-center">
                     <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4"/>
@@ -508,7 +516,7 @@ const SeasonsPage = () => {
                 season={editingSeason ? editingSeason : seasonLib.New()}
                 isEdit={!!editingSeason}
                 isOpen={isCreateModalOpen}
-                onConfirm={(season: Season) => handleCreateSeason(season)}
+                onConfirm={(season: CreateSeasonDTO) => handleCreateSeason(season)}
                 onClose={() => setIsCreateModalOpen(false)}
             />
         </div>

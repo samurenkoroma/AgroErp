@@ -6,7 +6,7 @@ export interface Season {
     year: number;
     startDate: Date;
     endDate: Date;
-    status: 'planning' | 'active' | 'completed' | 'archived';
+    status: 'planning' | 'current' | 'completed' ;
     statistics: {
         totalPlans: number;
         completedPlans: number;

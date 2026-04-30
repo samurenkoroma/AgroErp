@@ -1,5 +1,5 @@
 import {Modal} from "@/components/common/Modal.tsx";
-import {Season, seasonLib} from "@/entities/season";
+import {CreateSeasonDTO, Season, seasonLib} from "@/entities/season";
 import {useUIStore} from "@/stores/uiStore.ts";
 import {useState} from "react";
 
@@ -8,7 +8,7 @@ interface CreateSeasonFormProps {
     onClose: () => void;
     isEdit: boolean;
     season: Season;
-    onConfirm: (data: Season) => void;
+    onConfirm: (data: CreateSeasonDTO) => void;
 }
 
 const CreateSeasonForm = ({isOpen, onClose, isEdit, season, onConfirm}: CreateSeasonFormProps) => {
@@ -18,20 +18,18 @@ const CreateSeasonForm = ({isOpen, onClose, isEdit, season, onConfirm}: CreateSe
     const [endDate, setEndDate] = useState(seasonLib.getDateString(season.endDate));
     const [status, setStatus] = useState(season.status);
     const [error, setError] = useState('');
+    const [disableStatus, setDisableStatus] = useState(false)
 
     const handleConfirm = () => {
         if (!name.trim()) {
             addNotification({type: "warning", message: 'Пожалуйста, введите название'})
             return;
         }
-        // season.name = name;
-        // season.startDate = new Date(startDate);
-        // season.endDate = new Date(endDate);
         onConfirm({
-            ...season,
             name,
             startDate: new Date(startDate),
-            endDate: new Date(endDate)
+            endDate: new Date(endDate),
+            status: status
         });
         onClose();
     };
@@ -79,26 +77,32 @@ const CreateSeasonForm = ({isOpen, onClose, isEdit, season, onConfirm}: CreateSe
                                 <input
                                     type="date"
                                     value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
+                                    onChange={(e) => {
+                                        if (endDate < seasonLib.getDateString(new Date())) {
+                                            setStatus('completed')
+                                            setDisableStatus(true)
+                                        }
+                                        setEndDate(e.target.value)
+                                    }}
                                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 />
                             </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Тип
+                                Статус
                             </label>
                             <select
                                 onChange={(e) => {
                                     setStatus(e.target.value as Season["status"]);
                                 }}
                                 value={status}
+                                disabled={disableStatus}
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                             >
-                                <option value="draft">Черновик</option>
-                                <option value="active">Активный</option>
+                                <option value="planning">Планирование</option>
+                                <option value="current">Текущий</option>
                                 <option value="completed">Завершен</option>
-                                <option value="archived">Архив</option>
                             </select>
                         </div>
                         <div>
@@ -119,7 +123,8 @@ const CreateSeasonForm = ({isOpen, onClose, isEdit, season, onConfirm}: CreateSe
                         >
                             Отмена
                         </button>
-                        <button onClick={handleConfirm}
+                        <button
+                            onClick={handleConfirm}
                                 className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                         >
                             {isEdit ? 'Сохранить' : 'Создать'}

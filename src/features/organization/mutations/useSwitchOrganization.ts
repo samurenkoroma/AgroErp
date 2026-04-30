@@ -21,6 +21,7 @@ export const useSwitchOrganization = () => {
             await queryClient.invalidateQueries({queryKey: ['me']});
             await queryClient.invalidateQueries({queryKey: ['organizations']});
             await queryClient.invalidateQueries({queryKey: ['farmObjects']});
+            await queryClient.invalidateQueries({queryKey: ['seasons']});
         },
     });
 };

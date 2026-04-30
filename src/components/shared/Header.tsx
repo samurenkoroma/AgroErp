@@ -25,6 +25,12 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-4 ml-6">
+                <div className="px-3 py-4 border-gray-200 dark:border-gray-800 w-[300px]">
+                    <OrganizationSwitcher/>
+                </div>
+                <div className="px-3 py-4 border-gray-200 dark:border-gray-800 w-[300px]">
+                    <OrganizationSwitcher/>
+                </div>
                 {mounted && (
                     <button
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -35,15 +41,14 @@ export function Header() {
                     </button>
                 )}
 
+
                 <button
                     className="relative p-2 hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors">
                     <Bell className="w-5 h-5"/>
                     <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
                 </button>
 
-                <div className="px-3 py-4 border-gray-200 dark:border-gray-800 w-[300px]">
-                    <OrganizationSwitcher/>
-                </div>
+
 
                 <div
                     className="flex items-center gap-3 px-3 py-2 hover:bg-accent rounded-lg cursor-pointer transition-colors">

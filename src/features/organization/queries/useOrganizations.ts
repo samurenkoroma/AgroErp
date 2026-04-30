@@ -9,6 +9,5 @@ export const useOrganizations = () => {
         queryKey: ['organizations'],
         queryFn: organizationApi.getUserOrganizations,
         enabled: !!token, // 🔑 важно
-        staleTime: 1000 * 60 * 5, // 5 минут кеш
     });
 };
