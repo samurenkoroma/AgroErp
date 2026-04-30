@@ -1,4 +1,4 @@
-import {Crop, Species} from './types';
+import {Crop, Specie} from './types';
 
 export const calculateHarvestDate = (sowingDate: Date, crop: Crop): Date => {
     const harvestDate = new Date(sowingDate);
@@ -35,7 +35,7 @@ export const isCropSuitableAfterPrevious = (newCropId: string, previousCropId: s
     };
 };
 
-export const getGardenCrops = (crops: Species[]) => {
+export const getGardenCrops = (crops: Specie[]) => {
     return crops.filter(c =>
         c.category === 'Овощные' ||
         c.category === 'Зеленные' ||

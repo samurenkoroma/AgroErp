@@ -19,6 +19,7 @@ import RegisterPage from "@/pages/auth/RegisterPage.tsx";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import ScadaDashboard from "@/pages/scada/ScadaDashboard.tsx";
+import AllCropsPage from "@/pages/crop/AllCropsPage.tsx";
 
 // Публичные маршруты (без авторизации)
 export const publicRoutes: RouteObject[] = [
@@ -43,6 +44,8 @@ export const privateRoutes: RouteObject[] = [
     {path: "crops/:id", element: <CropDetailsPage/>},
     {path: "crops/:id/variety/:varId", element: <VarietyDetailsPage/>},
 
+
+    {path: 'crop-plan', element: <AllCropsPage/>},
 
     {path: 'planning', element: <SeasonalPlanningPage/>},
     { path: "/plan/:planId", element: <CropPlanDetailsPage/> },

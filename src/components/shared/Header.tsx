@@ -28,9 +28,6 @@ export function Header() {
                 <div className="px-3 py-4 border-gray-200 dark:border-gray-800 w-[300px]">
                     <OrganizationSwitcher/>
                 </div>
-                <div className="px-3 py-4 border-gray-200 dark:border-gray-800 w-[300px]">
-                    <OrganizationSwitcher/>
-                </div>
                 {mounted && (
                     <button
                         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

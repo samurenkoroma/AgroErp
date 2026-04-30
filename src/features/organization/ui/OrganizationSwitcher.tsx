@@ -1,12 +1,12 @@
 import {useEffect, useRef, useState} from 'react';
-import {AlertCircle, Building2, Check, ChevronDown, Loader2, Plus, Settings, Users} from 'lucide-react';
+import {AlertCircle, Building2, ChevronDown, Loader2, Plus, Settings, Users} from 'lucide-react';
 import {useCreateOrganization} from "@/features/organization/mutations/useCreateOrganization.ts";
 import {useOrganizations} from "@/features/organization/queries/useOrganizations.ts";
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {useSwitchOrganization} from "@/features/organization/mutations/useSwitchOrganization.ts";
 import {useCurrentOrganization} from "@/features/organization/queries/useCurrentOrganization.ts";
-import {useUIStore} from "@/stores/uiStore.ts";
+import {useNavigate} from "react-router-dom";
 
 
 export const OrganizationSwitcher = () => {
@@ -18,8 +18,8 @@ export const OrganizationSwitcher = () => {
     const {mutateAsync} = useCreateOrganization();
     const {mutate: switchOrg} = useSwitchOrganization();
     const {data: organizations, isLoading, error} = useOrganizations();
-    const {organization: currentOrganization}= useCurrentOrganization();
-
+    const {organization: currentOrganization} = useCurrentOrganization();
+    const navigate = useNavigate();
     // Закрываем dropdown при клике вне
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -36,12 +36,9 @@ export const OrganizationSwitcher = () => {
     }, []);
 
     const handleSwitchOrganization = async (orgId: string) => {
-        try {
-            switchOrg(orgId);
-            setIsOpen(false);
-        } catch (error) {
-            console.error('Failed to switch organization:', error);
-        }
+        switchOrg(orgId);
+        setIsOpen(false);
+        navigate('/dashboard');
     };
 
     const handleCreateOrganization = async (e: React.FormEvent) => {
@@ -122,24 +119,19 @@ export const OrganizationSwitcher = () => {
                                 <button
                                     key={org.id}
                                     onClick={() => handleSwitchOrganization(org.id)}
-                                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                                    className={`w-full px-4 py-3 flex items-center justify-between ${currentOrganization?.id === org.id ? 'bg-green-100 dark:bg-green-400  ' : ' hover:bg-gray-50 dark:hover:bg-gray-800'}  transition-colors text-left`}
                                 >
                                     <div className="flex-1">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center justify-between gap-2">
                                             <span
                                                 className="font-medium text-gray-900 dark:text-white">{org.name}</span>
                                             <span
-                                                className={`text-xs px-1.5 py-0.5 rounded-full ${getRoleColor(org.role)}`}>
-                        {org.role}
-                      </span>
+                                                className={`text-xs px-1.5 py-0.5 rounded-full ${getRoleColor(org.role)}`}>{org.role}</span>
                                         </div>
                                         {org.name && (
                                             <p className="text-xs text-gray-500 mt-0.5">{org.name}</p>
                                         )}
                                     </div>
-                                    {currentOrganization?.id === org.id && (
-                                        <Check className="w-4 h-4 text-green-500"/>
-                                    )}
                                 </button>
                             ))
                         )}

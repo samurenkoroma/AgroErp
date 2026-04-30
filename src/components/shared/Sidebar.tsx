@@ -32,6 +32,7 @@ export function Sidebar() {
         // {id: 'draw', label: 'Обьект', icon: MapPin, path: '/draw'},
         {id: 'crops-list', label: 'Все культуры', icon: Wheat, path: '/crops'},
         {id: 'planning', label: 'Планирование', icon: Sprout, path: '/planning'},
+        {id: 'crop-plan', label: 'crop-plan', icon: Sprout, path: '/crop-plan'},
         {id: 'cropplan', label: 'Посевы', icon: Sprout, path: '/plan/1'},
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
         {id: 'season1', label: 'Сезоны', icon: Calendar1Icon, path: '/season1/1'},

@@ -68,7 +68,7 @@ export interface Variety {
     description: string
 }
 
-export interface Species {
+export interface Specie {
     key: string;
     name: string;
     family: string;

@@ -1,41 +1,15 @@
-import {apiClient, ENDPOINTS} from '@/api';
-import {Species, Variety} from "@/entities";
-
-// Параметры запроса GetCropTypes
-
-// Параметры запроса GetVarieties
-export interface ListVarietiesQuery {
-    speciesKey: string
-}
+import {apiClient} from '@/api';
+import {Specie, Variety} from "@/entities";
 
 export const cropApi = {
 
-    async getListSpecies(): Promise<Species[]> {
-        return await apiClient.post<Species[]>(ENDPOINTS.Queries, {
-            query: 'ListSpecies',
-            data: {},
-        });
-    },
-    async getSpecies(key: string): Promise<Species> {
-        return await apiClient.post<Species>(ENDPOINTS.Queries, {
-            query: 'GetSpecies',
-            data: {key},
-        });
-    },
+    getListSpecies: async () => await apiClient.query<Specie[]>('ListSpecies', {}),
+    getSpecie: async (key: string) => await apiClient.query<Specie>('GetSpecie', {key}),
+    listVarieties: async (params?: {
+        speciesKey: string
+    }) => await apiClient.query<Variety[]>('ListVarieties', params || {}),
+    getVarietyById: async (key: string, id: string) => await apiClient.query<Variety>('GetVariety', {key, id}),
 
-    async listVarieties(params?: ListVarietiesQuery): Promise<Variety[]> {
-        return await apiClient.post<Variety[]>(ENDPOINTS.Queries, {
-            query: 'ListVarieties',
-            data: params || {},
-        });
-    },
-
-    async getVarietyById(key: string, id: string): Promise<Variety> {
-        return await apiClient.post<Variety>(ENDPOINTS.Queries, {
-            query: 'GetVariety',
-            data: {key, id},
-        });
-    }
 }
 
 
