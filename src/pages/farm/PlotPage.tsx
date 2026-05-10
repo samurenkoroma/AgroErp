@@ -3,20 +3,19 @@ import {Calendar, FileText, Layers, MapPin, Ruler, Sprout, Wrench} from "lucide-
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {useObjectPage} from "@/features/farm/hooks";
-import {getGardenCrops, Plot} from "@/entities";
 import {useUpdateObject} from "@/features/farm/mutations";
 import {Element, SvgSchemeEditor} from "@/components/svg/SvgSchemeEditor.tsx";
 import {statusLib} from "@/utils/status.ts";
 import {formatArea} from "@/utils/geometry.ts";
 import {Button} from "@/components/common/Button.tsx";
-import PlantingRecordModal from "@/features/planting/ui/PlantingRecordModal.tsx";
-import {mockVarieties} from "@/data/mockVarieties.ts";
-import {useListSpecies} from "@/features/crops/queries/useListSpecies.ts";
-import {PlantingRecord} from "@/entities/planting/model/types.ts";
+import PlantingRecordModal from "@/features/crop-planning/components/PlantingRecordModal.tsx";
+import {PlantingRecord} from "@/entities/planning/types.ts";
+import {useCrops} from "@/features/catalog/queries/useCrop.ts";
+import {Plot} from "@/entities/object";
 
 const PlotPage = () => {
     const {object, isLoading, error} = useObjectPage<Plot>();
-    const {data: species} = useListSpecies()
+    const {data: crops} = useCrops()
     const [activeTab, setActiveTab] = useState('info');
     const {mutate: updateObject} = useUpdateObject()
     const [editSchema, setEditSchema] = useState(false);
@@ -265,8 +264,7 @@ const PlotPage = () => {
                         onClose={() => setIsModalOpen(false)}
                         onSave={handleSaveRecord}
                         object={selectedBed}
-                        availableCrops={[]}
-                        availableVarieties={mockVarieties}
+                        availableCrops={crops}
                     />
                 }
             </div>

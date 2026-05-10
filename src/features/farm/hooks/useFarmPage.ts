@@ -3,7 +3,7 @@ import {useFarmUIStore} from '../store/useFarmUIStore';
 
 import {useFarm} from '../queries/useFarm';
 import {useFarmObjects} from '../queries/useFarmObjects';
-import {useCropPlans} from "@/features/planting/queries/useCropPlans.ts";
+import {useCropPlans} from "@/features/crop-planning/hooks/useCropPlans.ts";
 
 export const useFarmPage = () => {
     const {setSelectedObjectId} = useFarmUIStore();

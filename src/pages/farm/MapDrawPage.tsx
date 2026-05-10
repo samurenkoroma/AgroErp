@@ -943,25 +943,21 @@ export function MapDrawPage() {
                                                             <h3 className="font-semibold text-gray-900 dark:text-white">
                                                                 {field.properties.name}
                                                             </h3>
-                                                            <Button variant='outline' size="icon" onClick={() => {
-                                                                setIsModalOpen(true)
-                                                            }
-                                                            }><Edit/></Button>
+                                                            <div>
+
+                                                                <Button variant='outline' size="icon"
+                                                                        onClick={() => setIsModalOpen(true)}><Edit/></Button>
+                                                                <Button variant='outline' size="icon"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleDeleteField(field.id);
+                                                                        }}><Trash2/></Button>
+                                                            </div>
                                                         </div>
                                                         <p className="text-xs text-gray-500 mt-1">
                                                             {field.properties.type} • {field.properties.type == 'greenhouse' ? `${field.properties.length}x${field.properties.width}` : formatArea(field.area)}
                                                         </p>
                                                     </div>
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDeleteField(field.id);
-                                                        }}
-                                                        className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg transition-colors text-red-500 opacity-0 group-hover:opacity-100"
-                                                        title="Удалить поле"
-                                                    >
-                                                        <Trash2 className="w-4 h-4"/>
-                                                    </button>
                                                 </div>
                                             </div>
                                         ))}

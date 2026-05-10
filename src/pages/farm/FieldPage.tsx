@@ -4,15 +4,14 @@ import {Calendar, Delete, Droplets, FileText, MapPin, Ruler, Sprout, Thermometer
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {useObjectPage} from "@/features/farm/hooks";
-import {Field} from "@/entities";
 import {statusLib} from "@/utils/status.ts";
 import {formatArea} from "@/utils/geometry.ts";
 import {useDeleteObject} from "@/features/farm/mutations";
 import {Button} from "@/components/common/Button.tsx";
 import {useNavigate} from "react-router-dom";
-import PlantingRecordModal from "@/features/planting/ui/PlantingRecordModal.tsx";
-import {mockVarieties} from "@/data/mockVarieties.ts";
-import {PlantingRecord} from "@/entities/planting/model/types.ts";
+import PlantingRecordModal from "@/features/crop-planning/components/PlantingRecordModal.tsx";
+import {PlantingRecord} from "@/entities/planning/types.ts";
+import {Field} from "@/entities/object/model.ts";
 
 const FieldPage = () => {
     const {object, isLoading, error} = useObjectPage<Field>();
@@ -208,7 +207,6 @@ const FieldPage = () => {
                     onSave={handleSaveRecord}
                     object={object}
                     availableCrops={[]}
-                    availableVarieties={mockVarieties}
                 />
             </div>
         </div>

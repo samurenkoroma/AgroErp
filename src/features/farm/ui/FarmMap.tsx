@@ -2,9 +2,10 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { farmLib, Field, Greenhouse, Plot } from '@/entities';
+import {Field, Greenhouse, Plot} from '@/entities/object';
 import * as turf from "@turf/turf";
 import {useFarmPage} from "@/features/farm/hooks";
+import {farmLib} from "@/entities/object/lib.ts";
 
 interface FarmMapProps {
     onMapLoad?: (map: mapboxgl.Map) => void,
@@ -12,10 +13,10 @@ interface FarmMapProps {
     onObjectClick?: (object: any) => void;
 }
 
-const FarmMap = ({ onMapLoad, objects, onObjectClick }: FarmMapProps) => {
+const FarmMap = ({onMapLoad, objects, onObjectClick}: FarmMapProps) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
-    const { farm, setSelectedObjectId } = useFarmPage();
+    const {farm, setSelectedObjectId} = useFarmPage();
     const [mapLoaded, setMapLoaded] = useState(false);
     // const [isMapReady, setIsMapReady] = useState(false);
     const objectsRef = useRef(objects);
@@ -41,7 +42,7 @@ const FarmMap = ({ onMapLoad, objects, onObjectClick }: FarmMapProps) => {
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/satellite-streets-v12',
-            center: farmLib.getLocation(farm),
+            center: farmLib.getLocation(),
             zoom: 12,
             attributionControl: false,
         });
@@ -343,7 +344,7 @@ const FarmMap = ({ onMapLoad, objects, onObjectClick }: FarmMapProps) => {
         }
     }, [mapLoaded, setupEventHandlers]);
 
-    return <div ref={mapContainer} className="absolute inset-0 w-full h-full" style={{ background: '#1a1a2e' }} />;
+    return <div ref={mapContainer} className="absolute inset-0 w-full h-full" style={{background: '#1a1a2e'}}/>;
 };
 
 export default FarmMap;

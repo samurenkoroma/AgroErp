@@ -1,4 +1,4 @@
-import {Activity, Calendar1Icon, HomeIcon, MapPin, Sprout, Wheat} from 'lucide-react';
+import {Calendar1Icon, HomeIcon, MapPin, Sprout, Wheat} from 'lucide-react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {ElementType, useEffect, useRef, useState} from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
@@ -27,23 +27,20 @@ export function Sidebar() {
 
     const menuItems: MenuItem[] = [
         {id: 'dashboard', label: 'Главная', icon: HomeIcon, path: '/dashboard'},
-        {id: 'farm', label: 'Ферма', icon: MapPin, path: '/farm'},
-        {id: 'scada', label: 'SCADA', icon: Activity, path: '/scada',},
-        // {id: 'draw', label: 'Обьект', icon: MapPin, path: '/draw'},
         {id: 'crops-list', label: 'Все культуры', icon: Wheat, path: '/crops'},
-        {id: 'planning', label: 'Планирование', icon: Sprout, path: '/planning'},
-        {id: 'crop-plan', label: 'crop-plan', icon: Sprout, path: '/crop-plan'},
-        {id: 'cropplan', label: 'Посевы', icon: Sprout, path: '/plan/1'},
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
-        {id: 'season1', label: 'Сезоны', icon: Calendar1Icon, path: '/season1/1'},
+        {id: 'seasons1', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons1'},
+        {id: 'farm', label: 'Ферма', icon: MapPin, path: '/farm'},
         {id: 'inventory', label: 'Инвентарь', icon: Inventory, path: '/inventory'},
+        {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
     ];
+
 
     const isActive = (path: string) => {
         if (path === '/') {
             return location.pathname === '/' || location.pathname === '/dashboard';
         }
-        return location.pathname.startsWith(path);
+        return location.pathname == path;
     };
 
     const handleMenuClick = (item: MenuItem) => {

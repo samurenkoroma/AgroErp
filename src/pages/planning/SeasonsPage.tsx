@@ -25,15 +25,16 @@ import Error from "@/components/shared/Error.tsx";
 import {useSeasons} from "@/features/season/queries/useSeasons.ts";
 import {useSeasonUIStore} from "@/features/season/store/useSeasonUIStore.ts";
 import {useCreateSeason} from "@/features/season/mutations/useCreateSeason.ts";
+import {mockSeasons} from "@/data/mockSeasonsData.ts";
 
 // ==================== MAIN COMPONENT ====================
 
 const SeasonsPage = () => {
     const navigate = useNavigate();
-    const {data: seasons, refetch, error, isLoading} = useSeasons()
+    const { refetch, error, isLoading} = useSeasons()
     const {selectedSeasonId, setSelectedSeasonId} = useSeasonUIStore();
     const {mutateAsync} = useCreateSeason()
-
+    const seasons = mockSeasons
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingSeason, setEditingSeason] = useState<Season | null>(null);
     const [expandedCrops, setExpandedCrops] = useState<Set<string>>(new Set());

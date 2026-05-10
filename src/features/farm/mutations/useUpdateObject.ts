@@ -8,8 +8,16 @@ export const useUpdateObject = () => {
     const {addNotification} = useUIStore();
 
     return useMutation({
-        mutationFn: ({id, data}: { id: string; data: UpdateObjectCommand }) =>
-            objectApi.updateObject(id, data),
+        mutationFn: ({id, data}: { id: string; data: UpdateObjectCommand }) => {
+            data.schema = data.schema?.map((e) => {
+                return {
+                    ...e,
+                    width: Number(e.width.toFixed(1)),
+                    height: Number(e.height.toFixed(1))
+                }
+            });
+            return objectApi.updateObject(id, data)
+        },
 
         onSuccess: (_, variables) => {
             // Инвалидация связанных запросов

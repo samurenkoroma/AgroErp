@@ -56,12 +56,12 @@ const BASE_PIXELS_PER_METER = 100;
 const SNAP_THRESHOLD = 5;
 
 const getAdaptiveScale = (width: number, height: number, type: string): number => {
-    if (type === 'greenhouse') return BASE_PIXELS_PER_METER;
+    if (type === 'greenhouse') return BASE_PIXELS_PER_METER * 0.8;
     const maxDimension = Math.max(width, height);
     if (maxDimension > 500) return BASE_PIXELS_PER_METER * 0.2;
     if (maxDimension > 300) return BASE_PIXELS_PER_METER * 0.35;
     if (maxDimension > 200) return BASE_PIXELS_PER_METER * 0.5;
-    if (maxDimension > 100) return BASE_PIXELS_PER_METER * 0.7;
+    if (maxDimension > 10) return BASE_PIXELS_PER_METER * 0.4;
     return BASE_PIXELS_PER_METER;
 };
 

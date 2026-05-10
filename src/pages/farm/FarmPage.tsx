@@ -4,14 +4,14 @@ import {useFarmPage} from "@/features/farm/hooks";
 import {Calendar, ChevronRight, Layers, List, MapPin, Sprout, X} from "lucide-react";
 import {formatArea} from "@/utils/geometry.ts";
 import {useNavigate} from "react-router-dom";
-import {Field, Greenhouse, Plot} from "@/entities";
 import fieldIcon from '@/assets/images/icons/field.png';
 import greenhouseIcon from '@/assets/images/icons/greenhouse.png';
 import plotIcon from '@/assets/images/icons/plot.png';
-import CropsGridView from "@/features/planting/ui/CropsGridView.tsx";
-import {CropsWidget} from "@/features/planting/ui/CropsWidget.tsx";
+import CropsGridView from "@/features/crop-planning/components/CropsGridView.tsx";
+import {CropsWidget} from "@/features/crop-planning/components/CropsWidget.tsx";
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
+import {FarmObject} from "@/entities/object";
 
 const FarmPage = () => {
     const {farm: currentFarm, objects, cropPlans, isLoading, error} = useFarmPage();
@@ -25,7 +25,7 @@ const FarmPage = () => {
         return objects;
     }, [currentFarm, objects]);
 
-    const handleNavigateToDetails = (obj: Field | Greenhouse | Plot) => {
+    const handleNavigateToDetails = (obj: FarmObject) => {
         if (obj.type === "field") {
             navigate(`/field/${obj.id}`);
         } else if (obj.type === "greenhouse") {
@@ -36,7 +36,7 @@ const FarmPage = () => {
     };
 
     const handleNavigateToPlan = (planId: string) => {
-        navigate(`/plan/${planId}`);
+        navigate(`/growing/${planId}`);
     };
 
     // Получение иконки для типа объекта (PNG)
@@ -282,7 +282,7 @@ const FarmPage = () => {
                         </div>
                     )}
                     {activeTab === 'crops' && (
-                        <CropsWidget onNavigateToPlan={(planId) => navigate(`/plan/${planId}`)}/>
+                        <CropsWidget onNavigateToPlan={(planId) => navigate(`/growing/${planId}`)}/>
                     )}
                     {/* Подсказка внизу */}
                     <div className="p-3 border-t border-white/20 bg-white/5">
