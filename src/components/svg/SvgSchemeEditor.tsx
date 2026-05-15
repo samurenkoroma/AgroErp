@@ -18,7 +18,7 @@ import {
 import * as turf from '@turf/turf';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import {v4 as uuidv4} from 'uuid';
-import {FarmObjectTypes} from "@/entities";
+import {FarmObjectTypes} from "@/entities/object";
 
 export interface Element {
     id: string;

@@ -4,7 +4,7 @@ export type Option = {
 };
 
 export const toOptions = <
-    T extends Record<string, any>
+    T extends Record<string, string>
 >(
     items: T[],
     valueKey: keyof T,

@@ -9,10 +9,8 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK_CROP_PLANNING === 'true' || true;
 export const cropPlanningApi = {
 
     // ============ CULTIVATION PLANS ============
-    getCultivationPlans: (cropId?: string): Promise<CultivationPlan[]> => {
-        if (USE_MOCK) return mockCropPlanningApi.getCultivationPlans(cropId);
-        const params = cropId ? `?cropId=${cropId}` : '';
-        return apiClient.get(`/cultivation-plans${params}`);
+    getCultivationPlans: (cropKey?: string): Promise<CultivationPlan[]> => {
+        return apiClient.query("getCultivationPlans", {cropKey});
     },
 
     getCultivationAreas: (params?: { objectId: string }) => {
@@ -26,8 +24,8 @@ export const cropPlanningApi = {
 
     // ============ CROP PLANS ============
     createCropPlan: (data: CreateCropPlanRequest): Promise<CropPlan> => {
-        if (USE_MOCK) return mockCropPlanningApi.createCropPlan(data);
-        return apiClient.post('/crop-plans', data);
+        // if (USE_MOCK) return mockCropPlanningApi.createCropPlan(data);
+        return apiClient.command('createCropPlan', data);
     },
 
     getCropPlans: (): Promise<CropPlan[]> => {

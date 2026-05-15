@@ -9,7 +9,6 @@ import {formatArea} from "@/utils/geometry.ts";
 import {useDeleteObject} from "@/features/farm/mutations";
 import {Button} from "@/components/common/Button.tsx";
 import {useNavigate} from "react-router-dom";
-import PlantingRecordModal from "@/features/crop-planning/components/PlantingRecordModal.tsx";
 import {PlantingRecord} from "@/entities/planning/types.ts";
 import {Field} from "@/entities/object/model.ts";
 
@@ -201,13 +200,6 @@ const FieldPage = () => {
                     </div>
                 </div>
 
-                <PlantingRecordModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSave={handleSaveRecord}
-                    object={object}
-                    availableCrops={[]}
-                />
             </div>
         </div>
     );

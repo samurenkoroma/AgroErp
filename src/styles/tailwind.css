@@ -2,3 +2,31 @@
 @source '../**/*.{js,ts,jsx,tsx}';
 
 @import 'tw-animate-css';
+
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease-out, margin 0.2s ease-out;
+    opacity: 0;
+}
+
+.accordion-content.open {
+    max-height: 500px; /* Достаточно большое значение для вашего контента */
+    opacity: 1;
+}
+
+/* Альтернативный вариант с grid */
+.accordion-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+}
+
+.accordion-grid.open {
+    grid-template-rows: 1fr;
+}
+
+.accordion-grid > div {
+    overflow: hidden;
+}

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
+import {useEffect, useRef} from 'react';
+import {X} from 'lucide-react';
 
 interface ModalProps {
     isOpen: boolean;
@@ -12,11 +12,11 @@ interface ModalProps {
 }
 
 const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
-    full: 'max-w-[90vw]',
+    sm: 'max-w-md max-h-[90vh]',
+    md: 'max-w-lg max-h-[90vh]',
+    lg: 'max-w-2xl max-h-[90vh]',
+    xl: 'max-w-4xl max-h-[90vh]',
+    full: 'max-w-[90vw] h-[90vh]',
 };
 
 export function Modal({
@@ -70,7 +70,7 @@ export function Modal({
                     relative bg-white dark:bg-gray-900 
                     rounded-xl shadow-2xl 
                     w-full ${sizeClasses[size]} 
-                    max-h-[90vh] overflow-hidden 
+                    overflow-hidden 
                     flex flex-col
                     animate-in fade-in zoom-in duration-200
                 `}

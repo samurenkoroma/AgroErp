@@ -14,7 +14,8 @@ export interface CultivationStep {
 export interface CultivationPlan {
     id: string;
     name: string;
-    cropId: string;
+    cropKey: string;
+    version: number;
     description?: string;
     steps: CultivationStep[];
 }
@@ -56,11 +57,10 @@ export interface RecommendedAction {
 }
 
 export interface CreateCropPlanRequest {
-    cropId: string;
-    varietyId: string;
+    varietyId?: string;
     cultivationPlanId: string;
-    startDate: string;
-    locationId: string; // теперь обязательное поле
+    seasonId: string;
+    areaId: string;
 }
 
 export interface PlantingRecord {

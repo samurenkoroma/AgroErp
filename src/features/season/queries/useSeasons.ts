@@ -25,3 +25,11 @@ export const useSeasonOptions = () => {
         select: items => toOptions(items, 'id', ['name', 'status'])
     })
 }
+
+
+export const useCurrentSeason = () =>
+    useQuery({
+        queryKey: ["seasons"],
+        queryFn: seasonApi.list,
+        select: items => items.find(s => s.status === 'current') ?? null
+    })

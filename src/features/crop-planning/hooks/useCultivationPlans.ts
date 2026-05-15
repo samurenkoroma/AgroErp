@@ -2,10 +2,10 @@
 import {useQuery} from '@tanstack/react-query';
 import {cropPlanningApi} from '../api/cropPlanningApi';
 
-export const useCultivationPlans = (cropId?: string) => {
+export const useCultivationPlans = (cropKey?: string) => {
     return useQuery({
-        queryKey: ['cultivation-plans', cropId],
-        queryFn: () => cropPlanningApi.getCultivationPlans(cropId),
+        queryKey: ['cultivation-plans', cropKey],
+        queryFn: () => cropPlanningApi.getCultivationPlans(cropKey),
     });
 };
 

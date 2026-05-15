@@ -8,7 +8,6 @@ import {Element, SvgSchemeEditor} from "@/components/svg/SvgSchemeEditor.tsx";
 import {statusLib} from "@/utils/status.ts";
 import {formatArea} from "@/utils/geometry.ts";
 import {Button} from "@/components/common/Button.tsx";
-import PlantingRecordModal from "@/features/crop-planning/components/PlantingRecordModal.tsx";
 import {PlantingRecord} from "@/entities/planning/types.ts";
 import {useCrops} from "@/features/catalog/queries/useCrop.ts";
 import {Plot} from "@/entities/object";
@@ -256,17 +255,6 @@ const PlotPage = () => {
                         </div>
                     </div>
                 </div>
-
-
-                {
-                    selectedBed && <PlantingRecordModal
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        onSave={handleSaveRecord}
-                        object={selectedBed}
-                        availableCrops={crops}
-                    />
-                }
             </div>
         </div>
     );

@@ -26,9 +26,7 @@ import {Element} from "@/components/svg/SvgSchemeEditor"
 import {Button} from "@/components/common/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {formatArea} from "@/utils/geometry.ts";
-import PlantingRecordModal from "@/features/crop-planning/components/PlantingRecordModal.tsx";
 import {getCropIcon} from "@/utils/cropIcons.ts";
-import {useGreenhouseCrops} from "@/features/catalog/queries/useCrop.ts";
 import {CreateCropPlanModal} from "@/features/crop-planning/components/CreateCropPlanModal.tsx";
 import {Greenhouse} from "@/entities/object";
 
@@ -180,7 +178,6 @@ const CropPlanCard = ({plan, onClick}: { plan: CropPlan; onClick: () => void }) 
 
 const GreenhousePage = () => {
     const {object, isLoading, error} = useObjectPage<Greenhouse>();
-    const {data: crops} = useGreenhouseCrops();
     const [activeTab, setActiveTab] = useState('crops'); // Меняем на 'crops' по умолчанию
     const [editSchema, setEditSchema] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -190,7 +187,6 @@ const GreenhousePage = () => {
 
     // Состояние модалки посева
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isModalOpen3, setIsModalOpen3] = useState(false);
     const [selectedBed, setSelectedBed] = useState<{
         id: string,
         name: string,
@@ -208,9 +204,6 @@ const GreenhousePage = () => {
         {id: 'tasks', label: 'Задачи', icon: <Calendar className="w-4 h-4"/>},
     ];
 
-    const handleSaveRecord = (record) => {
-        console.log('Сохраненная запись:', record);
-    };
 
     const handleSaveSvg = (elements: any[]) => {
         updateObject({
@@ -229,11 +222,6 @@ const GreenhousePage = () => {
 
     const handleNavigateToPlan = (planId: string) => {
         navigate(`/growing/${planId}`);
-    };
-
-    const handleCreatePlan = () => {
-        // Открываем модалку создания плана
-        console.log('Создать новый план');
     };
 
     let schema: Element[] = [];
@@ -284,7 +272,6 @@ const GreenhousePage = () => {
                                 readonly={!editSchema}
                                 onBedClick={(element) => {
                                     const el = object.attributes.metadata?.schema.find((elem: Element) => elem.id === element.id)
-                                    console.log(el)
                                     const area = +(el.width.toFixed(1) * el.height.toFixed(1)).toFixed(2) / 10000
                                     setSelectedBed({
                                         id: el.id,
@@ -441,11 +428,11 @@ const GreenhousePage = () => {
                             <div className="space-y-3">
                                 {/* Кнопка добавления посева */}
                                 <button
-                                    onClick={() => setIsModalOpen3(true)}
+                                    onClick={() => setIsModalOpen(true)}
                                     className="w-full py-2 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-sm text-green-600 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors flex items-center justify-center gap-2"
                                 >
                                     <Plus className="w-4 h-4"/>
-                                    Добавить посев 3
+                                    Добавить посев
                                 </button>
 
 
@@ -483,22 +470,15 @@ const GreenhousePage = () => {
                 </div>
             </div>
 
-            {/* Модальное окно */}
-            {selectedBed && (
-                <PlantingRecordModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSave={handleSaveRecord}
-                    object={selectedBed}
-                    availableCrops={crops}
-                    o
-                />
-            )}
 
             <CreateCropPlanModal
                 objectId={object.id}
-                onSuccess={() => console.log("success")} onClose={() => setIsModalOpen3(false)}
-                                 isOpen={isModalOpen3}></CreateCropPlanModal>
+                preSelectedLocationId={selectedBed?.id}
+                onSuccess={() => console.log("success")} onClose={() => {
+                setSelectedBed(undefined)
+                setIsModalOpen(false)
+            }}
+                isOpen={isModalOpen}></CreateCropPlanModal>
         </div>
     );
 };
