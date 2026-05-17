@@ -1,22 +1,23 @@
 // src/features/crop-planning/hooks/useCropPlans.ts
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {cropPlanningApi} from '../api/cropPlanningApi';
-import {CreateCropPlanRequest} from '../../../entities/planning/types.ts';
+import {CreateCropPlanRequest} from "@/entities/planning";
 
-export const useCropPlans = (status?: string) => {
+export const useCropPlans = () => {
     return useQuery({
-        queryKey: ['crop-plans', status],
+        queryKey: ['crop-plans'],
         queryFn: () => cropPlanningApi.getCropPlans(),
     });
 };
 
-export const useCropPlan = (id: string) => {
-    return useQuery({
+export const useCropPlan = (id: string) =>
+    useQuery({
         queryKey: ['crop-plan', id],
-        queryFn: () => cropPlanningApi.getCropPlan(id),
+        queryFn: cropPlanningApi.getCropPlans,
         enabled: !!id,
+        // staleTime: Infinity,
+        select: (crops) => crops.find(c => c.id === id),
     });
-};
 
 export const useCreateCropPlan = () => {
     const queryClient = useQueryClient();

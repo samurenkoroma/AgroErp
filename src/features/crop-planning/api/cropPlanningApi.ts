@@ -8,33 +8,27 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK_CROP_PLANNING === 'true' || true;
 
 export const cropPlanningApi = {
 
+    getCultivationAreas: (params?: { objectId: string }) => {
+        return apiClient.query<CultivationArea[]>('getCultivationAreas', params || {});
+    },
+
     // ============ CULTIVATION PLANS ============
     getCultivationPlans: (cropKey?: string): Promise<CultivationPlan[]> => {
         return apiClient.query("getCultivationPlans", {cropKey});
     },
 
-    getCultivationAreas: (params?: { objectId: string }) => {
-        return apiClient.query<CultivationArea[]>('getCultivationAreas', params || {});
-    },
 
-    getCultivationPlan: (id: string): Promise<CultivationPlan> => {
-        if (USE_MOCK) return mockCropPlanningApi.getCultivationPlan(id);
-        return apiClient.get(`/cultivation-plans/${id}`);
+    getCultivationPlan: (id: string) => {
+        return apiClient.query<CultivationPlan>("getCultivationPlans", {id});
     },
 
     // ============ CROP PLANS ============
     createCropPlan: (data: CreateCropPlanRequest): Promise<CropPlan> => {
-        // if (USE_MOCK) return mockCropPlanningApi.createCropPlan(data);
         return apiClient.command('createCropPlan', data);
     },
 
     getCropPlans: (): Promise<CropPlan[]> => {
         return apiClient.query<CropPlan[]>("getCropPlans", {});
-    },
-
-    getCropPlan: (id: string): Promise<CropPlan> => {
-        if (USE_MOCK) return mockCropPlanningApi.getCropPlan(id);
-        return apiClient.get(`/crop-plans/${id}`);
     },
 
     updateCropPlanStatus: (id: string, status: CropPlan['status']): Promise<CropPlan> => {

@@ -12,6 +12,7 @@ import {CropsWidget} from "@/features/crop-planning/components/CropsWidget.tsx";
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {FarmObject} from "@/entities/object";
+import {statusLib} from "@/utils/status.ts";
 
 const FarmPage = () => {
     const {farm: currentFarm, objects, cropPlans, isLoading, error} = useFarmPage();
@@ -50,28 +51,6 @@ const FarmPage = () => {
                 return plotIcon;
             default:
                 return fieldIcon;
-        }
-    };
-
-    // Получение статуса плана
-    const getPlanStatusBadge = (status: string) => {
-        switch (status) {
-            case 'active':
-                return {
-                    bg: 'bg-green-100 dark:bg-green-900/30',
-                    text: 'text-green-700 dark:text-green-400',
-                    label: 'Активен'
-                };
-            case 'in_progress':
-                return {
-                    bg: 'bg-blue-100 dark:bg-blue-900/30',
-                    text: 'text-blue-700 dark:text-blue-400',
-                    label: 'В процессе'
-                };
-            case 'completed':
-                return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: 'Завершен'};
-            default:
-                return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: status};
         }
     };
 
@@ -214,7 +193,7 @@ const FarmPage = () => {
                             {/*{activePlans && activePlans.length > 0 ? (*/}
                             {cropPlans ? (
                                 cropPlans.map((plan) => {
-                                    const statusBadge = getPlanStatusBadge(plan.status);
+                                    const statusBadge = statusLib.getBadge(plan.status);
                                     return (
                                         <div
                                             key={plan.id}
@@ -229,7 +208,7 @@ const FarmPage = () => {
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center justify-between gap-2">
                                                         <h3 className="font-semibold text-white truncate">
-                                                            {plan.name}
+                                                            {plan.crop.name}
                                                         </h3>
                                                         <span
                                                             className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${statusBadge.bg} ${statusBadge.text}`}>
@@ -237,12 +216,12 @@ const FarmPage = () => {
                                                         </span>
                                                     </div>
                                                     <p className="text-xs text-gray-300 mt-1">
-                                                        {plan.cropName} • {plan.varietyName}
+                                                        {plan.variety.name}
                                                     </p>
                                                     <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
                                                         <span className="flex items-center gap-1">
                                                             <Calendar className="w-3 h-3"/>
-                                                            {new Date(plan.planting_date).toLocaleDateString('ru')}
+                                                            {new Date(plan.plantingDate).toLocaleDateString('ru')}
                                                         </span>
                                                         {plan.progress > 0 && (
                                                             <span className="flex items-center gap-1">

@@ -26,155 +26,12 @@ import {Element} from "@/components/svg/SvgSchemeEditor"
 import {Button} from "@/components/common/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {formatArea} from "@/utils/geometry.ts";
-import {getCropIcon} from "@/utils/cropIcons.ts";
 import {CreateCropPlanModal} from "@/features/crop-planning/components/CreateCropPlanModal.tsx";
 import {Greenhouse} from "@/entities/object";
+import CropPlanCard from "@/features/crop-planning/components/CropPlanCard.tsx";
+import {useGreenhouseCrops} from "@/features/catalog/queries/useCrop.ts";
+import {useCropPlans} from "@/features/crop-planning/hooks/useCropPlans.ts";
 
-// ==================== MOCK DATA FOR CROPS ====================
-
-interface CropPlan {
-    id: string;
-    name: string;
-    crop_name: string;
-    variety_name: string;
-    status: 'active' | 'completed' | 'planned' | 'draft';
-    status_text: string;
-    planting_date: string;
-    expected_harvest_date: string;
-    progress: number;
-    area: number;
-    area_unit: string;
-}
-
-const mockCropPlans: CropPlan[] = [
-    {
-        id: 'plan-1',
-        name: 'Томаты весенние 2025',
-        crop_name: 'Томат',
-        variety_name: 'Бычье сердце',
-        status: 'active',
-        status_text: 'Активный',
-        planting_date: '2025-03-15',
-        expected_harvest_date: '2025-07-20',
-        progress: 45,
-        area: 0.25,
-        area_unit: 'м²'
-    },
-    {
-        id: 'plan-2',
-        name: 'Огурцы ранние 2025',
-        crop_name: 'Огурец',
-        variety_name: 'Герман F1',
-        status: 'active',
-        status_text: 'Активный',
-        planting_date: '2025-04-01',
-        expected_harvest_date: '2025-07-15',
-        progress: 30,
-        area: 0.25,
-        area_unit: 'м²'
-    },
-    {
-        id: 'plan-3',
-        name: 'Перец сладкий 2025',
-        crop_name: 'Перец сладкий',
-        variety_name: 'Калифорнийское чудо',
-        status: 'planned',
-        status_text: 'Запланирован',
-        planting_date: '2025-05-10',
-        expected_harvest_date: '2025-08-25',
-        progress: 0,
-        area: 0.2,
-        area_unit: 'м²'
-    },
-    {
-        id: 'plan-4',
-        name: 'Баклажаны 2025',
-        crop_name: 'Баклажан',
-        variety_name: 'Алмаз',
-        status: 'completed',
-        status_text: 'Завершен',
-        planting_date: '2025-02-01',
-        expected_harvest_date: '2025-06-01',
-        progress: 100,
-        area: 0.2,
-        area_unit: 'м²'
-    }
-];
-
-
-const getStatusBadge = (status: string) => {
-    switch (status) {
-        case 'active':
-            return {
-                bg: 'bg-green-100 dark:bg-green-900/30',
-                text: 'text-green-700 dark:text-green-400',
-                label: 'Активен'
-            };
-        case 'completed':
-            return {bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-400', label: 'Завершен'};
-        case 'planned':
-            return {
-                bg: 'bg-purple-100 dark:bg-purple-900/30',
-                text: 'text-purple-700 dark:text-purple-400',
-                label: 'Запланирован'
-            };
-        case 'draft':
-            return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: 'Черновик'};
-        default:
-            return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: status};
-    }
-};
-
-const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'bg-green-500';
-    if (progress >= 50) return 'bg-blue-500';
-    if (progress >= 25) return 'bg-yellow-500';
-    return 'bg-gray-500';
-};
-
-// Компонент карточки посева
-const CropPlanCard = ({plan, onClick}: { plan: CropPlan; onClick: () => void }) => {
-    const statusBadge = getStatusBadge(plan.status);
-    const progressColor = getProgressColor(plan.progress);
-
-    return (
-        <div
-            onClick={onClick}
-            className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all cursor-pointer group"
-        >
-            <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-3">
-                    <span className="text-3xl">{getCropIcon(plan.crop_name)}</span>
-                    <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">{plan.crop_name}</h3>
-                        <p className="text-xs text-gray-500">{plan.variety_name}</p>
-                    </div>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
-                    {statusBadge.label}
-                </span>
-            </div>
-
-            <div className="space-y-2 mb-3">
-                <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Прогресс</span>
-                    <span className="font-medium">{plan.progress}%</span>
-                </div>
-                <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                        className={`h-full rounded-full transition-all ${progressColor}`}
-                        style={{width: `${plan.progress}%`}}
-                    />
-                </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>Посадка: {new Date(plan.planting_date).toLocaleDateString('ru')}</span>
-                <span>Сбор: {new Date(plan.expected_harvest_date).toLocaleDateString('ru')}</span>
-            </div>
-        </div>
-    );
-};
 
 const GreenhousePage = () => {
     const {object, isLoading, error} = useObjectPage<Greenhouse>();
@@ -183,6 +40,8 @@ const GreenhousePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const {mutate: updateObject} = useUpdateObject()
     const {mutate: deleteObject} = useDeleteObject()
+    const {data: crops} = useGreenhouseCrops();
+    const {data: plans} = useCropPlans();
     const navigate = useNavigate();
 
     // Состояние модалки посева
@@ -424,7 +283,7 @@ const GreenhousePage = () => {
                             </div>
                         )}
 
-                        {activeTab === 'crops' && (
+                        {activeTab === 'crops' && plans && (
                             <div className="space-y-3">
                                 {/* Кнопка добавления посева */}
                                 <button
@@ -438,7 +297,7 @@ const GreenhousePage = () => {
 
                                 {/* Список посевов */}
                                 <div className="space-y-3 max-h-[calc(100vh-250px)] overflow-y-auto">
-                                    {mockCropPlans.map((plan) => (
+                                    {plans.map((plan) => (
                                         <CropPlanCard
                                             key={plan.id}
                                             plan={plan}
@@ -447,7 +306,7 @@ const GreenhousePage = () => {
                                     ))}
                                 </div>
 
-                                {mockCropPlans.length === 0 && (
+                                {plans.length === 0 && (
                                     <div className="text-center py-12">
                                         <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-3"/>
                                         <p className="text-gray-500">Нет посевов</p>
@@ -478,6 +337,7 @@ const GreenhousePage = () => {
                 setSelectedBed(undefined)
                 setIsModalOpen(false)
             }}
+                crops={crops}
                 isOpen={isModalOpen}></CreateCropPlanModal>
         </div>
     );

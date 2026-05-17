@@ -6,13 +6,13 @@ import {useCultivationPlans} from '../hooks/useCultivationPlans';
 import {useCreateCropPlan} from '../hooks/useCropPlans';
 import {getCropIcon} from '@/utils/cropIcons';
 import {CultivationArea} from "@/entities/planning/types.ts";
-import {useGreenhouseCrops} from "@/features/catalog/queries/useCrop.ts";
 import {useVarieties} from "@/features/catalog/queries/useVariety.ts";
 import {useCultivationAreasByObject} from "@/features/crop-planning/hooks/useCultivationAreas.ts";
 import {CropPlanPreview} from "@/features/crop-planning/components/CropPlanPreview.tsx";
 import {formatArea} from "@/utils/geometry.ts";
 import {useSeasonOptions} from "@/features/season/queries/useSeasons.ts";
 import {Select} from "@/components/common/Select.tsx";
+import {Crop} from "@/entities/crop";
 
 interface CreateCropPlanModalProps {
     isOpen: boolean;
@@ -20,6 +20,7 @@ interface CreateCropPlanModalProps {
     onSuccess: () => void;
     preSelectedLocationId?: string;
     objectId: string;
+    crops: Crop[] | undefined
 }
 
 export const CreateCropPlanModal = ({
@@ -28,6 +29,7 @@ export const CreateCropPlanModal = ({
                                         onSuccess,
                                         preSelectedLocationId,
                                         objectId,
+                                        crops
                                     }: CreateCropPlanModalProps) => {
     // Основные состояния формы
     const [selectedLocationId, setSelectedLocationId] = useState<string>(preSelectedLocationId || '');
@@ -51,7 +53,6 @@ export const CreateCropPlanModal = ({
     });
 
     // API данные
-    const {data: crops, isLoading: cropsLoading} = useGreenhouseCrops();
     const {data: seasonOption} = useSeasonOptions()
     const {data: varieties, isLoading: varietiesLoading} = useVarieties(selectedCropKey);
     const {data: cultivationPlans, isLoading: plansLoading} = useCultivationPlans(selectedCropKey);
@@ -307,9 +308,7 @@ export const CreateCropPlanModal = ({
                                     }`}
                                 >
                                     <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                                        {cropsLoading ? (
-                                            <div className="col-span-2 text-center py-4">Загрузка...</div>
-                                        ) : (
+                                        {
                                             filteredCrops.map((crop) => (
                                                 <button
                                                     key={crop.key}
@@ -339,9 +338,8 @@ export const CreateCropPlanModal = ({
                                                             <p className="text-xs text-gray-500">{crop.category}</p>
                                                         </div>
                                                     </div>
-                                                </button>
-                                            ))
-                                        )}
+                                                </button>)
+                                            )}
                                     </div>
                                 </div>
                             </div>
