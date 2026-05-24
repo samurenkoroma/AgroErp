@@ -1,8 +1,8 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import {CommandResponse} from "@/api/types.ts";
 import {getAccessToken, currentOrgId} from "@/stores/authStore.ts";
 import {getFreshToken} from "@/flow/refreshTokenRequest.ts";
 import {ENDPOINTS} from "@/api/endpoints.ts";
+import {Response} from "@/api/types.ts";
 
 class ApiClient {
     private client: AxiosInstance;
@@ -65,19 +65,19 @@ class ApiClient {
     }
 
     async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        const response: AxiosResponse<CommandResponse<T>> = await this.client.post(url, data, config);
+        const response: AxiosResponse<Response<T>> = await this.client.post(url, data, config);
         return response.data.data!
     }
 
     async command<T>(cmd: string, data: any): Promise<T> {
-        const response: AxiosResponse<CommandResponse<T>> = await this.client.post(ENDPOINTS.Commands, {
+        const response: AxiosResponse<Response<T>> = await this.client.post(ENDPOINTS.Commands, {
             command: cmd,
             data: data
         });
         return response.data.data!
     }
     async query<T>(cmd: string, query: any): Promise<T> {
-        const response: AxiosResponse<CommandResponse<T>> = await this.client.post(ENDPOINTS.Queries, {
+        const response: AxiosResponse<Response<T>> = await this.client.post(ENDPOINTS.Queries, {
             query: cmd,
             data: query
         });

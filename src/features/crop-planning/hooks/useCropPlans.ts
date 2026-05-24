@@ -2,11 +2,20 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {cropPlanningApi} from '../api/cropPlanningApi';
 import {CreateCropPlanRequest} from "@/entities/planning";
+import {toCropPlanCard} from "@/features/crop-planning/mapper/toCropPlanCard.ts";
 
 export const useCropPlans = () => {
     return useQuery({
         queryKey: ['crop-plans'],
         queryFn: () => cropPlanningApi.getCropPlans(),
+    });
+};
+
+export const useCropPlanCards = () => {
+    return useQuery({
+        queryKey: ['crop-plans'],
+        queryFn: cropPlanningApi.getCropPlans,
+        select: items => items.map(toCropPlanCard),
     });
 };
 

@@ -28,42 +28,15 @@ export const statusLib = {
         return texts[status as keyof typeof texts] || status;
     },
     getBadge(status: string) {
-        switch (status) {
-            case 'active':
-                return {
-                    bg: 'bg-green-100 dark:bg-green-900/30',
-                    text: 'text-green-700 dark:text-green-400',
-                    label: 'Активен'
-                };
-            case 'completed':
-                return {
-                    bg: 'bg-blue-100 dark:bg-blue-900/30',
-                    text: 'text-blue-700 dark:text-blue-400',
-                    label: 'Завершен'
-                };
-            case 'cancelled' :
-                return {
-                    bg: 'bg-red-100 dark:bg-red-900/30',
-                    text: 'text-red-700 dark:text-red-400',
-                    label: 'Отменен',
-                };
-            case 'in_progress':
-                return {
-                    bg: 'bg-blue-100 dark:bg-blue-900/30',
-                    text: 'text-blue-700 dark:text-blue-400',
-                    label: 'В процессе'
-                };
-            case 'planned':
-                return {
-                    bg: 'bg-purple-100 dark:bg-purple-900/30',
-                    text: 'text-purple-700 dark:text-purple-400',
-                    label: 'Запланирован'
-                };
-            case 'draft':
-                return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: 'Черновик'};
-            default:
-                return {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: status};
+        const badges = {
+            active: {bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400', label: 'Активен'},
+            completed: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-400', label: 'Завершен'},
+            cancelled: {bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Отменен'},
+            in_progress:  {bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-400', label: 'В процессе'},
+            planned:  {bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-400',label: 'Запланирован'},
+            draft:  {bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500', label: 'Черновик'}
         }
+        return badges[status as keyof typeof badges] || badges.active;
     },
 
     getProgressColor(progress: number) {

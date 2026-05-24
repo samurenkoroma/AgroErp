@@ -67,10 +67,12 @@ export interface CropPlan {
     variety: {
         name: string;
         id: string;
+        daysToMaturity: number;
     };
     productionUnit: {
         id: string
         area: number;
+        name: string;
     };
     cultivationPlan: {
         id: string
@@ -79,7 +81,6 @@ export interface CropPlan {
     status: 'active' | 'completed' | 'planned' | 'draft';
     plantingDate: string;
     expectedHarvestDate: string;
-    progress: number;
 }
 
 export interface CurrentPhenology {
