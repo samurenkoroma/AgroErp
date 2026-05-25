@@ -1,1 +1,1 @@
-export {organizationApi} from './organizationApi'
+export {organizationApi} from './organizationApi.ts'

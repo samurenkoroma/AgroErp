@@ -1,7 +1,7 @@
 import {useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {ArrowRight, Plus, Search, Sprout} from 'lucide-react';
-import {useCrops} from "@/features/catalog/queries/useCrop.ts";
+import {useCrops} from "@/features/agronomy/crop";
 
 const CropsPage = () => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ const CropsPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('Все');
     const [selectedFamily, setSelectedFamily] = useState('Все');
 
-    const {data: crops, isLoading, error} = useCrops();
+    const {data: crops, isLoading, error} = useCrops({});
 
     // ✅ Фильтрация данных (useMemo должен быть после всех useState и useQuery)
     const filteredCrops = useMemo(() => {

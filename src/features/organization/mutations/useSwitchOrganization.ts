@@ -1,6 +1,6 @@
 import {useMutation} from '@tanstack/react-query';
 import {organizationApi} from '@/features/organization/api';
-import {useAuthStore} from '@/stores/authStore';
+import {useAuthStore} from '@/stores/authStore.ts';
 import {queryClient} from "@/shared/queryClient.ts";
 
 export const useSwitchOrganization = () => {

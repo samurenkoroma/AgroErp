@@ -2,8 +2,8 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {ArrowLeft, ArrowRight, Calendar as CalendarIcon, Clock, Leaf, TrendingUp} from 'lucide-react';
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
-import {useCrop} from "@/features/catalog/queries/useCrop.ts";
-import {useVarieties} from "@/features/catalog/queries/useVariety.ts";
+import {useCrop} from "@/features/agronomy/crop/queries.ts";
+import {useVarieties} from "@/features/agronomy/variety/queries.ts";
 
 const CropDetailsPage = () => {
     const {id} = useParams<{ id: string }>();
@@ -11,7 +11,7 @@ const CropDetailsPage = () => {
 
     // ✅ Вызов хука useCropTypes - ВСЕГДА в одном месте
     const {data: crop, error, isLoading} = useCrop(id!);
-    const {data: varieties} = useVarieties(id!);
+    const {data: varieties} = useVarieties(crop?.id);
 
     if (isLoading) return (<Loading text="Загрузка культуры..."/>);
     if (error || !crop ) return (<Error text="Культура не найдена"/>);
@@ -126,7 +126,7 @@ const CropDetailsPage = () => {
                                         </div>
 
                                         <button
-                                            onClick={() => navigate(`/crops/${crop.key}/variety/${variety.id}`)}
+                                            onClick={() => navigate(`/crops/${crop.id}/variety/${variety.id}`)}
                                             className="w-full py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm"
                                         >
                                             Подробнее о сорте

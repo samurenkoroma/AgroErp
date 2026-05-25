@@ -1,1 +1,0 @@
-export {default as FarmMap} from './FarmMap';

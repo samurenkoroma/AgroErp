@@ -1,0 +1,1 @@
+export {varietyApi} from "./api"

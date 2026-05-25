@@ -13,8 +13,6 @@ export const authApi = {
     login: (data: LoginRequest) => apiClient.post<AuthResponse>(`auth/login`, data),
     register: (data: RegisterRequest) => apiClient.post<AuthResponse>(`auth/register`, data),
     refreshToken: (data: RefreshTokenRequest) => apiClient.post<RefreshTokenResponse>(`auth/refresh`, data),
-    getMe: () => apiClient.query<MeInfo>('Me', {}),
+    getMe: () => apiClient.query<MeInfo>('account.me', {}),
     logout: () => apiClient.post(`auth/logout`)
-
-
 }

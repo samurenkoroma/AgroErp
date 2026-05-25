@@ -1,1 +1,0 @@
-export {plantingApi} from "../../planting/api/plantingApi.ts"

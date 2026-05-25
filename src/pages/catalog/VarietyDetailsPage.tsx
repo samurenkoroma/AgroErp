@@ -11,7 +11,7 @@ import {
     Sun,
     TrendingUp
 } from 'lucide-react';
-import {useVariety} from "@/features/catalog/queries/useVariety.ts";
+import {useVariety} from "@/features/agronomy/variety/queries.ts";
 
 const VarietyDetailsPage = () => {
     const navigate = useNavigate();
@@ -105,8 +105,8 @@ const VarietyDetailsPage = () => {
                                         <CalendarIcon className="w-5 h-5"/>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-muted-foreground">Рекомендуемое время посадки</p>
-                                        <p className="font-semibold text-foreground">{variety?.recommendedSeasons.join(" ")}</p>
+                                        {/*<p className="text-sm text-muted-foreground">Рекомендуемое время посадки</p>*/}
+                                        {/*<p className="font-semibold text-foreground">{variety?.recommendedSeasons.join(" ")}</p>*/}
                                     </div>
                                 </div>
                                 <div
@@ -135,20 +135,20 @@ const VarietyDetailsPage = () => {
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">Суточная норма (мин.)</p>
                                         <p className="text-2xl font-bold text-foreground">
-                                            {variety?.waterRequirement.daily_need_min} <span
+                                            {variety?.waterRequirement.dailyNeedMin} <span
                                             className="text-sm font-normal">л/м²/день</span>
                                         </p>
                                     </div>
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">Суточная норма (оптимум)</p>
                                         <p className="text-2xl font-bold text-green-600">
-                                            {variety?.waterRequirement.daily_need_opt} <span
+                                            {variety?.waterRequirement.dailyNeedOpt} <span
                                             className="text-sm font-normal">л/м²/день</span>
                                         </p>
                                     </div>
                                 </div>
 
-                                {variety?.waterRequirement.critical_phases?.length > 0 && (
+                                {variety?.waterRequirement.criticalPhases?.length > 0 && (
                                     <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
                                         <div className="flex items-start gap-2">
                                             <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5"/>
@@ -157,7 +157,7 @@ const VarietyDetailsPage = () => {
                                                     Критические фазы для полива
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 mt-2">
-                                                    {variety?.waterRequirement.critical_phases.map((phase: string) => (
+                                                    {variety?.waterRequirement.criticalPhases.map((phase: string) => (
                                                         <span key={phase}
                                                               className="px-2 py-1 bg-amber-100 dark:bg-amber-800 text-amber-800 dark:text-amber-200 rounded-lg text-xs">
                                     {phase}
@@ -186,28 +186,28 @@ const VarietyDetailsPage = () => {
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">PPFD (мин.)</p>
                                         <p className="text-2xl font-bold text-foreground">
-                                            {variety.lightRequirement.ppfd_min} <span
+                                            {variety.lightRequirement.ppfdMin} <span
                                             className="text-sm font-normal">μmol/m²/s</span>
                                         </p>
                                     </div>
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">PPFD (оптимум)</p>
                                         <p className="text-2xl font-bold text-green-600">
-                                            {variety.lightRequirement.ppfd_opt} <span
+                                            {variety.lightRequirement.ppfdOpt} <span
                                             className="text-sm font-normal">μmol/m²/s</span>
                                         </p>
                                     </div>
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">Световой день (мин.)</p>
                                         <p className="text-2xl font-bold text-foreground">
-                                            {variety.lightRequirement.day_length_min} <span
+                                            {variety.lightRequirement.dayLengthMin} <span
                                             className="text-sm font-normal">часов</span>
                                         </p>
                                     </div>
                                     <div className="bg-background p-4 rounded-xl">
                                         <p className="text-sm text-muted-foreground mb-1">Световой день (оптимум)</p>
                                         <p className="text-2xl font-bold text-green-600">
-                                            {variety.lightRequirement.day_length_opt} <span
+                                            {variety.lightRequirement.dayLengthOpt} <span
                                             className="text-sm font-normal">часов</span>
                                         </p>
                                     </div>
@@ -221,19 +221,19 @@ const VarietyDetailsPage = () => {
                     Тип фотопериода:
                 </span>
                                         <span className="text-sm font-semibold text-blue-900 dark:text-blue-200">
-                    {variety.lightRequirement.photoperiod_type === 'short_day' && 'Короткодневное растение'}
-                                            {variety.lightRequirement.photoperiod_type === 'long_day' && 'Длиннодневное растение'}
-                                            {variety.lightRequirement.photoperiod_type === 'day_neutral' && 'Нейтральное растение'}
+                    {variety.lightRequirement.photoperiodType === 'short_day' && 'Короткодневное растение'}
+                                            {variety.lightRequirement.photoperiodType === 'long_day' && 'Длиннодневное растение'}
+                                            {variety.lightRequirement.photoperiodType === 'day_neutral' && 'Нейтральное растение'}
                 </span>
                                     </div>
                                     <p className="text-xs text-blue-700 dark:text-blue-400 mt-2">
-                                        {variety.lightRequirement.photoperiod_type === 'short_day' && 'Цветет при коротком световом дне (<12 часов)'}
-                                        {variety.lightRequirement.photoperiod_type === 'long_day' && 'Цветет при длинном световом дне (>14 часов)'}
-                                        {variety.lightRequirement.photoperiod_type === 'day_neutral' && 'Цветение не зависит от длины светового дня'}
+                                        {variety.lightRequirement.photoperiodType === 'short_day' && 'Цветет при коротком световом дне (<12 часов)'}
+                                        {variety.lightRequirement.photoperiodType === 'long_day' && 'Цветет при длинном световом дне (>14 часов)'}
+                                        {variety.lightRequirement.photoperiodType === 'day_neutral' && 'Цветение не зависит от длины светового дня'}
                                     </p>
                                 </div>
 
-                                {variety.lightRequirement.critical_phases?.length > 0 && (
+                                {variety.lightRequirement.criticalPhases?.length > 0 && (
                                     <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
                                         <div className="flex items-start gap-2">
                                             <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5"/>
@@ -242,7 +242,7 @@ const VarietyDetailsPage = () => {
                                                     Критические фазы для освещения
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 mt-2">
-                                                    {variety.lightRequirement.critical_phases.map((phase: string) => (
+                                                    {variety.lightRequirement.criticalPhases.map((phase: string) => (
                                                         <span key={phase}
                                                               className="px-2 py-1 bg-amber-100 dark:bg-amber-800 text-amber-800 dark:text-amber-200 rounded-lg text-xs">
                                     {phase}
@@ -314,14 +314,14 @@ const VarietyDetailsPage = () => {
                                         <MapPin className="w-5 h-5 text-green-500 shrink-0 mt-0.5"/>
                                         <div>
                                             <p className="text-sm font-medium text-foreground">Цвет плода</p>
-                                            <p className="text-xs text-muted-foreground">{variety?.characteristics.fruitColor}</p>
+                                            {/*<p className="text-xs text-muted-foreground">{variety?.characteristics.fruitColor}</p>*/}
                                         </div>
                                     </li>
                                     <li className="flex items-start gap-3">
                                         <MapPin className="w-5 h-5 text-green-500 shrink-0 mt-0.5"/>
                                         <div>
                                             <p className="text-sm font-medium text-foreground">Вес плода</p>
-                                            <p className="text-xs text-muted-foreground">{variety?.characteristics.fruitWeight}</p>
+                                            {/*<p className="text-xs text-muted-foreground">{variety?.characteristics.fruitWeight}</p>*/}
                                         </div>
                                     </li>
                                 </ul>
