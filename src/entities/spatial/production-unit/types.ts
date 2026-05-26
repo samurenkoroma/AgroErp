@@ -9,6 +9,4 @@ export interface ProductionUnit {
     geometry?: Geometry;
     capacity?: number;
     metadata: Metadata;
-    createdAt: string;
-    updatedAt: string;
 }

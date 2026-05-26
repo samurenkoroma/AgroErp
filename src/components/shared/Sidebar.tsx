@@ -27,6 +27,8 @@ export function Sidebar() {
 
     const menuItems: MenuItem[] = [
         {id: 'dashboard', label: 'Главная', icon: HomeIcon, path: '/dashboard'},
+        {id: 'farm1', label: 'farm', icon: HomeIcon, path: '/farm1'},
+        {id: 'farm2', label: 'farm', icon: HomeIcon, path: '/farm2'},
         {id: 'crops-list', label: 'Все культуры', icon: Wheat, path: '/crops'},
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
         {id: 'seasons1', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons1'},
