@@ -7,7 +7,7 @@ import RegisterPage from "@/pages/auth/RegisterPage.tsx";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import Dashboard from "@/pages/Dashboard.tsx";
-import ProductionUnitsPage2 from "@/pages/farm/ProductionUnitsPage2.tsx";
+import ProductionUnitsPage from "@/pages/farm/ProductionUnitsPage.tsx";
 
 // Публичные маршруты (без авторизации)
 export const publicRoutes: RouteObject[] = [
@@ -22,7 +22,7 @@ export const privateRoutes: RouteObject[] = [
     {path: '/', element: <Navigate to="/dashboard" replace/>},
     {path: '/dashboard', element: <Dashboard/>},
     // {path: "/farm1", element: <ProductionUnitsPage/>},
-    {path: "/farm2", element: <ProductionUnitsPage2/>},
+    {path: "/farm2", element: <ProductionUnitsPage/>},
     // {path: "/draw", element: <MapDrawPage/>},
     // {path: "/field/:id", element: <FieldPage/>},
     // {path: "/plot/:id", element: <PlotPage/>},
