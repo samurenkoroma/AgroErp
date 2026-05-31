@@ -10,15 +10,11 @@ export const initSession = async () => {
     const me = await queryClient.ensureQueryData({
         queryKey: ['me'],
         queryFn: authApi.getMe,
+        staleTime: 1000 * 60 * 5, // 5 минут кеш
     });
 
 
-    if(me?.organizations){
+    if(me?.currentOrgId){
         auth.setCurrentOrganizationId(me.currentOrgId);
     }
-
-    // await queryClient.ensureQueryData({
-    //     queryKey: ['organizations'],
-    //     queryFn: organizationApi.getUserOrganizations,
-    // });
 };

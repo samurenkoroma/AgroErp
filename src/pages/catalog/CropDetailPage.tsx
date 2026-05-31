@@ -1,9 +1,10 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {ArrowLeft, ArrowRight, Calendar as CalendarIcon, Clock, Leaf, TrendingUp} from 'lucide-react';
+import {ArrowLeft, ArrowRight, Calendar as CalendarIcon, Clock, Leaf, MapPin, TrendingUp} from 'lucide-react';
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
 import {useCrop} from "@/features/agronomy/crop/queries.ts";
 import {useVarieties} from "@/features/agronomy/variety/queries.ts";
+import {usePageActions} from "@/hooks/usePageActions.ts";
 
 const CropDetailsPage = () => {
     const {id} = useParams<{ id: string }>();
@@ -12,7 +13,18 @@ const CropDetailsPage = () => {
     // ✅ Вызов хука useCropTypes - ВСЕГДА в одном месте
     const {data: crop, error, isLoading} = useCrop(id!);
     const {data: varieties} = useVarieties(crop?.id);
+    usePageActions({
+        actions:  [
+            {
+                id: 'add-field',
+                label: 'Добавить сорт ',
+                icon: <MapPin className="w-5 h-5"/>,
+                onClick: () => console.log("Добавление"),
+                color: 'bg-green-500'
+            },
 
+        ],
+    });
     if (isLoading) return (<Loading text="Загрузка культуры..."/>);
     if (error || !crop ) return (<Error text="Культура не найдена"/>);
 

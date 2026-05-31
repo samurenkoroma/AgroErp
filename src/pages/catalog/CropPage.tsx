@@ -1,11 +1,25 @@
 import {useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {ArrowRight, Plus, Search, Sprout} from 'lucide-react';
+import {ArrowRight, MapPin, Search, Sprout} from 'lucide-react';
 import {useCrops} from "@/features/agronomy/crop";
+import {usePageActions} from "@/hooks/usePageActions.ts";
 
 const CropsPage = () => {
     const navigate = useNavigate();
 
+    // Подключаем действия к плавающей кнопке
+    usePageActions({
+        actions:  [
+            {
+                id: 'add-field',
+                label: 'Добавить культуру ',
+                icon: <MapPin className="w-5 h-5"/>,
+                onClick: () => console.log("Добавление"),
+                color: 'bg-green-500'
+            },
+
+        ],
+    });
     // ✅ ВСЕ ХУКИ В НАЧАЛЕ (без условий!)
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Все');
@@ -82,23 +96,7 @@ const CropsPage = () => {
 
     // ✅ Рендер компонента
     return (
-        <div className="p-8 max-w-7xl mx-auto w-full space-y-8">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Справочник культур
-                    </h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Управление справочником выращиваемых культур
-                    </p>
-                </div>
-                <button
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <Plus className="w-4 h-4"/>
-                    Добавить культуру
-                </button>
-            </div>
+        <div className="p-4 mx-auto w-full space-y-8">
 
             {/* Filters */}
             <div
@@ -140,7 +138,7 @@ const CropsPage = () => {
             </div>
 
             {/* Crops Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
 
                 {filteredCrops.map((crop) => (
                     <div
@@ -164,44 +162,23 @@ const CropsPage = () => {
                                     className="px-2 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-xs font-semibold rounded-md">
                                     {crop.category?.split('(')[0]?.trim() || crop.category}
                                 </span>
+                                <div className="p-5">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                                        {crop.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-950 dark:text-gray-800 mb-4">
+                                        Семейство: {crop.family}
+                                    </p>
+                                    <button
+                                        className="mt-5 w-full py-2 bg-gray-50 dark:bg-gray-800 hover:bg-green-600 dark:hover:bg-green-600 text-gray-700 dark:text-gray-300 hover:text-white rounded-lg flex items-center justify-center gap-2 text-sm font-semibold transition-colors">
+                                        Подробнее
+                                        <ArrowRight className="w-4 h-4"/>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="p-5">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                                {crop.name}
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                Семейство: {crop.family}
-                            </p>
 
-                            {/*<div className="space-y-2 text-sm">*/}
-                            {/*    <div className="flex justify-between">*/}
-                            {/*        <span className="text-gray-500">Сортов в базе</span>*/}
-                            {/*        <span className="font-semibold text-gray-900 dark:text-white">*/}
-                            {/*            {crop.countVarieties || '-'}*/}
-                            {/*        </span>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="flex justify-between">*/}
-                            {/*        <span className="text-gray-500">Дней выращивания</span>*/}
-                            {/*        <span className="font-semibold text-gray-900 dark:text-white">*/}
-                            {/*            {crop.growingDaysMin + "-" + crop.growingDaysMax || '-'}*/}
-                            {/*        </span>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="flex justify-between">*/}
-                            {/*        <span className="text-gray-500">Ср. урожайность</span>*/}
-                            {/*        <span className="font-semibold text-gray-900 dark:text-white">*/}
-                            {/*            {crop.yieldEstimateMin + "-" + crop.yieldEstimateMax || '-'}*/}
-                            {/*        </span>*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
-
-                            <button
-                                className="mt-5 w-full py-2 bg-gray-50 dark:bg-gray-800 hover:bg-green-600 dark:hover:bg-green-600 text-gray-700 dark:text-gray-300 hover:text-white rounded-lg flex items-center justify-center gap-2 text-sm font-semibold transition-colors">
-                                Подробнее
-                                <ArrowRight className="w-4 h-4"/>
-                            </button>
-                        </div>
                     </div>
                 ))}
             </div>

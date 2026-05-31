@@ -1,13 +1,16 @@
 import {apiClient} from '@/api/client';
+import {ResponseId} from "@/entities/shared/dto.ts";
+import {ProductionUnit} from "@/entities/spatial";
+import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 
 export const productionUnitApi = {
 
-    createProductionUnit: async (data: {}) => apiClient.command('spatial.create_production_unit', data),
+    createProductionUnit: async (data: CreateProductionUnitRequest) => apiClient.command<ResponseId>('spatial.create_production_unit', data),
     updateProductionUnit: async (data: {}) => apiClient.command('spatial.update_production_unit', data),
     archiveProductionUnit: async (data: {}) => apiClient.command('spatial.archive_production_unit', data),
 
     getProductionUnit: async (id: string) => apiClient.query('spatial.get_production_unit', {id}),
-    listProductionUnits: async (farmId: string) => apiClient.query('spatial.list_production_units', {farmId}),
+    listProductionUnits: async () => apiClient.query<ProductionUnit[]>('spatial.list_production_units', {}),
     getProductionUnitTree: async (data: {}) => apiClient.query('spatial.get_production_unit_tree', data),
 
 }

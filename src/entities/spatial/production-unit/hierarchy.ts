@@ -1,0 +1,42 @@
+// src/features/production-units/hierarchy.ts
+
+import {ProductionUnitType} from "@/entities/spatial";
+
+/**
+ * Допустимые родительско-дочерние отношения
+ */
+
+export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
+    // Корневые элементы
+    FIELD: ['BLOCK', 'BED', 'ROW'],
+    PLOT: ['BLOCK', 'BED', 'ROW', 'GREENHOUSE', 'CONTAINER', 'NFT_CHANNEL', 'DWC_TANK', 'AEROPONIC_CHAMBER', 'RACK'],
+    GREENHOUSE: ['GREENHOUSE_ZONE', 'BED', 'RACK'],
+    CONTAINER: ['RACK', 'SHELF', 'POT', 'TRAY'],
+    STORAGE: [],
+
+    // Полевая иерархия
+    BLOCK: ['BED', 'ROW'],
+    BED: [],
+    ROW: [],
+
+    // Тепличная иерархия
+    GREENHOUSE_ZONE: ['BED', 'ROW'],
+
+    // Контейнерная иерархия
+    RACK: ['SLOT', 'POT', 'TRAY'],
+    SHELF: ['POT', 'TRAY'],
+    VERTICAL_TOWER: ['SLOT'],
+
+    // Терминальные элементы
+    SLOT: [],
+    POT: [],
+    TRAY: [],
+
+    // Гидропонные системы
+    NFT_CHANNEL: [],
+    DWC_TANK: [],
+    AEROPONIC_CHAMBER: [],
+
+    // Служебные
+    RESERVOIR: []
+};

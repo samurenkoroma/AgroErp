@@ -1,11 +1,12 @@
 import {create} from 'zustand';
 import {persist} from 'zustand/middleware';
+import {jwtDecode} from "jwt-decode";
 
 interface AuthState {
     accessToken: string | null;
     refreshToken: string | null;
     isAuthenticated: boolean;
-
+    role: string | undefined;
     setTokens: (access: string, refresh: string) => void;
     clearAuth: () => void;
 
@@ -13,6 +14,9 @@ interface AuthState {
     setCurrentOrganizationId: (id: string | undefined) => void;
 }
 
+interface JWTPayload {
+    role: string;
+}
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
@@ -20,13 +24,17 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: null,
             isAuthenticated: false,
             currentOrganizationId: undefined,
+            role: undefined,
 
-            setTokens: (access, refresh) =>
+            setTokens: (access, refresh) => {
+                const {role} = jwtDecode<JWTPayload>(access);
                 set({
+                    role: role,
                     accessToken: access,
                     refreshToken: refresh,
                     isAuthenticated: true,
-                }),
+                })
+            },
 
             clearAuth: () =>
                 set({

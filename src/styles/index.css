@@ -1,6 +1,7 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+@import './animations.css';
 @import 'mapbox-gl/dist/mapbox-gl.css';
 /* Mapbox styles */
 

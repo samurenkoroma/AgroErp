@@ -20,7 +20,8 @@ export const useSwitchOrganization = () => {
             // 🔄 3. инвалидируем данные (права могли измениться)
             await queryClient.invalidateQueries({queryKey: ['me']});
             await queryClient.invalidateQueries({queryKey: ['organizations']});
-            await queryClient.invalidateQueries({queryKey: ['farmObjects']});
+            await queryClient.invalidateQueries({queryKey: ['production-units']});
+            await queryClient.invalidateQueries({queryKey: ['production-units-tree']});
             await queryClient.invalidateQueries({queryKey: ['seasons']});
         },
     });

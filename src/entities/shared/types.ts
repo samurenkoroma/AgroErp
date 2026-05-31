@@ -1,7 +1,22 @@
 export interface Metadata {
     tags?: string[];
     notes?: string;
+    name?: string;
+    color?: string;
+    icon?: string;
+    soilType?: string;
+    temperatureControlled?: boolean;
+    levels?: number;
+    level?: number;
+    description?: string;
+
     extra?: Record<string, unknown>;
+}
+
+export interface Position {
+    x: number;
+    y: number;
+    z?: number;
 }
 
 export interface Quantity {
@@ -24,8 +39,10 @@ export interface Coordinates {
 }
 
 export interface Geometry {
-    type: string;
-    coordinates: unknown;
+    type: 'Point' | 'Polygon' | 'MultiPolygon';
+    coordinates: number[] | number[][][];
+    area?: number;
+    areaUnit?: 'ha' | 'm2';
 }
 
 export interface Location {

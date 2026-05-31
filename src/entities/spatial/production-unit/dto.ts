@@ -1,14 +1,27 @@
 export interface CreateProductionUnitRequest {
-    farmId: string;
-    parentId?: string;
+    code: string;
+    name?: string;
+    description?: string;
     type: string;
-    name: string;
-    geometry?: {
-        type: string;
-        coordinates: unknown;
-    };
+    status: string;
+    parentId?: string;
+    capabilities?: string[];
+    dimensions?: Dimensions
+}
+
+// Интерфейс для размеров
+export interface Dimensions {
+    length?: number;
+    width?: number;
+    height?: number;
+    diameter?: number;
+    volume?: number;
+    levels?: number;
+    slots?: number;
+    cellCount?: number;
     capacity?: number;
 }
+
 
 export interface UpdateProductionUnitRequest {
     id: string;

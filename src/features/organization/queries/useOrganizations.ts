@@ -6,8 +6,9 @@ export const useOrganizations = () => {
     const token = getAccessToken()
 
     return useQuery({
-        queryKey: ['organizations'],
+        queryKey: ['me'],
         queryFn: authApi.getMe,
+        staleTime: 1000 * 60 * 5, // 5 минут кеш
         enabled: !!token, // 🔑 важно
         select: data => data.organizations
     });

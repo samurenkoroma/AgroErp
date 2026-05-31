@@ -6,6 +6,7 @@ import {useEffect, useRef} from "react";
 import {initSession} from "@/flow/initSession.ts";
 import {useAuthStore} from "@/stores/authStore.ts";
 import {queryClient} from "@/shared/queryClient.ts";
+import {FloatingActionProvider} from "@/contexts/FloatingActionContext.tsx";
 
 
 export default function App() {
@@ -26,7 +27,9 @@ export default function App() {
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
                 {/* BrowserRouter удалён — он уже есть в main.tsx */}
-                <AppRoutes/>
+                <FloatingActionProvider>
+                    <AppRoutes/>
+                </FloatingActionProvider>
                 {/*<Toaster position="top-right"/>*/}
                 <ReactQueryDevtools initialIsOpen={false}/>
             </QueryClientProvider>
