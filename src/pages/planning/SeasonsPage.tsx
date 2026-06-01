@@ -17,41 +17,31 @@ import {
     ThermometerIcon,
     Tractor
 } from 'lucide-react';
-import {CreateSeasonDTO, Season, seasonLib} from "@/entities/season";
-import SeasonCard from "@/features/season/ui/SeasonCard.tsx";
-import CreateSeasonForm from "@/features/season/ui/CreateSeasonForm.tsx";
+import {CreateSeasonDTO, Season, seasonLib} from "@/entities/agronomy/season";
+import SeasonCard from "@/features/agronomy/season/ui/SeasonCard.tsx";
+import CreateSeasonForm from "@/features/agronomy/season/ui/CreateSeasonForm.tsx";
 import Loading from "@/components/shared/Loading.tsx";
 import Error from "@/components/shared/Error.tsx";
-import {useSeasons} from "@/features/season/queries/useSeasons.ts";
-import {useSeasonUIStore} from "@/features/season/store/useSeasonUIStore.ts";
-import {useCreateSeason} from "@/features/season/mutations/useCreateSeason.ts";
-import {mockSeasons} from "@/data/mockSeasonsData.ts";
+import {useGroupedSeason} from "@/features/agronomy/season/queries.ts";
+import {useSeasonUIStore} from "@/features/agronomy/season/store/useSeasonUIStore.ts";
+import {mutations} from "@/features/agronomy/season/mutations.ts";
 
 // ==================== MAIN COMPONENT ====================
 
 const SeasonsPage = () => {
     const navigate = useNavigate();
-    const { refetch, error, isLoading} = useSeasons()
+    const {data, error, isLoading} = useGroupedSeason()
     const {selectedSeasonId, setSelectedSeasonId} = useSeasonUIStore();
-    const {mutateAsync} = useCreateSeason()
-    const seasons = mockSeasons
+    const {mutateAsync} = mutations()
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingSeason, setEditingSeason] = useState<Season | null>(null);
     const [expandedCrops, setExpandedCrops] = useState<Set<string>>(new Set());
 
     // Выбранный сезон
     const selectedSeason = useMemo(() => {
-        return seasons?.find(s => s.id === selectedSeasonId);
-    }, [seasons, selectedSeasonId]);
+        return data?.all?.find(s => s.id === selectedSeasonId);
+    }, [data?.all, selectedSeasonId]);
 
-    // Группировка сезонов по типу
-    const groupedSeasons = useMemo(() => {
-        return {
-            current: seasons?.find(s => s.status === 'current'),
-            planning: seasons?.filter(s => s.status === 'planning'),
-            past: seasons?.filter(s => s.status === 'completed')
-        };
-    }, [seasons]);
 
     // Создание нового сезона
     const handleCreateSeason = (season: CreateSeasonDTO) => {
@@ -76,26 +66,6 @@ const SeasonsPage = () => {
         });
     };
 
-    // Активация сезона
-    const handleActivateSeason = (seasonId: string) => {
-        // setSeasons(prev => prev.map(season => {
-        //     if (season.id === seasonId) {
-        //         return {...season, status: 'active', type: 'current'};
-        //     }
-        //     if (season.type === 'current') {
-        //         return {...season, type: 'past', status: 'completed'};
-        //     }
-        //     return season;
-        // }));
-    };
-
-    // Удаление сезона
-    const handleDeleteSeason = (seasonId: string) => {
-        refetch()
-        if (selectedSeasonId === seasonId) {
-            setSelectedSeasonId(seasons?.find(s => s.id !== seasonId)?.id || '');
-        }
-    };
 
     if (isLoading) return (<Loading text="Загрузка теплицы..."/>);
     if (error) return (<Error text="Сезон не найдена"/>);
@@ -124,45 +94,42 @@ const SeasonsPage = () => {
                     </div>
                 </div>
             </div>
-            {seasons.length > 0 ? (
+            {data?.all && data?.all.length > 0 ? (
                 <div className="w-full mx-auto px-6 py-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Левая колонка - список сезонов */}
                         <div className="space-y-6">
                             {/* Текущий сезон */}
-                            {groupedSeasons?.current && (
+                            {data?.current && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <Play className="w-4 h-4 text-green-600"/>
                                         Текущий сезон
                                     </h2>
                                     <SeasonCard
-                                        season={groupedSeasons.current}
-                                        isSelected={selectedSeasonId === groupedSeasons.current.id}
-                                        onClick={() => setSelectedSeasonId(groupedSeasons.current!.id)}
-                                        onEdit={() => setEditingSeason(groupedSeasons.current!)}
-                                        onDelete={() => handleDeleteSeason(groupedSeasons.current!.id)}
+                                        season={data?.current}
+                                        isSelected={selectedSeasonId === data?.current.id}
+                                        onClick={() => setSelectedSeasonId(data?.current!.id)}
+                                        onEdit={() => setEditingSeason(data?.current!)}
                                     />
                                 </div>
                             )}
 
                             {/* Планируемые сезоны */}
-                            {groupedSeasons?.planning && groupedSeasons.planning.length > 0 && (
+                            {data?.planning && data?.planning.length > 0 && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <Calendar className="w-4 h-4 text-blue-600"/>
                                         Планируемые сезоны
                                     </h2>
                                     <div className="space-y-3">
-                                        {groupedSeasons.planning.map(season => (
+                                        {data?.planning.map(season => (
                                             <SeasonCard
                                                 key={season.id}
                                                 season={season}
                                                 isSelected={selectedSeasonId === season.id}
                                                 onClick={() => setSelectedSeasonId(season.id)}
                                                 onEdit={() => setEditingSeason(season)}
-                                                onDelete={() => handleDeleteSeason(season.id)}
-                                                onActivate={() => handleActivateSeason(season.id)}
                                             />
                                         ))}
                                     </div>
@@ -170,21 +137,20 @@ const SeasonsPage = () => {
                             )}
 
                             {/* Прошедшие сезоны */}
-                            {groupedSeasons?.past && groupedSeasons.past.length > 0 && (
+                            {data?.completed && data?.completed.length > 0 && (
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <CheckCircle className="w-4 h-4 text-gray-500"/>
                                         Прошедшие сезоны
                                     </h2>
                                     <div className="space-y-3">
-                                        {groupedSeasons.past.map(season => (
+                                        {data?.completed.map(season => (
                                             <SeasonCard
                                                 key={season.id}
                                                 season={season}
                                                 isSelected={selectedSeasonId === season.id}
                                                 onClick={() => setSelectedSeasonId(season.id)}
                                                 onEdit={() => setEditingSeason(season)}
-                                                onDelete={() => handleDeleteSeason(season.id)}
                                             />
                                         ))}
                                     </div>
@@ -212,7 +178,6 @@ const SeasonsPage = () => {
                                             <div className="flex items-center gap-2">
                                                 {seasonLib.isPlanning(selectedSeason) && (
                                                     <button
-                                                        onClick={() => handleActivateSeason(selectedSeason.id)}
                                                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
                                                     >
                                                         <Play className="w-4 h-4"/>
@@ -473,12 +438,6 @@ const SeasonsPage = () => {
                                             </div>
                                         )}
 
-                                        {/* Заметки */}
-                                        {selectedSeason.notes && (
-                                            <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
-                                                <p className="text-sm text-amber-800 dark:text-amber-300">{selectedSeason.notes}</p>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             ) : (

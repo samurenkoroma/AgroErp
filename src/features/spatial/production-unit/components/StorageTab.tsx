@@ -4,12 +4,12 @@ import {ProductionUnit} from "@/entities/spatial";
 import {useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 
-interface HydroTabProps {
+interface StorageTabProps {
     units: ProductionUnit[]
     onAddChild: (unit: ProductionUnit) => void
 }
 
-export const HydroTab = ({units = [], onAddChild}: HydroTabProps) => {
+export const StorageTab = ({units = [], onAddChild}: StorageTabProps) => {
     const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);

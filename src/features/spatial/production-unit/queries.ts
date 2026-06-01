@@ -26,6 +26,7 @@ export const useProductionUnits = () => {
                 plots: [] as ProductionUnit[],
                 containers: [] as ProductionUnit[],
                 hydroponic: [] as ProductionUnit[],
+                storages: [] as ProductionUnit[],
             }
 
             for (const unit of productionUnits) {
@@ -44,6 +45,10 @@ export const useProductionUnits = () => {
 
                     case 'CONTAINER':
                         result.containers.push(unit)
+                        break
+                    case 'RESERVOIR':
+                    case 'STORAGE':
+                        result.storages.push(unit)
                         break
                 }
 

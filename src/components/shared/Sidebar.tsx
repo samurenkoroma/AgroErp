@@ -1,4 +1,4 @@
-import {Calendar1Icon, HomeIcon, MapPin, Sprout, Wheat} from 'lucide-react';
+import {Calendar1Icon, HomeIcon, MapPin, Wheat} from 'lucide-react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {ElementType, useEffect, useRef, useState} from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
@@ -27,14 +27,11 @@ export function Sidebar() {
 
     const menuItems: MenuItem[] = [
         {id: 'dashboard', label: 'Главная', icon: HomeIcon, path: '/dashboard'},
-        {id: 'farm1', label: 'farm', icon: HomeIcon, path: '/farm1'},
-        {id: 'farm2', label: 'farm', icon: HomeIcon, path: '/farm2'},
+        {id: 'farm', label: 'Ферма', icon: MapPin, path: '/farm'},
         {id: 'crops-list', label: 'Все культуры', icon: Wheat, path: '/crops'},
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
-        {id: 'seasons1', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons1'},
-        {id: 'farm', label: 'Ферма', icon: MapPin, path: '/farm'},
         {id: 'inventory', label: 'Инвентарь', icon: Inventory, path: '/inventory'},
-        {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
+        // {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
     ];
 
 

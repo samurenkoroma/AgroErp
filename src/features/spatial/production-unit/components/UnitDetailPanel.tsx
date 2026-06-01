@@ -1,10 +1,11 @@
 import {getCapabilityIcon, getCapabilityName, getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
 import {Plus, Shield, X} from "lucide-react";
 
-export const UnitDetailPanel = ({unit, onClose, onAddChild}: {
+export const UnitDetailPanel = ({unit, onClose, onAddChild, onEdit}: {
     unit: ProductionUnit;
     onClose: () => void;
     onAddChild: () => void;
+    onEdit: () => void;
 }) => {
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('ru', {day: 'numeric', month: 'long', year: 'numeric'});
@@ -81,7 +82,9 @@ export const UnitDetailPanel = ({unit, onClose, onAddChild}: {
                 )}
 
                 <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
+                    <button
+                        onClick={onEdit}
+                        className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
                         Редактировать
                     </button>
                     <button

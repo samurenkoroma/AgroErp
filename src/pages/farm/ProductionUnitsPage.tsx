@@ -1,5 +1,5 @@
 import {useMemo, useState} from 'react';
-import {Container, Download, Droplets, Factory, Home, Map as MapIcon, MapPin, Package, Sprout} from 'lucide-react';
+import {Container, Download, Factory, Home, Map as MapIcon, MapPin, Package, Sprout, Store} from 'lucide-react';
 import {ProductionUnit, RootUnits} from "@/entities/spatial";
 import {CreateProductionUnitModal} from "@/features/spatial/production-unit/components/CreateProductionUnitModal.tsx";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
@@ -11,21 +11,17 @@ import {usePageActions} from "@/hooks/usePageActions.ts";
 import {FieldsTab} from "@/features/spatial/production-unit/components/FieldsTab.tsx";
 import {GreenhousesTab} from "@/features/spatial/production-unit/components/GreenhousesTab.tsx";
 import {ContainersTab} from "@/features/spatial/production-unit/components/ContainersTab.tsx";
-import {HydroTab} from "@/features/spatial/production-unit/components/HydroTab.tsx";
+import {StorageTab} from "@/features/spatial/production-unit/components/StorageTab.tsx";
 import {PlotsTab} from "@/features/spatial/production-unit/components/PlotsTab.tsx";
 
-
-type TabType = 'fields' | 'greenhouses' | 'containers' | 'hydroponic' | 'plots';
-
 const ProductionUnitsPage = () => {
-    const [activeTab, setActiveTab] = useState<TabType>('greenhouses');
+    const [activeTab, setActiveTab] = useState<RootUnits>('GREENHOUSE');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedParentForCreate, setSelectedParentForCreate] = useState<ProductionUnit | null>(null);
     const {mutate: createUnit} = useCreateProductionUnit();
     const {data, isLoading, error} = useProductionUnits();
     const [unitType, setUnitType] = useState<RootUnits | null>(null)
 
-    // Мемоизируем действия - они не будут меняться при каждом рендере
     const pageActions = useMemo(() => [
         {
             id: 'add-field',
@@ -81,13 +77,12 @@ const ProductionUnitsPage = () => {
     usePageActions({actions: pageActions});
 
     const tabs = [
-        {id: 'fields', label: 'Поля', icon: MapIcon, count: data?.fields.length},
-        {id: 'plots', label: 'Участки', icon: Home, count: data?.plots.length},
-        {id: 'greenhouses', label: 'Теплицы', icon: Factory, count: data?.greenhouses.length},
-        {id: 'containers', label: 'Контейнеры', icon: Container, count: data?.containers.length},
-        {id: 'hydroponic', label: 'Гидропоника', icon: Droplets, count: data?.hydroponic.length},
+        {id: 'FIELD', label: 'Поля', icon: MapIcon, count: data?.fields.length},
+        {id: 'PLOT', label: 'Участки', icon: Home, count: data?.plots.length},
+        {id: 'GREENHOUSE', label: 'Теплицы', icon: Factory, count: data?.greenhouses.length},
+        {id: 'CONTAINER', label: 'Контейнеры', icon: Container, count: data?.containers.length},
+        {id: 'STORAGE', label: 'Склады', icon: Store, count: data?.storages.length},
     ] as const;
-
     const handleAddChild = (parentUnit: ProductionUnit) => {
         setSelectedParentForCreate(parentUnit);
         setIsCreateModalOpen(true);
@@ -136,23 +131,23 @@ const ProductionUnitsPage = () => {
                     })}
                 </div>
 
-                {activeTab == 'fields' && (<FieldsTab units={data?.fields!} onAddChild={handleAddChild}/>)}
-                {activeTab == 'plots' && (
+                {activeTab == 'FIELD' && (<FieldsTab units={data?.fields!} onAddChild={handleAddChild}/>)}
+                {activeTab == 'PLOT' && (
                     <PlotsTab units={data?.plots!} handleAddChild={handleAddChild}
                               handleCreateUnit={() => {
                                   setUnitType('PLOT');
                                   setIsCreateModalOpen(true);
                               }}/>
                 )}
-                {activeTab == 'greenhouses' && (
+                {activeTab == 'GREENHOUSE' && (
                     <GreenhousesTab units={data?.greenhouses!} onAddChild={handleAddChild}/>)}
-                {activeTab == 'containers' && (
+                {activeTab == 'CONTAINER' && (
                     <ContainersTab units={data?.containers!} onAddChild={handleAddChild} handleCreateUnit={() => {
                         setUnitType('CONTAINER');
                         setIsCreateModalOpen(true);
                     }}/>
                 )}
-                {activeTab == 'hydroponic' && (<HydroTab units={data?.hydroponic!} onAddChild={handleAddChild}/>)}
+                {activeTab == 'STORAGE' && (<StorageTab units={data?.storages!} onAddChild={handleAddChild}/>)}
             </div>
             {/* Модалка создания */}
             {isCreateModalOpen && (<CreateProductionUnitModal

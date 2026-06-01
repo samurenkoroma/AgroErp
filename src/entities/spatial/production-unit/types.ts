@@ -1,4 +1,5 @@
 import {Geometry, Metadata} from '@/entities/shared/types';
+import {Dimensions} from "@/entities/spatial/production-unit/dto.ts";
 
 export interface ProductionUnit {
     id: string;
@@ -16,6 +17,8 @@ export interface ProductionUnit {
 }
 
 export interface Properties {
+    schema: any;
+    dimensions?: Dimensions
     capabilities?: Capability[];
     metadata?: Metadata;
     capacity: {

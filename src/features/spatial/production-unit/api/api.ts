@@ -9,7 +9,7 @@ export const productionUnitApi = {
     updateProductionUnit: async (data: {}) => apiClient.command('spatial.update_production_unit', data),
     archiveProductionUnit: async (data: {}) => apiClient.command('spatial.archive_production_unit', data),
 
-    getProductionUnit: async (id: string) => apiClient.query('spatial.get_production_unit', {id}),
+    getProductionUnit: async (id: string) => apiClient.query<ProductionUnit>('spatial.get_production_unit', {id}),
     listProductionUnits: async () => apiClient.query<ProductionUnit[]>('spatial.list_production_units', {}),
     getProductionUnitTree: async (data: {}) => apiClient.query('spatial.get_production_unit_tree', data),
 

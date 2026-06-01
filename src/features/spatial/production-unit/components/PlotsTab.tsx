@@ -3,6 +3,7 @@ import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
 import {useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface PlotsTabProps {
     units: ProductionUnit[]
@@ -15,6 +16,7 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);
     };
+    const navigate = useNavigate();
     if (units.length === 0) {
         return (
             <div className="text-center py-8 text-gray-500">
@@ -48,6 +50,9 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
             <div className="lg:col-span-1">
                 {selectedUnit ? (<UnitDetailPanel
                     unit={selectedUnit}
+                    onEdit={() => {
+                        navigate(`/plot/${selectedUnit.id}`)
+                    }}
                     onClose={() => setSelectedUnit(null)}
                     onAddChild={() => handleAddChild(selectedUnit)}
                 />) : (<div
