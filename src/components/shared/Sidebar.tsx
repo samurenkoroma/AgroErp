@@ -1,4 +1,4 @@
-import {Calendar1Icon, HomeIcon, MapPin, Wheat} from 'lucide-react';
+import {Calendar1Icon, HomeIcon, MapPin, Sprout, Wheat} from 'lucide-react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {ElementType, useEffect, useRef, useState} from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
@@ -31,7 +31,8 @@ export function Sidebar() {
         {id: 'crops-list', label: 'Все культуры', icon: Wheat, path: '/crops'},
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
         {id: 'inventory', label: 'Инвентарь', icon: Inventory, path: '/inventory'},
-        // {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
+        {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
+        {id: 'growing-domain', label: 'Посевы-cБЭка', icon: Sprout, path: '/growing-domain'},
     ];
 
 

@@ -5,6 +5,7 @@ export interface ProductionUnit {
     id: string;
     parentId?: string;
     name: string;
+    area: number;
     status: string;
     geometry?: Geometry;
     type: ProductionUnitType;
