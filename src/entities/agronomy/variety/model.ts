@@ -1,8 +1,8 @@
 export interface Variety {
     id: string;
     name: string;
-    speciesKey: string;
-    speciesName: string;
+    cropId: string;
+    cropName: string;
     baseTemperature: number;
     maxTemperature: number;
     daysToMaturity: number;

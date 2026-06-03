@@ -18,6 +18,7 @@ import {
     XCircle
 } from 'lucide-react';
 import {Modal} from '@/components/common/Modal';
+import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
 
 // ==================== TYPES ====================
 
@@ -361,176 +362,6 @@ const CycleCard = ({ cycle, onClick }: { cycle: GrowingCycle; onClick: () => voi
     );
 };
 
-// Модалка создания/редактирования
-const CycleModal = ({
-                        isOpen,
-                        onClose,
-                        onSave,
-                        initialData,
-                        crops,
-                        varieties
-                    }: {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (data: any) => void;
-    initialData?: GrowingCycle;
-    crops: Crop[];
-    varieties: Variety[];
-}) => {
-    const [formData, setFormData] = useState({
-        name: initialData?.name || '',
-        cropId: initialData?.cropId || '',
-        varietyId: initialData?.varietyId || '',
-        method: initialData?.method || 'seedling',
-        area: initialData?.area || 0,
-        areaUnit: initialData?.areaUnit || 'ha',
-        expectedHarvestAt: initialData?.expectedHarvestAt?.split('T')[0] || ''
-    });
-
-    const selectedCrop = crops.find(c => c.id === formData.cropId);
-    const availableVarieties = varieties.filter(v => v.cropId === formData.cropId);
-
-    const handleSubmit = () => {
-        onSave(formData);
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={isOpen} onClose={onClose} title={initialData ? 'Редактировать цикл' : 'Новый цикл выращивания'} size="lg">
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Название *
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Введите название цикла"
-                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Культура *
-                        </label>
-                        <select
-                            value={formData.cropId}
-                            onChange={(e) => setFormData({ ...formData, cropId: e.target.value, varietyId: '' })}
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                        >
-                            <option value="">Выберите культуру</option>
-                            {crops.map(crop => (
-                                <option key={crop.id} value={crop.id}>
-                                    {crop.icon} {crop.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Сорт (опционально)
-                        </label>
-                        <select
-                            value={formData.varietyId}
-                            onChange={(e) => setFormData({ ...formData, varietyId: e.target.value })}
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                            disabled={!formData.cropId}
-                        >
-                            <option value="">Не выбран</option>
-                            {availableVarieties.map(variety => (
-                                <option key={variety.id} value={variety.id}>
-                                    {variety.name} ({variety.daysToMaturity} дн.)
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Метод выращивания
-                        </label>
-                        <select
-                            value={formData.method}
-                            onChange={(e) => setFormData({ ...formData, method: e.target.value })}
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                        >
-                            <option value="seedling">Рассадный</option>
-                            <option value="direct">Прямой посев</option>
-                            <option value="hydroponic">Гидропоника</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Ожидаемый сбор урожая
-                        </label>
-                        <input
-                            type="date"
-                            value={formData.expectedHarvestAt}
-                            onChange={(e) => setFormData({ ...formData, expectedHarvestAt: e.target.value })}
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Площадь
-                        </label>
-                        <input
-                            type="number"
-                            value={formData.area || ''}
-                            onChange={(e) => setFormData({ ...formData, area: parseFloat(e.target.value) })}
-                            placeholder="Введите площадь"
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                            step="0.01"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Ед. изм.
-                        </label>
-                        <select
-                            value={formData.areaUnit}
-                            onChange={(e) => setFormData({ ...formData, areaUnit: e.target.value as 'ha' | 'm2' })}
-                            className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-lg"
-                        >
-                            <option value="ha">га</option>
-                            <option value="m2">м²</option>
-                        </select>
-                    </div>
-                </div>
-
-                {selectedCrop && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
-                            💡 Рекомендации по выращиванию {selectedCrop.name}:
-                            {selectedCrop.name === 'Томат' && ' Оптимальная температура 20-25°C, влажность 60-70%'}
-                            {selectedCrop.name === 'Огурец' && ' Оптимальная температура 22-28°C, влажность 70-80%'}
-                            {selectedCrop.name === 'Перец сладкий' && ' Оптимальная температура 22-27°C, влажность 65-75%'}
-                        </p>
-                    </div>
-                )}
-            </div>
-
-            <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button onClick={onClose} className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50 transition-colors">
-                    Отмена
-                </button>
-                <button onClick={handleSubmit} className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    {initialData ? 'Сохранить' : 'Создать'}
-                </button>
-            </div>
-        </Modal>
-    );
-};
 
 // Модалка подтверждения
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }: {
@@ -778,7 +609,7 @@ const GrowingCyclesPagev2 = () => {
             </div>
 
             {/* Modals */}
-            <CycleModal
+            { isModalOpen && (<CycleModal
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
@@ -786,9 +617,7 @@ const GrowingCyclesPagev2 = () => {
                 }}
                 onSave={editingCycle ? handleUpdateCycle : handleCreateCycle}
                 initialData={editingCycle || undefined}
-                crops={mockCrops}
-                varieties={mockVarieties}
-            />
+            />)}
 
             <ConfirmModal
                 isOpen={!!deletingCycle}

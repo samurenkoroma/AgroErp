@@ -12,7 +12,7 @@ const CropDetailsPage = () => {
 
     // ✅ Вызов хука useCropTypes - ВСЕГДА в одном месте
     const {data: crop, error, isLoading} = useCrop(id!);
-    const {data: varieties} = useVarieties(crop?.id);
+    const {data: varieties} = useVarieties(crop?.key);
     usePageActions({
         actions:  [
             {

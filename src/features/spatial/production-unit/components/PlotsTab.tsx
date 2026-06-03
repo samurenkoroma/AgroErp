@@ -4,6 +4,9 @@ import {ProductionUnit} from "@/entities/spatial";
 import {useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {useNavigate} from "react-router-dom";
+import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
+import {useCreateCycle} from "@/features/production/growing_cycle/mutations.ts";
+import {CreateCycleRequest} from "@/entities/production/growing-cycle/dto.ts";
 
 interface PlotsTabProps {
     units: ProductionUnit[]
@@ -12,7 +15,10 @@ interface PlotsTabProps {
 }
 
 export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTabProps) => {
-    const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
+    const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | undefined>(undefined);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const {mutate: createCycle} = useCreateCycle()
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);
     };
@@ -25,6 +31,17 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
             </div>
         )
     }
+    const actions = new Map<string, () => void>([
+        ["Редактирование", () => {
+            navigate(`/plot/${selectedUnit!.id}`)
+        }],
+        ["Добавить дочерний", () => handleAddChild(selectedUnit!)],
+        ["Добавить посев", () => setIsModalOpen(true)],
+    ]);
+    const handleCreateCycle = (data: CreateCycleRequest) => {
+        createCycle(data)
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -50,11 +67,8 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
             <div className="lg:col-span-1">
                 {selectedUnit ? (<UnitDetailPanel
                     unit={selectedUnit}
-                    onEdit={() => {
-                        navigate(`/plot/${selectedUnit.id}`)
-                    }}
-                    onClose={() => setSelectedUnit(null)}
-                    onAddChild={() => handleAddChild(selectedUnit)}
+                    actions={actions}
+                    onClose={() => setSelectedUnit(undefined)}
                 />) : (<div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center sticky top-6">
                         <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4"/>
@@ -67,6 +81,15 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
                     </div>
                 )}
             </div>
+
+            {selectedUnit && <CycleModal
+                isOpen={isModalOpen}
+                unit={selectedUnit}
+                onClose={() => {
+                    setIsModalOpen(false)
+                }}
+                onSave={handleCreateCycle}
+            />}
         </div>
     )
 }

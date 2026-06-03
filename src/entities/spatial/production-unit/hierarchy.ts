@@ -16,7 +16,7 @@ export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
 
     // Полевая иерархия
     BLOCK: ['BED', 'ROW'],
-    BED: [],
+    BED: ['ROW'],
     ROW: [],
 
     // Тепличная иерархия

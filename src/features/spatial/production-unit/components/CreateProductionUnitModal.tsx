@@ -145,6 +145,18 @@ export const CreateProductionUnitModal = ({
         calculateAreaFromDimensions();
     }, [dimensions, selectedType]);
 
+
+    function maxLength(value: string) {
+        const maxValue = parentUnit?.properties.dimensions?.length
+        if (maxValue == undefined) {
+            return value
+        }
+        return parseFloat(value) > maxValue ? maxValue : value
+    }
+
+    function maxWidth(value: string) {
+        return Math.max(parseFloat(value), parentUnit?.properties.dimensions?.width || 0)
+    }
     // Рендер полей для размеров в зависимости от типа
     const renderDimensionFields = () => {
         if (!selectedType) return null;
@@ -195,7 +207,7 @@ export const CreateProductionUnitModal = ({
                             <input
                                 type="number"
                                 value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
+                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
                                 placeholder="Введите длину"
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 step="0.1"
@@ -208,7 +220,7 @@ export const CreateProductionUnitModal = ({
                             <input
                                 type="number"
                                 value={dimensions.width || ''}
-                                onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
+                                onChange={(e) => setDimensions({...dimensions, width: maxWidth(e.target.value)})}
                                 placeholder="Введите ширину"
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 step="0.1"
@@ -227,7 +239,7 @@ export const CreateProductionUnitModal = ({
                             <input
                                 type="number"
                                 value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
+                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
                                 placeholder="Введите длину"
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 step="0.1"
@@ -680,7 +692,7 @@ export const CreateProductionUnitModal = ({
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={!selectedType || !name}
+                    disabled={!selectedType}
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                     <Save className="w-4 h-4"/>

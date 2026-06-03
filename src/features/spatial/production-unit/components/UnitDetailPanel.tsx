@@ -1,15 +1,12 @@
 import {getCapabilityIcon, getCapabilityName, getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
-import {Plus, Shield, X} from "lucide-react";
+import {Shield, X} from "lucide-react";
 
-export const UnitDetailPanel = ({unit, onClose, onAddChild, onEdit}: {
+export const UnitDetailPanel = ({unit, onClose, actions}: {
     unit: ProductionUnit;
     onClose: () => void;
-    onAddChild: () => void;
-    onEdit: () => void;
+    actions: Map<string, () => void>
 }) => {
-    const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('ru', {day: 'numeric', month: 'long', year: 'numeric'});
-    };
+
     return (
         <div
             className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden sticky top-6">
@@ -52,8 +49,8 @@ export const UnitDetailPanel = ({unit, onClose, onAddChild, onEdit}: {
                             </div>
                         )}
                         <div>
-                            <span className="text-gray-500">Создан</span>
-                            <p className="font-medium">{formatDate(unit.createdAt)}</p>
+                            <span className="text-gray-500">Размеры</span>
+                            <p className="font-medium">{unit.properties.dimensions?.length} * {unit.properties.dimensions?.width}</p>
                         </div>
                     </div>
                 </div>
@@ -82,18 +79,14 @@ export const UnitDetailPanel = ({unit, onClose, onAddChild, onEdit}: {
                 )}
 
                 <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button
-                        onClick={onEdit}
-                        className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
-                        Редактировать
-                    </button>
-                    <button
-                        onClick={onAddChild}
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm flex items-center justify-center gap-1"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Добавить дочерний
-                    </button>
+                    {actions && Array.from(actions).map(([key, fn]) => (
+                        <button
+                            onClick={fn}
+                            className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
+                            {key}
+                        </button>
+                    ))}
+
                 </div>
             </div>
         </div>

@@ -7,5 +7,5 @@ import {Variety} from "@/entities/agronomy/variety/model.ts";
 export const varietyApi = {
     createVariety: (data: CreateVarietyRequest) => apiClient.command<ResponseId>('agronomy.create_variety', data),
     getVariety: (id: string) => apiClient.query<Variety>('agronomy.get_variety', {id}),
-    listVarieties: (cropId: string) => apiClient.query<Variety[]>('agronomy.list_varieties', {cropId})
+    listVarieties: (cropKey: string) => apiClient.query<Variety[]>('agronomy.list_varieties', {cropKey})
 }

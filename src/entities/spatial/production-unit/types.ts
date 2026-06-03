@@ -12,8 +12,6 @@ export interface ProductionUnit {
     code: string;
     climateZoneId?: string;
     properties: Properties;
-    createdAt: string;
-    updatedAt: string;
     children?: ProductionUnit[];
 }
 
