@@ -11,7 +11,7 @@ export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
     FIELD: ['BLOCK', 'BED', 'ROW'],
     PLOT: ['BLOCK', 'BED', 'ROW', 'GREENHOUSE', 'CONTAINER', 'NFT_CHANNEL', 'DWC_TANK', 'AEROPONIC_CHAMBER', 'RACK'],
     GREENHOUSE: ['GREENHOUSE_ZONE', 'BED', 'RACK'],
-    CONTAINER: ['RACK', 'SHELF', 'POT', 'TRAY'],
+    CONTAINER: [ 'RACK', 'SHELF', 'POT', 'TRAY', 'RESERVOIR', 'DWC_TANK'],
     STORAGE: [],
 
     // Полевая иерархия
@@ -23,7 +23,7 @@ export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
     GREENHOUSE_ZONE: ['BED', 'ROW'],
 
     // Контейнерная иерархия
-    RACK: ['SLOT', 'POT', 'TRAY'],
+    RACK: ['SHELF', 'SLOT', 'POT', 'TRAY'],
     SHELF: ['POT', 'TRAY'],
     VERTICAL_TOWER: ['SLOT'],
 
@@ -34,7 +34,7 @@ export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
 
     // Гидропонные системы
     NFT_CHANNEL: [],
-    DWC_TANK: [],
+    DWC_TANK: ['SLOT'],
     AEROPONIC_CHAMBER: [],
 
     // Служебные

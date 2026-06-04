@@ -4,9 +4,8 @@ import {Dimensions} from "@/entities/spatial/production-unit/dto.ts";
 export interface ProductionUnit {
     id: string;
     parentId?: string;
-    name: string;
     area: number;
-    status: string;
+    status: 'growing' | 'preparation' | 'empty';
     geometry?: Geometry;
     type: ProductionUnitType;
     code: string;

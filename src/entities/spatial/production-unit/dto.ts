@@ -7,6 +7,7 @@ export interface CreateProductionUnitRequest {
     parentId?: string;
     capabilities?: string[];
     dimensions?: Dimensions
+    count?: number;
 }
 
 // Интерфейс для размеров
@@ -19,6 +20,7 @@ export interface Dimensions {
     levels?: number;
     slots?: number;
     cellCount?: number;
+    cellVolume?: number;
     capacity?: number;
 }
 

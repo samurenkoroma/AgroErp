@@ -3,33 +3,44 @@ import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
 import {useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
+import {useNavigate} from "react-router-dom";
+import {CreateContainerModal} from "@/features/spatial/production-unit/components/CreateContainerModal.tsx";
+import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
+import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 
 interface ContainersTabProps {
     units: ProductionUnit[]
-    onAddChild: (unit: ProductionUnit) => void
-    handleCreateUnit: () => void
 }
 
-export const ContainersTab = ({units = [], onAddChild, handleCreateUnit}: ContainersTabProps) => {
+export const ContainersTab = ({units = []}: ContainersTabProps) => {
     const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const navigate = useNavigate();
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);
     };
-    if (units.length === 0) {
-        return (
-            <div className="text-center py-8 text-gray-500">
-                <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                <button onClick={handleCreateUnit}>Добавить</button>
-            </div>
-        )
+    const {mutate: createUnit} = useCreateProductionUnit();
+    const actions = new Map<string, () => void>([
+        ["Редактирование", () => { navigate(`/plot/${selectedUnit!.id}`)}],
+        ["Добавить дочерний", () => setIsCreateModalOpen(true)],
+    ]);
+    const handleCreateUnit = (newUnit: CreateProductionUnitRequest) => {
+        setIsCreateModalOpen(false);
+        createUnit(newUnit);
+    };
+
+    const handleCreateIfEmpty = () => {
+        setSelectedUnit(null);
+        setIsCreateModalOpen(true)
     }
-
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <div className="space-y-4">
-
+                    <div className="text-center py-8 text-gray-500">
+                        <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
+                        <button onClick={handleCreateIfEmpty}>Добавить</button>
+                    </div>
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
                         <div className="space-y-1">
@@ -40,7 +51,8 @@ export const ContainersTab = ({units = [], onAddChild, handleCreateUnit}: Contai
                                         unit={unit}
                                         onSelectUnit={handleSelectUnit}
                                         selectedId={selectedUnit?.id}
-                                        onAddChild={onAddChild}
+                                        onAddChild={() => {
+                                        }}
                                     />
                                 ))
                             ) : (
@@ -59,7 +71,7 @@ export const ContainersTab = ({units = [], onAddChild, handleCreateUnit}: Contai
                     <UnitDetailPanel
                         unit={selectedUnit}
                         onClose={() => setSelectedUnit(null)}
-                        onAddChild={() => onAddChild(selectedUnit)}
+                        actions={actions}
                     />
                 ) : (
                     <div
@@ -74,6 +86,16 @@ export const ContainersTab = ({units = [], onAddChild, handleCreateUnit}: Contai
                     </div>
                 )}
             </div>
+
+            {isCreateModalOpen && (<CreateContainerModal
+                units={units}
+                isOpen={isCreateModalOpen}
+                parent ={selectedUnit}
+                onClose={() => {
+                    setIsCreateModalOpen(false);
+                }}
+                onSuccess={handleCreateUnit}
+            />)}
         </div>
     )
 }

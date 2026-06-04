@@ -39,7 +39,7 @@ export const getUnitTypeName = (type: ProductionUnitType): string => {
         GREENHOUSE_ZONE: 'Зона теплицы',
         CONTAINER: 'Контейнер',
         POT: 'Горшок',
-        TRAY: 'Лоток',
+        TRAY: 'Кассета',
         NFT_CHANNEL: 'NFT Канал',
         DWC_TANK: 'DWC Резервуар',
         AEROPONIC_CHAMBER: 'Аэропоника',

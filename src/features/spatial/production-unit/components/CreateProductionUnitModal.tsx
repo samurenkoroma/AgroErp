@@ -36,7 +36,7 @@ export const CreateProductionUnitModal = ({
     const [area, setArea] = useState<number | undefined>();
     const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState<'active' | 'maintenance' | 'planned'>('active');
+    const [status, setStatus] = useState<'growing' | 'preparation' | 'empty'>('empty');
 
     const availableTypes = useMemo(() => getAvailableChildTypes(parentUnit?.type), [parentUnit]);
     const availableCapabilities = useMemo(() => selectedType ? getAvailableCapabilities(selectedType) : [], [selectedType]);
@@ -149,13 +149,17 @@ export const CreateProductionUnitModal = ({
     function maxLength(value: string) {
         const maxValue = parentUnit?.properties.dimensions?.length
         if (maxValue == undefined) {
-            return value
+            return +value
         }
-        return parseFloat(value) > maxValue ? maxValue : value
+        return parseFloat(value) > maxValue ? maxValue : +value
     }
 
     function maxWidth(value: string) {
-        return Math.max(parseFloat(value), parentUnit?.properties.dimensions?.width || 0)
+        const maxValue = parentUnit?.properties.dimensions?.width
+        if (maxValue == undefined) {
+            return +value
+        }
+        return parseFloat(value) > maxValue ? maxValue : +value
     }
     // Рендер полей для размеров в зависимости от типа
     const renderDimensionFields = () => {
@@ -479,7 +483,7 @@ export const CreateProductionUnitModal = ({
         setArea(undefined);
         setSelectedCapabilities([]);
         setDescription('');
-        setStatus('active');
+        setStatus('empty');
     };
 
     return (

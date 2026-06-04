@@ -1,5 +1,7 @@
 import {getCapabilityIcon, getCapabilityName, getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
 import {Shield, X} from "lucide-react";
+import {statusLib} from "@/utils/status.ts";
+import {propsLib} from "@/utils/props.ts";
 
 export const UnitDetailPanel = ({unit, onClose, actions}: {
     unit: ProductionUnit;
@@ -36,11 +38,7 @@ export const UnitDetailPanel = ({unit, onClose, actions}: {
                         </div>
                         <div>
                             <span className="text-gray-500">Статус</span>
-                            <p className="font-medium">
-                                {unit.status === 'active' && 'Активен'}
-                                {unit.status === 'maintenance' && 'Обслуживание'}
-                                {!unit.status && 'Активен'}
-                            </p>
+                            <p className="font-medium">{statusLib.getText(unit.status)}</p>
                         </div>
                         {unit.geometry?.area && (
                             <div>
@@ -48,10 +46,13 @@ export const UnitDetailPanel = ({unit, onClose, actions}: {
                                 <p className="font-medium">{unit.geometry.area} {unit.geometry.areaUnit === 'ha' ? 'га' : 'м²'}</p>
                             </div>
                         )}
-                        <div>
-                            <span className="text-gray-500">Размеры</span>
-                            <p className="font-medium">{unit.properties.dimensions?.length} * {unit.properties.dimensions?.width}</p>
-                        </div>
+                        {Object.entries(unit.properties.dimensions || []).map(([key, value]) => (
+                            <div key={key}>
+                                <span className="text-gray-500">{propsLib.getText(key)}</span>
+                                <p className="font-medium">{value}</p>
+                            </div>
+
+                        ))}
                     </div>
                 </div>
 

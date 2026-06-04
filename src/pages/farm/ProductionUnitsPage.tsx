@@ -15,7 +15,7 @@ import {StorageTab} from "@/features/spatial/production-unit/components/StorageT
 import {PlotsTab} from "@/features/spatial/production-unit/components/PlotsTab.tsx";
 
 const ProductionUnitsPage = () => {
-    const [activeTab, setActiveTab] = useState<RootUnits>('GREENHOUSE');
+    const [activeTab, setActiveTab] = useState<RootUnits>('CONTAINER');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedParentForCreate, setSelectedParentForCreate] = useState<ProductionUnit | null>(null);
     const {mutate: createUnit} = useCreateProductionUnit();
@@ -142,10 +142,7 @@ const ProductionUnitsPage = () => {
                 {activeTab == 'GREENHOUSE' && (
                     <GreenhousesTab units={data?.greenhouses!} onAddChild={handleAddChild}/>)}
                 {activeTab == 'CONTAINER' && (
-                    <ContainersTab units={data?.containers!} onAddChild={handleAddChild} handleCreateUnit={() => {
-                        setUnitType('CONTAINER');
-                        setIsCreateModalOpen(true);
-                    }}/>
+                    <ContainersTab units={data?.containers!}/>
                 )}
                 {activeTab == 'STORAGE' && (<StorageTab units={data?.storages!} onAddChild={handleAddChild}/>)}
             </div>

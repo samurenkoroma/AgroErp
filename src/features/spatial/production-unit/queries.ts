@@ -44,9 +44,13 @@ export const useProductionUnits = () => {
                         break
 
                     case 'CONTAINER':
+                    case 'RACK':
+                    case 'POT':
+                    case 'TRAY':
+                    case 'RESERVOIR':
+                    case 'DWC_TANK':
                         result.containers.push(unit)
                         break
-                    case 'RESERVOIR':
                     case 'STORAGE':
                         result.storages.push(unit)
                         break

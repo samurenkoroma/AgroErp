@@ -3,7 +3,7 @@ import {ChevronDown, ChevronRight} from 'lucide-react';
 import {getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
 import {statusLib} from "@/utils/status.ts";
 
-export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddChild}: {
+export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddChild}: {
     unit: ProductionUnit;
     level?: number;
     onSelectUnit: (unit: ProductionUnit) => void;
@@ -22,6 +22,7 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
     const handleSelect = () => {
         onSelectUnit(unit);
     };
+
     return (
         <div className="space-y-1">
             <div
@@ -40,13 +41,10 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="font-medium text-gray-900 dark:text-white">{unit.properties.metadata?.name}</h3>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">{getUnitTypeName(unit.type)}</h3>
+                                {unit.code && <span className="text-xs text-gray-400 font-mono">{unit.code}</span>}
                                 <span
-                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusLib.getColor(unit.status)}`}>
-                                    {statusLib.getText(unit.status)}
-                                </span>
-                                <span className="text-xs text-gray-400 font-mono">{unit.code}</span>
-
+                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusLib.getColor(unit.status)}`}>{statusLib.getText(unit.status)}</span>
                             </div>
                             <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
                                 <span>{getUnitTypeName(unit.type)}</span>
@@ -77,21 +75,6 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
                     )}
                 </div>
             </div>
-
-            {expanded && hasChildren && (
-                <div className="space-y-1">
-                    {unit.children!.map((child: any) => (
-                        <UnitTreeNode
-                            key={child.id}
-                            unit={child}
-                            level={level + 1}
-                            onSelectUnit={onSelectUnit}
-                            selectedId={selectedId}
-                            onAddChild={onAddChild}
-                        />
-                    ))}
-                </div>
-            )}
         </div>
     );
 };
