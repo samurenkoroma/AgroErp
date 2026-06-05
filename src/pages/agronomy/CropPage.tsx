@@ -86,6 +86,18 @@ const CropsPage = () => {
         );
     }
 
+    const renderCropCreateModal = () => {
+        return (
+            <CreateCropModal
+                isOpen={isOpenCreateCrop}
+                onClose={() => {
+                    setIsOpenCreateCrop(false);
+                }}
+                onSuccess={(data: CreateCropRequest) => createCrop(data)}
+            ></CreateCropModal>
+        )
+    }
+
     if (!crops || crops.length === 0) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -93,6 +105,7 @@ const CropsPage = () => {
                     <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-3"/>
                     <p className="text-gray-500">Нет данных о культурах</p>
                 </div>
+                {renderCropCreateModal()}
             </div>
         );
     }
@@ -197,15 +210,7 @@ const CropsPage = () => {
                 </div>
             )}
 
-            {
-                <CreateCropModal
-                    isOpen={isOpenCreateCrop}
-                    onClose={() => {
-                        setIsOpenCreateCrop(false);
-                    }}
-                    onSuccess={(data: CreateCropRequest) => createCrop(data)}
-                ></CreateCropModal>
-            }
+            {renderCropCreateModal()}
         </div>
     );
 }
