@@ -1,20 +1,23 @@
 import {useMemo, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {ArrowRight, MapPin, Search, Sprout} from 'lucide-react';
-import {useCrops} from "@/features/agronomy/crop";
+import {useCreateCrop, useCrops} from "@/features/agronomy/crop";
 import {usePageActions} from "@/hooks/usePageActions.ts";
+import {CreateCropModal} from "@/features/agronomy/crop/components/CreateCropModal.tsx";
+import {CreateCropRequest} from "@/entities/agronomy/crop/dto.ts";
 
 const CropsPage = () => {
     const navigate = useNavigate();
-
+    const [isOpenCreateCrop, setIsOpenCreateCrop] = useState(false)
+    const {mutate: createCrop} = useCreateCrop()
     // Подключаем действия к плавающей кнопке
     usePageActions({
         actions:  [
             {
-                id: 'add-field',
+                id: 'add-crop',
                 label: 'Добавить культуру ',
                 icon: <MapPin className="w-5 h-5"/>,
-                onClick: () => console.log("Добавление"),
+                onClick: () => setIsOpenCreateCrop(true),
                 color: 'bg-green-500'
             },
 
@@ -142,9 +145,9 @@ const CropsPage = () => {
 
                 {filteredCrops.map((crop) => (
                     <div
-                        key={crop.key}
+                        key={crop.id}
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
-                        onClick={() => navigate(`/crops/${crop.key}`)}
+                        onClick={() => navigate(`/crops/${crop.id}`)}
                     >
 
                         <div className="h-48 overflow-hidden relative">
@@ -193,6 +196,16 @@ const CropsPage = () => {
                     <p className="text-gray-500">Попробуйте изменить параметры поиска</p>
                 </div>
             )}
+
+            {
+                <CreateCropModal
+                    isOpen={isOpenCreateCrop}
+                    onClose={() => {
+                        setIsOpenCreateCrop(false);
+                    }}
+                    onSuccess={(data: CreateCropRequest) => createCrop(data)}
+                ></CreateCropModal>
+            }
         </div>
     );
 }

@@ -31,6 +31,7 @@ export const CreateContainerModal = ({
     const [code, setCode] = useState('');
     const [dimensions, setDimensions] = useState<Dimensions>({});
     const [name, setName] = useState('');
+    const [createChild, setCreateChild] = useState(false);
     const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
     const [status, setStatus] = useState<'active' | 'maintenance' | 'planned'>('active');
 
@@ -87,6 +88,7 @@ export const CreateContainerModal = ({
             status,
             dimensions,
             capabilities: selectedCapabilities,
+            createChild
         };
 
         onSuccess(requestData);
@@ -231,7 +233,6 @@ export const CreateContainerModal = ({
                             </div>
                         </div>
                         <div>
-
                             <div className="flex gap-2">
                                 <input
                                     type="number"
@@ -255,6 +256,14 @@ export const CreateContainerModal = ({
                                 />
 
                             </div>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={createChild}
+                                    onChange={(e) => setCreateChild(e.target.checked)}
+                                    className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                />Создавать дочерние слоты для ячеек</label>
+
                         </div>
 
                     </div>

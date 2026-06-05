@@ -1,10 +1,7 @@
 export interface CreateVarietyRequest {
     cropId: string;
-
     name: string;
-
     description?: string;
-
     tolerance: {
         temperatureMin?: number;
         temperatureMax?: number;

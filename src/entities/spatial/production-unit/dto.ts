@@ -8,6 +8,7 @@ export interface CreateProductionUnitRequest {
     capabilities?: string[];
     dimensions?: Dimensions
     count?: number;
+    createChild: boolean
 }
 
 // Интерфейс для размеров

@@ -32,7 +32,7 @@ export const CycleModal = ({
 
     const {data: crops = [],} = useCrops({})
     const selectedCrop = crops.find(c => c.id === formData.cropID);
-    const {data: varieties = [],} = useVarieties(selectedCrop?.key)
+    const {data: varieties = [],} = useVarieties(selectedCrop?.id)
     const availableVarieties = varieties.filter(v => v.cropId === formData.cropID);
 
     const handleSubmit = () => {
@@ -52,7 +52,7 @@ export const CycleModal = ({
     }, [formData]);
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={initialData ? 'Редактировать цикл' : 'Новый цикл выращивания'}
+        <Modal isOpen={isOpen} onClose={onClose} title={initialData ? 'Редактировать цикл' : `Новый цикл выращивания ${unit.code}`}
                size="lg">
             <div className="space-y-4">
                 <div>

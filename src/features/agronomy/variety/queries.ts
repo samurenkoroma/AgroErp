@@ -7,7 +7,7 @@ export const useVariety = (id: string) => useQuery({
     queryFn: () => varietyApi.getVariety(id),
 })
 
-export const useVarieties = (cropKey?: string) => useQuery({
-    queryKey: ["varieties", cropKey],
-    queryFn: () => varietyApi.listVarieties(cropKey!)
+export const useVarieties = (cropId: string) => useQuery({
+    queryKey: ["varieties", cropId],
+    queryFn: () => varietyApi.listVarieties(cropId)
 })

@@ -19,6 +19,10 @@ import {
 } from 'lucide-react';
 import {Modal} from '@/components/common/Modal';
 import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
+import {useCycles} from "@/features/production/growing_cycle/queries.ts";
+import {useProductionUnits} from "@/features/spatial/production-unit/queries.ts";
+import Loading from "@/components/shared/Loading.tsx";
+import Error from "@/components/shared/Error.tsx";
 
 // ==================== TYPES ====================
 
@@ -399,7 +403,8 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }: {
 
 const GrowingCyclesPagev2 = () => {
     const navigate = useNavigate();
-    const [cycles, setCycles] = useState<GrowingCycle[]>(mockGrowingCycles);
+    const {data: cycles, isLoading, error} = useCycles();
+    // const [cycles, setCycles] = useState<GrowingCycle[]>(mockGrowingCycles);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -407,7 +412,7 @@ const GrowingCyclesPagev2 = () => {
     const [deletingCycle, setDeletingCycle] = useState<GrowingCycle | null>(null);
 
     const filteredCycles = useMemo(() => {
-        let filtered = cycles;
+        let filtered = cycles || [];
 
         if (searchTerm) {
             filtered = filtered.filter(cycle =>
@@ -425,6 +430,9 @@ const GrowingCyclesPagev2 = () => {
     }, [cycles, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {
+        if (!cycles){
+            return [];
+        }
         const active = cycles.filter(c => c.status === 'active').length;
         const planned = cycles.filter(c => c.status === 'planned').length;
         const completed = cycles.filter(c => c.status === 'completed').length;
@@ -435,62 +443,65 @@ const GrowingCyclesPagev2 = () => {
     }, [cycles]);
 
     const handleCreateCycle = (data: any) => {
-        const newCycle: GrowingCycle = {
-            id: `cycle-${Date.now()}`,
-            farmId: 'farm-1',
-            cropId: data.cropId,
-            varietyId: data.varietyId || undefined,
-            name: data.name,
-            code: `${data.cropId === 'crop-1' ? 'T' : data.cropId === 'crop-2' ? 'O' : 'C'}-${new Date().getFullYear()}-${Math.floor(Math.random() * 100)}`,
-            method: data.method,
-            status: 'planned',
-            stage: 'planning',
-            expectedHarvestAt: data.expectedHarvestAt ? new Date(data.expectedHarvestAt).toISOString() : undefined,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            cropName: mockCrops.find(c => c.id === data.cropId)?.name,
-            varietyName: mockVarieties.find(v => v.id === data.varietyId)?.name,
-            area: data.area,
-            areaUnit: data.areaUnit,
-            progress: 0
-        };
-        setCycles(prev => [newCycle, ...prev]);
+        // const newCycle: GrowingCycle = {
+        //     id: `cycle-${Date.now()}`,
+        //     farmId: 'farm-1',
+        //     cropId: data.cropId,
+        //     varietyId: data.varietyId || undefined,
+        //     name: data.name,
+        //     code: `${data.cropId === 'crop-1' ? 'T' : data.cropId === 'crop-2' ? 'O' : 'C'}-${new Date().getFullYear()}-${Math.floor(Math.random() * 100)}`,
+        //     method: data.method,
+        //     status: 'planned',
+        //     stage: 'planning',
+        //     expectedHarvestAt: data.expectedHarvestAt ? new Date(data.expectedHarvestAt).toISOString() : undefined,
+        //     createdAt: new Date().toISOString(),
+        //     updatedAt: new Date().toISOString(),
+        //     cropName: mockCrops.find(c => c.id === data.cropId)?.name,
+        //     varietyName: mockVarieties.find(v => v.id === data.varietyId)?.name,
+        //     area: data.area,
+        //     areaUnit: data.areaUnit,
+        //     progress: 0
+        // };
+        // setCycles(prev => [newCycle, ...prev]);
         setIsModalOpen(false);
     };
 
     const handleUpdateCycle = (data: any) => {
         if (!editingCycle) return;
 
-        setCycles(prev => prev.map(cycle =>
-            cycle.id === editingCycle.id
-                ? {
-                    ...cycle,
-                    name: data.name,
-                    cropId: data.cropId,
-                    varietyId: data.varietyId,
-                    method: data.method,
-                    expectedHarvestAt: data.expectedHarvestAt ? new Date(data.expectedHarvestAt).toISOString() : undefined,
-                    area: data.area,
-                    areaUnit: data.areaUnit,
-                    cropName: mockCrops.find(c => c.id === data.cropId)?.name,
-                    varietyName: mockVarieties.find(v => v.id === data.varietyId)?.name,
-                    updatedAt: new Date().toISOString()
-                }
-                : cycle
-        ));
-        setEditingCycle(null);
+        // setCycles(prev => prev.map(cycle =>
+        //     cycle.id === editingCycle.id
+        //         ? {
+        //             ...cycle,
+        //             name: data.name,
+        //             cropId: data.cropId,
+        //             varietyId: data.varietyId,
+        //             method: data.method,
+        //             expectedHarvestAt: data.expectedHarvestAt ? new Date(data.expectedHarvestAt).toISOString() : undefined,
+        //             area: data.area,
+        //             areaUnit: data.areaUnit,
+        //             cropName: mockCrops.find(c => c.id === data.cropId)?.name,
+        //             varietyName: mockVarieties.find(v => v.id === data.varietyId)?.name,
+        //             updatedAt: new Date().toISOString()
+        //         }
+        //         : cycle
+        // ));
+        // setEditingCycle(null);
         setIsModalOpen(false);
     };
 
     const handleDeleteCycle = () => {
         if (!deletingCycle) return;
-        setCycles(prev => prev.filter(c => c.id !== deletingCycle.id));
+        // setCycles(prev => prev.filter(c => c.id !== deletingCycle.id));
         setDeletingCycle(null);
     };
 
     const handleCycleClick = (cycleId: string) => {
         navigate(`/growing/${cycleId}`);
     };
+
+    if (isLoading) return (<Loading text="Загрузка посевов..."/>);
+    if (error || !cycles) return (<Error text="Посевы не найдена"/>);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

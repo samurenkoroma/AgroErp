@@ -5,6 +5,7 @@ import {MoreVertical, Plus, Search} from 'lucide-react';
 import {Modal} from '@/components/common/Modal';
 import {CycleMethod, CycleStatus, GrowingCycle} from "@/entities/production";
 import {mockCycles} from "@/data/growing-cycle/mock-data.ts";
+import {useCycles} from "@/features/production/growing_cycle/queries.ts";
 
 const statusConfig: Record<CycleStatus, { label: string; color: string }> = {
     planned: { label: 'Запланирован', color: 'bg-gray-100 text-gray-700' },
@@ -24,7 +25,8 @@ const methodConfig: Record<CycleMethod, string> = {
 
 const GrowingCyclesPage = () => {
     const navigate = useNavigate();
-    const [cycles, setCycles] = useState<GrowingCycle[]>(mockCycles);
+    const {data: cycles, isLoading, error} = useCycles();
+    // const [cycles, setCycles] = useState<GrowingCycle[]>(mockCycles);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -38,7 +40,7 @@ const GrowingCyclesPage = () => {
     });
 
     const filteredCycles = useMemo(() => {
-        let filtered = cycles;
+        let filtered = cycles || [];
         if (searchTerm) {
             filtered = filtered.filter(c =>
                 c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -53,6 +55,10 @@ const GrowingCyclesPage = () => {
     }, [cycles, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {
+        if (!cycles){
+            return [];
+        }
+
         return {
             total: cycles.length,
             active: cycles.filter(c => c.status === 'active').length,

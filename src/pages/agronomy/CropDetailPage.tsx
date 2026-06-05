@@ -5,21 +5,26 @@ import Error from "@/components/shared/Error.tsx";
 import {useCrop} from "@/features/agronomy/crop/queries.ts";
 import {useVarieties} from "@/features/agronomy/variety/queries.ts";
 import {usePageActions} from "@/hooks/usePageActions.ts";
+import {useState} from "react";
+import {CreateVarietyModal} from "@/features/agronomy/variety/components/CreateVarietyModal.tsx";
+import {useCreateVariety} from "@/features/agronomy/variety/mutations.ts";
+import {CreateVarietyRequest} from "@/entities/agronomy/variety/dto.ts";
 
 const CropDetailsPage = () => {
     const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
-
+    const [isOpenCreateVariety, setIsOpenCreateVariety] = useState(false)
+    const {mutate: createVariety} = useCreateVariety()
     // ✅ Вызов хука useCropTypes - ВСЕГДА в одном месте
     const {data: crop, error, isLoading} = useCrop(id!);
-    const {data: varieties} = useVarieties(crop?.key);
+    const {data: varieties} = useVarieties(crop?.id!);
     usePageActions({
         actions:  [
             {
                 id: 'add-field',
                 label: 'Добавить сорт ',
                 icon: <MapPin className="w-5 h-5"/>,
-                onClick: () => console.log("Добавление"),
+                onClick: () => setIsOpenCreateVariety(true),
                 color: 'bg-green-500'
             },
 
@@ -150,6 +155,15 @@ const CropDetailsPage = () => {
                         </div>
                     </section>)}
             </div>
+            {
+                <CreateVarietyModal
+                    isOpen={isOpenCreateVariety}
+                    onClose={() => {
+                        setIsOpenCreateVariety(false)
+                    }}
+                    onSuccess={(data: CreateVarietyRequest) => createVariety(data)}
+                />
+            }
         </div>
     );
 };

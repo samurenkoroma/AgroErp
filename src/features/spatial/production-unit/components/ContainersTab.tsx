@@ -1,12 +1,15 @@
 import {UnitDetailPanel} from "@/features/spatial/production-unit/components/UnitDetailPanel.tsx";
 import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {useNavigate} from "react-router-dom";
 import {CreateContainerModal} from "@/features/spatial/production-unit/components/CreateContainerModal.tsx";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
+import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
+import {CreateCycleRequest} from "@/entities/production/growing-cycle/dto.ts";
+import {useCreateCycle} from "@/features/production/growing_cycle/mutations.ts";
 
 interface ContainersTabProps {
     units: ProductionUnit[]
@@ -15,15 +18,30 @@ interface ContainersTabProps {
 export const ContainersTab = ({units = []}: ContainersTabProps) => {
     const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
     const navigate = useNavigate();
+    const {mutate: createCycle} = useCreateCycle()
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);
     };
     const {mutate: createUnit} = useCreateProductionUnit();
-    const actions = new Map<string, () => void>([
-        ["Редактирование", () => { navigate(`/plot/${selectedUnit!.id}`)}],
-        ["Добавить дочерний", () => setIsCreateModalOpen(true)],
-    ]);
+
+    const actions = useMemo(
+            () => {
+                const act = new Map([
+                    ["Редактирование", () => { navigate(`/plot/${selectedUnit!.id}`)}],
+                    ["Добавить дочерний", () => setIsCreateModalOpen(true)],
+                ])
+                console.log(selectedUnit?.children)
+                if (selectedUnit?.children?.length == 0) {
+                    act.set("Добавить посев", () => setIsCycleModalOpen(true))
+                }
+                return act
+            },
+            [selectedUnit]
+        )
+    ;
+
     const handleCreateUnit = (newUnit: CreateProductionUnitRequest) => {
         setIsCreateModalOpen(false);
         createUnit(newUnit);
@@ -33,6 +51,12 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
         setSelectedUnit(null);
         setIsCreateModalOpen(true)
     }
+
+    const handleCreateCycle = (data: CreateCycleRequest) => {
+        createCycle(data)
+        setIsCycleModalOpen(false);
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
@@ -95,6 +119,16 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
                     setIsCreateModalOpen(false);
                 }}
                 onSuccess={handleCreateUnit}
+            />)}
+
+            {/* Modals */}
+            {selectedUnit && (<CycleModal
+                isOpen={isCycleModalOpen}
+                unit={selectedUnit}
+                onClose={() => {
+                    setIsCycleModalOpen(false);
+                }}
+                onSave={handleCreateCycle}
             />)}
         </div>
     )

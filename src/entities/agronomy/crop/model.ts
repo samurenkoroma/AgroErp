@@ -2,7 +2,6 @@ import {Metadata} from '@/entities/shared/types';
 
 export interface Crop {
     id: string;
-    key: string;
     name: string;
     category: string;
     family: string;
