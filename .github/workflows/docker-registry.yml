@@ -46,6 +46,8 @@ jobs:
         with:
           context: .
           labels: ${{ steps.meta.outputs.labels }}
+          build-args:
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
           file: Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
