@@ -32,7 +32,6 @@ export function Sidebar() {
         {id: 'seasons', label: 'Сезоны', icon: Calendar1Icon, path: '/seasons'},
         {id: 'inventory', label: 'Инвентарь', icon: Inventory, path: '/inventory'},
         {id: 'growing', label: 'Посевы', icon: Sprout, path: '/growing'},
-        {id: 'growing-domain', label: 'Посевы-cБЭка', icon: Sprout, path: '/growing-domain'},
     ];
 
 

@@ -1,4 +1,4 @@
-import {GrowingCycle} from "@/entities/production";
+import {GrowingCycle} from "@/entities/production/growing-cycle";
 import {useEffect, useState} from "react";
 import {Modal} from "@/components/common/Modal.tsx";
 import {useCrops} from "@/features/agronomy/crop";

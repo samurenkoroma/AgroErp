@@ -7,9 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {CreateContainerModal} from "@/features/spatial/production-unit/components/CreateContainerModal.tsx";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
-import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
-import {CreateCycleRequest} from "@/entities/production/growing-cycle/dto.ts";
-import {useCreateCycle} from "@/features/production/growing_cycle/mutations.ts";
+import {StartCycleModal} from "@/features/production/growing_cycle";
 
 interface ContainersTabProps {
     units: ProductionUnit[]
@@ -20,10 +18,7 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
     const navigate = useNavigate();
-    const {mutate: createCycle} = useCreateCycle()
-    const handleSelectUnit = (unit: ProductionUnit) => {
-        setSelectedUnit(unit);
-    };
+
     const {mutate: createUnit} = useCreateProductionUnit();
 
     const actions = useMemo(
@@ -32,7 +27,6 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
                     ["Редактирование", () => { navigate(`/plot/${selectedUnit!.id}`)}],
                     ["Добавить дочерний", () => setIsCreateModalOpen(true)],
                 ])
-                console.log(selectedUnit?.children)
                 if (selectedUnit?.children?.length == 0) {
                     act.set("Добавить посев", () => setIsCycleModalOpen(true))
                 }
@@ -42,20 +36,20 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
         )
     ;
 
-    const handleCreateUnit = (newUnit: CreateProductionUnitRequest) => {
+    const handleCreateUnit = async (newUnit: CreateProductionUnitRequest) => {
         setIsCreateModalOpen(false);
         createUnit(newUnit);
     };
 
-    const handleCreateIfEmpty = () => {
+    const onCreateIfEmpty = () => {
         setSelectedUnit(null);
         setIsCreateModalOpen(true)
     }
 
-    const handleCreateCycle = (data: CreateCycleRequest) => {
-        createCycle(data)
-        setIsCycleModalOpen(false);
+    const handleSelectUnit = (unit: ProductionUnit) => {
+        setSelectedUnit(unit);
     };
+
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -63,7 +57,7 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
                 <div className="space-y-4">
                     <div className="text-center py-8 text-gray-500">
                         <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                        <button onClick={handleCreateIfEmpty}>Добавить</button>
+                        <button onClick={onCreateIfEmpty}>Добавить</button>
                     </div>
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
@@ -101,12 +95,8 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center sticky top-6">
                         <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4"/>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
-                            Выберите объект
-                        </h3>
-                        <p className="text-gray-500 text-sm">
-                            Нажмите на объект в списке
-                        </p>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Выберите объект</h3>
+                        <p className="text-gray-500 text-sm">Нажмите на объект в списке</p>
                     </div>
                 )}
             </div>
@@ -121,14 +111,10 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
                 onSuccess={handleCreateUnit}
             />)}
 
-            {/* Modals */}
-            {selectedUnit && (<CycleModal
-                isOpen={isCycleModalOpen}
+            {selectedUnit && (<StartCycleModal
                 unit={selectedUnit}
-                onClose={() => {
-                    setIsCycleModalOpen(false);
-                }}
-                onSave={handleCreateCycle}
+                isOpen={isCycleModalOpen}
+                onClose={() => setIsCycleModalOpen(false)}
             />)}
         </div>
     )

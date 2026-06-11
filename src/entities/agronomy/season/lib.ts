@@ -1,5 +1,4 @@
 import {Season} from "@/entities/agronomy/season/index.ts";
-import {format} from "date-fns";
 
 export const seasonLib = {
     getStatusColor(status: Season["status"]) {
@@ -28,9 +27,7 @@ export const seasonLib = {
         }
     },
 
-    getDateString(date: Date): string {
-        return format(date, "yyyy-MM-dd");
-    },
+
 
     isPlanning(season: Season): boolean {
         return season.status === 'planning'

@@ -11,10 +11,8 @@ import ProductionUnitsPage from "@/pages/farm/ProductionUnitsPage.tsx";
 import PlotPage from "@/pages/farm/PlotPage.tsx";
 import SeasonsPage from "@/pages/planning/SeasonsPage.tsx";
 import InventoryPage from "@/pages/inventory/InventoryPage.tsx";
-import GrowingCyclesPagev2 from "@/pages/growing/GrowingCyclesPagev2.tsx";
-import GrowingCycleDetailsPageV2 from "@/pages/growing/GrowingCycleDetailsPageV2.tsx";
-import GrowingCyclesPage from "@/pages/growing/GrowingCyclesPage.tsx";
-import GrowingCycleDetailsPage from "@/pages/growing/GrowingCycleDetailsPage.tsx";
+import CropPlanDetailsPage from "@/pages/growing/CropPlanDetailsPage.tsx";
+import GrowingTablePage from "@/features/production/growing_cycle/components/GrowingTablePage.tsx";
 
 // Публичные маршруты (без авторизации)
 export const publicRoutes: RouteObject[] = [
@@ -41,10 +39,11 @@ export const privateRoutes: RouteObject[] = [
 
     {path: "/seasons", element: <SeasonsPage/>},
     {path: "/inventory", element: <InventoryPage/>},
-    {path: "/growing", element: <GrowingCyclesPagev2/>},
-    {path: "/growing/:id", element: <GrowingCycleDetailsPageV2/>},
-    {path: "/growing-domain", element: <GrowingCyclesPage/>},
-    {path: "/growing-domain/:id", element: <GrowingCycleDetailsPage/>},
+    {path: "/growing", element: <GrowingTablePage/>},
+    // {path: "/growing/:id", element: <GrowingCycleFullPage/>},
+
+    {path: "/growing/:id", element: <CropPlanDetailsPage/>},
+    // {path: "/table", element: <GrowingTablePage/>},
 ];
 
 

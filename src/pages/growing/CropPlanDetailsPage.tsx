@@ -134,7 +134,7 @@ const CropPlanDetails = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <button
-                                onClick={() => navigate('/farm')}
+                                onClick={() => navigate('/growing')}
                                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             >
                                 <ArrowLeft className="w-5 h-5" />

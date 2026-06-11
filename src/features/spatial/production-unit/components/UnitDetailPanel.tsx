@@ -18,8 +18,8 @@ export const UnitDetailPanel = ({unit, onClose, actions}: {
                     <div className="flex items-center gap-3">
                         <span className="text-4xl">{getUnitIcon(unit.type)}</span>
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{unit.name}</h2>
-                            ф {unit.code && <p className="text-sm text-gray-500 font-mono">{unit.code}</p>}
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{unit.properties.metadata?.name}</h2>
+                            {unit.code && <p className="text-sm text-gray-500 font-mono">{unit.code}</p>}
                         </div>
                     </div>
                     <button onClick={onClose} className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
@@ -82,6 +82,7 @@ export const UnitDetailPanel = ({unit, onClose, actions}: {
                 <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                     {actions && Array.from(actions).map(([key, fn]) => (
                         <button
+                            key={key}
                             onClick={fn}
                             className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
                             {key}

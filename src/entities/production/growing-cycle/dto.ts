@@ -1,14 +1,33 @@
-export interface CreateCycleRequest {
+
+
+
+// export interface StartCycleRequest {
+//     name: string
+//     code: string
+//     cropID: string
+//
+//     varietyID?: string
+//     protocolID?: string
+//     status: string
+//     stage: string
+//     method: string
+//     expectedHarvestAt?: Date
+//
+//     allocations: AllocationDTO[]
+//     plantings: PlantingDTO[]
+// }
+
+export interface AllocationDTO {
     productionUnitID: string
     area: number
-    cropID: string
-    name: string
-    code: string
-    method: string
-    varietyID?: string
-    protocolID?: string
-    expectedHarvestAt?: Date
+    startedAt: Date
 }
+
+export interface PlantingDTO {
+    plantedAt: Date
+    quantity: number
+}
+
 
 
 export interface CycleItemResponse {
@@ -32,3 +51,9 @@ export interface CycleItemResponse {
     progress: number
 }
 
+
+export interface ProductionHelpers {
+    statuses: Record<string, string>;
+    stages: Record<string, string>;
+    methods: Record<string, string>;
+}

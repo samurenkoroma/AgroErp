@@ -4,7 +4,6 @@ import {ProductionUnit} from "@/entities/spatial";
 import {useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {useNavigate} from "react-router-dom";
-import {CycleModal} from "@/features/production/growing_cycle/components/CycleModal.tsx";
 import {useCreateCycle} from "@/features/production/growing_cycle/mutations.ts";
 import {CreateCycleRequest} from "@/entities/production/growing-cycle/dto.ts";
 
@@ -82,14 +81,7 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
                 )}
             </div>
 
-            {selectedUnit && <CycleModal
-                isOpen={isModalOpen}
-                unit={selectedUnit}
-                onClose={() => {
-                    setIsModalOpen(false)
-                }}
-                onSave={handleCreateCycle}
-            />}
+
         </div>
     )
 }

@@ -1,1 +1,1 @@
-export {cropApi} from "./api"
+export {cycleApi} from "./api"

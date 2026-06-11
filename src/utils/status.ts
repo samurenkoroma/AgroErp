@@ -25,6 +25,8 @@ export const statusLib = {
             harvested: 'Собрано',
             fallow: 'Пар',
             preparation: 'Подготовка',
+            planned: 'Подготовка',
+            completed: "Completed",
             empty: 'Пусто'
         };
         return texts[status as keyof typeof texts] || status;

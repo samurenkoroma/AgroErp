@@ -6,11 +6,11 @@ export interface GrowingCycle {
     id: string;
     name: string;
     code: string;
-    cropId: string;
+    cropID: string;
     cropName: string;
-    varietyId?: string;
+    varietyID?: string;
     varietyName?: string;
-    protocolId?: string;
+    protocolID?: string;
     protocolName?: string;
     method: CycleMethod;
     status: CycleStatus;

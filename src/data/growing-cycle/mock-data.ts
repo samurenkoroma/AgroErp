@@ -1,6 +1,6 @@
 // src/features/growing-cycle/mock-data.ts
 
-import {Allocation, GrowingCycle, HarvestBatch, Planting} from "@/entities/production";
+import {Allocation, GrowingCycle, HarvestBatch, Planting} from "@/entities/production/growing-cycle";
 import {ProductionUnit} from "@/entities/spatial";
 
 export const mockCycles: GrowingCycle[] = [
