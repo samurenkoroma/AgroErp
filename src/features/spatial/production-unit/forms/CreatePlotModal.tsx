@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {Save, X} from 'lucide-react';
-import {Modal} from '@/components/common/Modal';
+import {Modal} from '@/components/common/Modal.tsx';
 import {
     getAvailableCapabilities,
     getAvailableChildTypes,
@@ -11,7 +11,7 @@ import {
 } from "@/entities/spatial";
 import {CreateProductionUnitRequest, Dimensions} from "@/entities/spatial/production-unit/dto.ts";
 
-interface CreateContainerModalProps {
+interface CreatePlotModalProps {
     isOpen: boolean,
     onClose: () => void,
     onSuccess: (data: CreateProductionUnitRequest) => void,
@@ -20,22 +20,20 @@ interface CreateContainerModalProps {
 }
 
 
-export const CreateContainerModal = ({
-                                         isOpen,
-                                         onClose,
-                                         onSuccess,
-                                         units,
-                                         parent
-                                     }: CreateContainerModalProps) => {
+export const CreatePlotModal = ({
+                                    isOpen,
+                                    onClose,
+                                    onSuccess,
+                                    parent
+                                }: CreatePlotModalProps) => {
     const [selectedType, setSelectedType] = useState<ProductionUnitType | null>();
     const [code, setCode] = useState('');
     const [dimensions, setDimensions] = useState<Dimensions>({});
     const [name, setName] = useState('');
-    const [createChild, setCreateChild] = useState(false);
     const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
     const [status, setStatus] = useState<'active' | 'maintenance' | 'planned'>('active');
 
-    const availableTypes = getAvailableChildTypes(parent ? parent.type : 'CONTAINER');
+    const availableTypes = getAvailableChildTypes(parent ? parent.type : 'PLOT');
     const availableCapabilities = useMemo(() => selectedType ? getAvailableCapabilities(selectedType) : [], [selectedType]);
 
     const handleTypeSelect = (type: ProductionUnitType) => {
@@ -55,14 +53,20 @@ export const CreateContainerModal = ({
 
     const generateCode = () => {
         const prefix =
-            selectedType === 'RACK' ? 'R' :
-                selectedType === 'POT' ? 'PT' :
-                    selectedType === 'TRAY' ? 'TR' :
-                        selectedType === 'DWC_TANK' ? 'DWC' :
-                            selectedType === 'SLOT' ? 'S' :
-                                selectedType === 'RESERVOIR' ? 'RS' : 'U';
-        const existingCodes = units?.map(u => u.code);
-        const parentCode = 'CNTR/'
+            selectedType === 'PLOT' ? 'P' :
+                selectedType === 'BED' ? 'B' :
+                    selectedType === 'BLOCK' ? 'BK' :
+                        selectedType === 'RACK' ? 'R' :
+                            selectedType === 'SHELF' ? 'SH' :
+                                selectedType === 'SLOT' ? 'S' :
+                                    selectedType === 'POT' ? 'PT' :
+                                        selectedType === 'TRAY' ? 'TR' :
+                                            selectedType === 'NFT_CHANNEL' ? 'NFT' :
+                                                selectedType === 'DWC_TANK' ? 'DWC' :
+                                                    selectedType === 'AEROPONIC_CHAMBER' ? 'AERO' :
+                                                        selectedType === 'VERTICAL_TOWER' ? 'VT' : 'U';
+        const existingCodes = parent?.children?.map(u => u.code);
+        const parentCode = parent ? parent.code + '/' : ''
         let counter = 1;
         let newCode = `${parentCode}${prefix}-${counter.toString().padStart(2, '0')}`;
         while (existingCodes?.includes(newCode)) {
@@ -88,7 +92,7 @@ export const CreateContainerModal = ({
             status,
             dimensions,
             capabilities: selectedCapabilities,
-            createChild
+            createChild: false,
         };
 
         onSuccess(requestData);
@@ -104,7 +108,7 @@ export const CreateContainerModal = ({
     };
 
     const generateName = () => {
-        setName(getUnitTypeName(selectedType || 'CONTAINER'))
+        setName(getUnitTypeName(selectedType || 'PLOT'))
         switch (selectedType) {
             case 'TRAY':
                 setName(`${getUnitTypeName(selectedType)} ${dimensions.cellCount || ''}`)
@@ -116,21 +120,134 @@ export const CreateContainerModal = ({
                 setName(`${getUnitTypeName(selectedType)} ${dimensions.volume ? `${dimensions.volume} л` : ''}`)
                 break;
             case 'RACK':
-                setName(`${getUnitTypeName(selectedType)} ${dimensions.length && dimensions.width? dimensions.length +"x"+dimensions.width:''} ${dimensions.levels ? `${dimensions.levels} ур` : ''}`)
+                setName(`${getUnitTypeName(selectedType)} ${dimensions.length && dimensions.width ? dimensions.length + "x" + dimensions.width : ''} ${dimensions.levels ? `${dimensions.levels} ур` : ''}`)
                 break;
 
 
         }
     }
 
-//    'RACK', 'POT', 'TRAY', 'RESERVOIR', 'DWC_TANK'
+    function maxLength(value: string) {
+        const maxValue = parent?.properties.dimensions?.length
+        if (maxValue == undefined) {
+            return +value
+        }
+        return parseFloat(value) > maxValue ? maxValue : +value
+    }
+
+    function maxWidth(value: string) {
+        const maxValue = parent?.properties.dimensions?.width
+        if (maxValue == undefined) {
+            return +value
+        }
+        return parseFloat(value) > maxValue ? maxValue : +value
+    }
+
     // Рендер полей для размеров в зависимости от типа
     const renderDimensionFields = () => {
         if (!selectedType) return null;
 
         switch (selectedType) {
+            case 'FIELD':
+            case 'PLOT':
+            case 'GREENHOUSE':
+            case 'CONTAINER':
+                return (
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Длина (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.length || ''}
+                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
+                                placeholder="Введите длину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Ширина (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.width || ''}
+                                onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
+                                placeholder="Введите ширину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                    </div>
+                );
+
+            case 'BED':
+                return (
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Длина (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.length || ''}
+                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
+                                placeholder="Введите длину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Ширина (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.width || ''}
+                                onChange={(e) => setDimensions({...dimensions, width: maxWidth(e.target.value)})}
+                                placeholder="Введите ширину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                    </div>
+                );
+
+            case 'ROW':
+                return (
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Длина ряда (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.length || ''}
+                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
+                                placeholder="Введите длину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Количество растений
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.capacity || ''}
+                                onChange={(e) => setDimensions({...dimensions, capacity: parseInt(e.target.value)})}
+                                placeholder="Количество"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                );
 
             case 'RACK':
+            case 'SHELF':
                 return (
                     <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
@@ -177,6 +294,38 @@ export const CreateContainerModal = ({
                         </div>
                     </div>
                 );
+
+            case 'VERTICAL_TOWER':
+                return (
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Высота (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.height || ''}
+                                onChange={(e) => setDimensions({...dimensions, height: parseFloat(e.target.value)})}
+                                placeholder="Введите высоту"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Растений/ярус
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.capacity || ''}
+                                onChange={(e) => setDimensions({...dimensions, capacity: parseInt(e.target.value)})}
+                                placeholder="Количество растений"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                );
+
             case 'POT':
                 return (
                     <div className="grid grid-cols-2 gap-3">
@@ -208,11 +357,14 @@ export const CreateContainerModal = ({
                         </div>
                     </div>
                 );
+
             case 'TRAY':
                 return (
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Размер (см)
+                            </label>
                             <div className="flex gap-2">
                                 <input
                                     type="number"
@@ -233,84 +385,47 @@ export const CreateContainerModal = ({
                             </div>
                         </div>
                         <div>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    value={dimensions.cellVolume}
-                                    onChange={(e) => setDimensions({
-                                        ...dimensions,
-                                        cellVolume: parseFloat(e.target.value)
-                                    })}
-                                    placeholder="Объем ячейки"
-                                    className="w-1/2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                />
-                                <input
-                                    type="number"
-                                    value={dimensions.cellCount || ''}
-                                    onChange={(e) => setDimensions({
-                                        ...dimensions,
-                                        cellCount: parseInt(e.target.value)
-                                    })}
-                                    placeholder="Количество ячеек"
-                                    className="w-1/2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                />
-
-                            </div>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={createChild}
-                                    onChange={(e) => setCreateChild(e.target.checked)}
-                                    className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                />Создавать дочерние слоты для ячеек</label>
-
-                        </div>
-
-                    </div>
-                );
-            case 'DWC_TANK':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Кол-во растений (шт)
+                                Количество ячеек
                             </label>
                             <input
                                 type="number"
                                 value={dimensions.cellCount || ''}
-                                onChange={(e) => setDimensions({...dimensions, cellCount: parseFloat(e.target.value)})}
-                                placeholder="Введите кол-во растений"
+                                onChange={(e) => setDimensions({...dimensions, cellCount: parseInt(e.target.value)})}
+                                placeholder="Ячеек"
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Объем (л)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.volume || ''}
-                                onChange={(e) => setDimensions({...dimensions, volume: parseFloat(e.target.value)})}
-                                placeholder="Введите объем"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
                             />
                         </div>
                     </div>
                 );
-            case 'RESERVOIR':
+
+            case 'NFT_CHANNEL':
+            case 'DWC_TANK':
+            case 'AEROPONIC_CHAMBER':
                 return (
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Объем (л)
+                                Длина (м)
                             </label>
                             <input
                                 type="number"
-                                value={dimensions.volume || ''}
-                                onChange={(e) => setDimensions({...dimensions, volume: parseFloat(e.target.value)})}
-                                placeholder="Введите объем"
+                                value={dimensions.length || ''}
+                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
+                                placeholder="Введите длину"
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                                step="0.1"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Ширина (м)
+                            </label>
+                            <input
+                                type="number"
+                                value={dimensions.width || ''}
+                                onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
+                                placeholder="Введите ширину"
                                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 step="0.1"
                             />

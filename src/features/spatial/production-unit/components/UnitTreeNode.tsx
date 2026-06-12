@@ -20,6 +20,7 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
     };
 
     const handleSelect = () => {
+        setExpanded(!expanded);
         onSelectUnit(unit);
     };
     return (

@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {Save, X} from 'lucide-react';
-import {Modal} from '@/components/common/Modal';
+import {Modal} from '@/components/common/Modal.tsx';
 import {
     getAvailableCapabilities,
     getAvailableChildTypes,
@@ -468,6 +468,7 @@ export const CreateProductionUnitModal = ({
             status,
             dimensions,
             capabilities: selectedCapabilities,
+
         };
 
         onSuccess(requestData);

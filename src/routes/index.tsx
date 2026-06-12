@@ -12,7 +12,8 @@ import PlotPage from "@/pages/farm/PlotPage.tsx";
 import SeasonsPage from "@/pages/planning/SeasonsPage.tsx";
 import InventoryPage from "@/pages/inventory/InventoryPage.tsx";
 import CropPlanDetailsPage from "@/pages/growing/CropPlanDetailsPage.tsx";
-import GrowingTablePage from "@/features/production/growing_cycle/components/GrowingTablePage.tsx";
+import GrowingTablePage from "@/pages/growing/GrowingTablePage.tsx";
+import OperationsPage from "@/pages/operations/OperationsPage.tsx";
 
 // Публичные маршруты (без авторизации)
 export const publicRoutes: RouteObject[] = [
@@ -39,11 +40,10 @@ export const privateRoutes: RouteObject[] = [
 
     {path: "/seasons", element: <SeasonsPage/>},
     {path: "/inventory", element: <InventoryPage/>},
-    {path: "/growing", element: <GrowingTablePage/>},
-    // {path: "/growing/:id", element: <GrowingCycleFullPage/>},
 
+    {path: "/growing", element: <GrowingTablePage/>},
     {path: "/growing/:id", element: <CropPlanDetailsPage/>},
-    // {path: "/table", element: <GrowingTablePage/>},
+    {path: "/operations", element: <OperationsPage/>},
 ];
 
 

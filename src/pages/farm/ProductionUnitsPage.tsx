@@ -1,7 +1,7 @@
 import {useMemo, useState} from 'react';
 import {Container, Download, Factory, Home, Map as MapIcon, MapPin, Package, Sprout, Store} from 'lucide-react';
 import {ProductionUnit, RootUnits} from "@/entities/spatial";
-import {CreateProductionUnitModal} from "@/features/spatial/production-unit/components/CreateProductionUnitModal.tsx";
+import {CreateProductionUnitModal} from "@/features/spatial/production-unit/forms/CreateProductionUnitModal.tsx";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 import {useProductionUnits} from "@/features/spatial/production-unit/queries.ts";
 import Loading from "@/components/shared/Loading.tsx";
@@ -15,7 +15,7 @@ import {StorageTab} from "@/features/spatial/production-unit/components/StorageT
 import {PlotsTab} from "@/features/spatial/production-unit/components/PlotsTab.tsx";
 
 const ProductionUnitsPage = () => {
-    const [activeTab, setActiveTab] = useState<RootUnits>('CONTAINER');
+    const [activeTab, setActiveTab] = useState<RootUnits>('PLOT');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedParentForCreate, setSelectedParentForCreate] = useState<ProductionUnit | null>(null);
     const {mutate: createUnit} = useCreateProductionUnit();

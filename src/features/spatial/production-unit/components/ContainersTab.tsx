@@ -4,7 +4,7 @@ import {ProductionUnit} from "@/entities/spatial";
 import {useMemo, useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {useNavigate} from "react-router-dom";
-import {CreateContainerModal} from "@/features/spatial/production-unit/components/CreateContainerModal.tsx";
+import {CreateContainerModal} from "@/features/spatial/production-unit/forms/CreateContainerModal.tsx";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 import {StartCycleModal} from "@/features/production/growing_cycle";
@@ -24,7 +24,7 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
     const actions = useMemo(
             () => {
                 const act = new Map([
-                    ["Редактирование", () => { navigate(`/plot/${selectedUnit!.id}`)}],
+                    ["Редактирование", () => { navigate(`/container/${selectedUnit!.id}`)}],
                     ["Добавить дочерний", () => setIsCreateModalOpen(true)],
                 ])
                 if (selectedUnit?.children?.length == 0) {
@@ -55,10 +55,7 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <div className="space-y-4">
-                    <div className="text-center py-8 text-gray-500">
-                        <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                        <button onClick={onCreateIfEmpty}>Добавить</button>
-                    </div>
+
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
                         <div className="space-y-1">
@@ -85,6 +82,10 @@ export const ContainersTab = ({units = []}: ContainersTabProps) => {
             </div>
 
             <div className="lg:col-span-1">
+                <div className="text-center py-8 text-gray-500">
+                    <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
+                    <button onClick={onCreateIfEmpty}>Добавить</button>
+                </div>
                 {selectedUnit ? (
                     <UnitDetailPanel
                         unit={selectedUnit}

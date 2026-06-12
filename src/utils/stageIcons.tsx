@@ -102,3 +102,16 @@ export const StageIcon = ({ stage, size = 'md' }: { stage: string; size?: 'sm' |
 
     return <span className={sizeClasses[size]}>{config.icon}</span>;
 };
+export const getStageLabel = (stageKey: string): string => {
+    const labels: Record<string, string> = {
+        planning: 'Планирование',
+        germination: 'Прорастание',
+        seedling: 'Рассада',
+        vegetative: 'Вегетация',
+        flowering: 'Цветение',
+        fruiting: 'Плодоношение',
+        harvesting: 'Сбор урожая',
+        completed: 'Завершен'
+    };
+    return labels[stageKey] || stageKey;
+};

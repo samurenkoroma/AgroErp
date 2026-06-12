@@ -1,51 +1,62 @@
 import {UnitDetailPanel} from "@/features/spatial/production-unit/components/UnitDetailPanel.tsx";
 import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {useNavigate} from "react-router-dom";
-import {useCreateCycle} from "@/features/production/growing_cycle/mutations.ts";
-import {CreateCycleRequest} from "@/entities/production/growing-cycle/dto.ts";
+import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
+import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
+import {StartCycleModal} from "@/features/production/growing_cycle";
+import {CreatePlotModal} from "@/features/spatial/production-unit/forms/CreatePlotModal.tsx";
 
 interface PlotsTabProps {
     units: ProductionUnit[]
-    handleAddChild: (unit: ProductionUnit) => void
-    handleCreateUnit: () => void
 }
 
-export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTabProps) => {
-    const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | undefined>(undefined);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+export const PlotsTab = ({units = []}: PlotsTabProps) => {
+    const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const {mutate: createUnit} = useCreateProductionUnit();
 
-    const {mutate: createCycle} = useCreateCycle()
+    const actions = useMemo(
+            () => {
+                const act = new Map([
+                    ["Редактирование", () => {
+                        navigate(`/plot/${selectedUnit!.id}`)
+                    }],
+                    ["Добавить дочерний", () => setIsCreateModalOpen(true)],
+                ])
+                if (selectedUnit?.children?.length == 0) {
+                    act.set("Добавить посев", () => setIsCycleModalOpen(true))
+                }
+                return act
+            },
+            [selectedUnit]
+        )
+    ;
+
+
     const handleSelectUnit = (unit: ProductionUnit) => {
         setSelectedUnit(unit);
     };
-    const navigate = useNavigate();
-    if (units.length === 0) {
-        return (
-            <div className="text-center py-8 text-gray-500">
-                <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                <button onClick={handleCreateUnit}>Добавить</button>
-            </div>
-        )
-    }
-    const actions = new Map<string, () => void>([
-        ["Редактирование", () => {
-            navigate(`/plot/${selectedUnit!.id}`)
-        }],
-        ["Добавить дочерний", () => handleAddChild(selectedUnit!)],
-        ["Добавить посев", () => setIsModalOpen(true)],
-    ]);
-    const handleCreateCycle = (data: CreateCycleRequest) => {
-        createCycle(data)
-        setIsModalOpen(false);
+
+    const handleCreateUnit = async (newUnit: CreateProductionUnitRequest) => {
+        setIsCreateModalOpen(false);
+        createUnit(newUnit);
     };
+
+    const onCreateIfEmpty = () => {
+        setSelectedUnit(null);
+        setIsCreateModalOpen(true)
+    }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <div className="space-y-4">
+
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
                         <div className="space-y-1">
@@ -55,7 +66,8 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
                                     unit={unit}
                                     onSelectUnit={handleSelectUnit}
                                     selectedId={selectedUnit?.id}
-                                    onAddChild={handleAddChild}
+                                    onAddChild={() => {
+                                    }}
                                 />
                             ))}
                         </div>
@@ -64,11 +76,17 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
             </div>
 
             <div className="lg:col-span-1">
-                {selectedUnit ? (<UnitDetailPanel
-                    unit={selectedUnit}
-                    actions={actions}
-                    onClose={() => setSelectedUnit(undefined)}
-                />) : (<div
+                <div className="text-center py-8 text-gray-500">
+                    <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
+                    <button onClick={onCreateIfEmpty}>Добавить</button>
+                </div>
+                {selectedUnit ? (
+                    <UnitDetailPanel
+                        unit={selectedUnit}
+                        onClose={() => setSelectedUnit(null)}
+                        actions={actions}
+                    />
+                ) : (<div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center sticky top-6">
                         <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4"/>
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
@@ -80,7 +98,21 @@ export const PlotsTab = ({units = [], handleAddChild, handleCreateUnit}: PlotsTa
                     </div>
                 )}
             </div>
+            {isCreateModalOpen && (<CreatePlotModal
+                units={units}
+                isOpen={isCreateModalOpen}
+                parent={selectedUnit}
+                onClose={() => {
+                    setIsCreateModalOpen(false);
+                }}
+                onSuccess={handleCreateUnit}
+            />)}
 
+            {selectedUnit && (<StartCycleModal
+                unit={selectedUnit}
+                isOpen={isCycleModalOpen}
+                onClose={() => setIsCycleModalOpen(false)}
+            />)}
 
         </div>
     )
