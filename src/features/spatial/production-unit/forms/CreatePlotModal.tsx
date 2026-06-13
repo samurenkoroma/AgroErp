@@ -10,6 +10,7 @@ import {
     ProductionUnitType
 } from "@/entities/spatial";
 import {CreateProductionUnitRequest, Dimensions} from "@/entities/spatial/production-unit/dto.ts";
+import {formatArea} from "@/utils/geometry.ts";
 
 interface CreatePlotModalProps {
     isOpen: boolean,
@@ -24,16 +25,17 @@ export const CreatePlotModal = ({
                                     isOpen,
                                     onClose,
                                     onSuccess,
-                                    parent
+                                    parent,
+                                    units
                                 }: CreatePlotModalProps) => {
-    const [selectedType, setSelectedType] = useState<ProductionUnitType | null>();
+    const [selectedType, setSelectedType] = useState<ProductionUnitType | null>(parent == null ? 'PLOT' : null);
     const [code, setCode] = useState('');
     const [dimensions, setDimensions] = useState<Dimensions>({});
     const [name, setName] = useState('');
     const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
     const [status, setStatus] = useState<'active' | 'maintenance' | 'planned'>('active');
-
-    const availableTypes = getAvailableChildTypes(parent ? parent.type : 'PLOT');
+    const [area, setArea] = useState<number | undefined>();
+    const availableTypes = getAvailableChildTypes(parent ? parent.type : undefined);
     const availableCapabilities = useMemo(() => selectedType ? getAvailableCapabilities(selectedType) : [], [selectedType]);
 
     const handleTypeSelect = (type: ProductionUnitType) => {
@@ -55,17 +57,12 @@ export const CreatePlotModal = ({
         const prefix =
             selectedType === 'PLOT' ? 'P' :
                 selectedType === 'BED' ? 'B' :
-                    selectedType === 'BLOCK' ? 'BK' :
-                        selectedType === 'RACK' ? 'R' :
-                            selectedType === 'SHELF' ? 'SH' :
-                                selectedType === 'SLOT' ? 'S' :
-                                    selectedType === 'POT' ? 'PT' :
-                                        selectedType === 'TRAY' ? 'TR' :
-                                            selectedType === 'NFT_CHANNEL' ? 'NFT' :
-                                                selectedType === 'DWC_TANK' ? 'DWC' :
-                                                    selectedType === 'AEROPONIC_CHAMBER' ? 'AERO' :
-                                                        selectedType === 'VERTICAL_TOWER' ? 'VT' : 'U';
-        const existingCodes = parent?.children?.map(u => u.code);
+                    selectedType === 'ROW' ? 'R' : 'U';
+
+        let existingCodes = units?.map(u => u.code);
+        if (parent){
+            existingCodes = parent?.children?.map(u => u.code);
+        }
         const parentCode = parent ? parent.code + '/' : ''
         let counter = 1;
         let newCode = `${parentCode}${prefix}-${counter.toString().padStart(2, '0')}`;
@@ -107,6 +104,21 @@ export const CreatePlotModal = ({
         setStatus('active');
     };
 
+    // Функция для расчета площади на основе размеров
+    const calculateAreaFromDimensions = () => {
+        if (!selectedType) return;
+
+        if (dimensions.length && dimensions.width) {
+            const areaM2 = (dimensions.length * dimensions.width) / 10000;
+            setArea(areaM2);
+        }
+
+    }
+// Автоматический расчет площади при изменении размеров
+    useEffect(() => {
+        calculateAreaFromDimensions();
+    }, [dimensions, selectedType]);
+
     const generateName = () => {
         setName(getUnitTypeName(selectedType || 'PLOT'))
         switch (selectedType) {
@@ -147,295 +159,44 @@ export const CreatePlotModal = ({
     const renderDimensionFields = () => {
         if (!selectedType) return null;
 
-        switch (selectedType) {
-            case 'FIELD':
-            case 'PLOT':
-            case 'GREENHOUSE':
-            case 'CONTAINER':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Длина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
-                                placeholder="Введите длину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Ширина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.width || ''}
-                                onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
-                                placeholder="Введите ширину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                    </div>
-                );
 
-            case 'BED':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Длина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
-                                placeholder="Введите длину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Ширина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.width || ''}
-                                onChange={(e) => setDimensions({...dimensions, width: maxWidth(e.target.value)})}
-                                placeholder="Введите ширину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                    </div>
-                );
+        return (
+            <div className="grid grid-cols-3 gap-3">
+                {/* Отображение рассчитанной площади для других типов */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Длина (м)
+                    </label>
+                    <input
+                        type="number"
+                        value={dimensions.length || ''}
+                        onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
+                        placeholder="Введите длину"
+                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                        step="0.1"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Ширина (м)
+                    </label>
+                    <input
+                        type="number"
+                        value={dimensions.width || ''}
+                        onChange={(e) => setDimensions({...dimensions, width: maxWidth(e.target.value)})}
+                        placeholder="Введите ширину"
+                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
+                        step="0.1"
+                    />
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                        📐 Расчетная площадь: {formatArea(area)}
+                    </p>
+                </div>
+            </div>
+        )
 
-            case 'ROW':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Длина ряда (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: maxLength(e.target.value)})}
-                                placeholder="Введите длину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Количество растений
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.capacity || ''}
-                                onChange={(e) => setDimensions({...dimensions, capacity: parseInt(e.target.value)})}
-                                placeholder="Количество"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                            />
-                        </div>
-                    </div>
-                );
-
-            case 'RACK':
-            case 'SHELF':
-                return (
-                    <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Длина (м)
-                                </label>
-                                <input
-                                    type="number"
-                                    value={dimensions.length || ''}
-                                    onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
-                                    placeholder="Введите длину"
-                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                    step="0.1"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Ширина (м)
-                                </label>
-                                <input
-                                    type="number"
-                                    value={dimensions.width || ''}
-                                    onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
-                                    placeholder="Введите ширину"
-                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                    step="0.1"
-                                />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Уровней
-                                </label>
-                                <input
-                                    type="number"
-                                    value={dimensions.levels || ''}
-                                    onChange={(e) => setDimensions({...dimensions, levels: parseInt(e.target.value)})}
-                                    placeholder="Количество уровней"
-                                    className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case 'VERTICAL_TOWER':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Высота (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.height || ''}
-                                onChange={(e) => setDimensions({...dimensions, height: parseFloat(e.target.value)})}
-                                placeholder="Введите высоту"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Растений/ярус
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.capacity || ''}
-                                onChange={(e) => setDimensions({...dimensions, capacity: parseInt(e.target.value)})}
-                                placeholder="Количество растений"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                            />
-                        </div>
-                    </div>
-                );
-
-            case 'POT':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Диаметр (см)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.diameter || ''}
-                                onChange={(e) => setDimensions({...dimensions, diameter: parseFloat(e.target.value)})}
-                                placeholder="Введите диаметр"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.5"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Объем (л)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.volume || ''}
-                                onChange={(e) => setDimensions({...dimensions, volume: parseFloat(e.target.value)})}
-                                placeholder="Введите объем"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.5"
-                            />
-                        </div>
-                    </div>
-                );
-
-            case 'TRAY':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Размер (см)
-                            </label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    value={dimensions.length || ''}
-                                    onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
-                                    placeholder="Длина"
-                                    className="w-1/2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                    step="0.5"
-                                />
-                                <input
-                                    type="number"
-                                    value={dimensions.width || ''}
-                                    onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
-                                    placeholder="Ширина"
-                                    className="w-1/2 px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                    step="0.5"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Количество ячеек
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.cellCount || ''}
-                                onChange={(e) => setDimensions({...dimensions, cellCount: parseInt(e.target.value)})}
-                                placeholder="Ячеек"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                            />
-                        </div>
-                    </div>
-                );
-
-            case 'NFT_CHANNEL':
-            case 'DWC_TANK':
-            case 'AEROPONIC_CHAMBER':
-                return (
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Длина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.length || ''}
-                                onChange={(e) => setDimensions({...dimensions, length: parseFloat(e.target.value)})}
-                                placeholder="Введите длину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Ширина (м)
-                            </label>
-                            <input
-                                type="number"
-                                value={dimensions.width || ''}
-                                onChange={(e) => setDimensions({...dimensions, width: parseFloat(e.target.value)})}
-                                placeholder="Введите ширину"
-                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                                step="0.1"
-                            />
-                        </div>
-                    </div>
-                );
-
-            default:
-                return null;
-        }
     };
 
 
@@ -444,34 +205,39 @@ export const CreatePlotModal = ({
             <div className="space-y-5 max-h-[70vh] overflow-y-auto px-1">
 
                 {/* Выбор типа */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Тип объекта *awd awd
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                        {availableTypes.map((type) => (
-                            <button
-                                key={type}
-                                onClick={() => handleTypeSelect(type)}
-                                className={`
+                {
+                    parent != null && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Тип объекта *awd awd
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {availableTypes.map((type) => (
+                                    <button
+                                        key={type}
+                                        onClick={() => handleTypeSelect(type)}
+                                        className={`
                                     p-3 rounded-lg border transition-all text-left
                                     ${selectedType === type
-                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20 ring-2 ring-green-500'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-green-300'
-                                }
+                                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20 ring-2 ring-green-500'
+                                            : 'border-gray-200 dark:border-gray-700 hover:border-green-300'
+                                        }
                                 `}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-2xl">{getUnitIcon(type)}</span>
-                                    <div>
-                                        <p className="font-medium text-gray-900 dark:text-white">{getUnitTypeName(type)}</p>
-                                        <p className="text-xs text-gray-500">{type.toLowerCase()}</p>
-                                    </div>
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl">{getUnitIcon(type)}</span>
+                                            <div>
+                                                <p className="font-medium text-gray-900 dark:text-white">{getUnitTypeName(type)}</p>
+                                                <p className="text-xs text-gray-500">{type.toLowerCase()}</p>
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                }
+
 
                 {selectedType && (
                     <>
@@ -487,6 +253,7 @@ export const CreatePlotModal = ({
                                     className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                                 />
                             </div>
+
 
                             {/* Возможности */}
                             <div>

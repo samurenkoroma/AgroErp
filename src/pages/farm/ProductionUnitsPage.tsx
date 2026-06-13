@@ -132,18 +132,10 @@ const ProductionUnitsPage = () => {
                 </div>
 
                 {activeTab == 'FIELD' && (<FieldsTab units={data?.fields!} onAddChild={handleAddChild}/>)}
-                {activeTab == 'PLOT' && (
-                    <PlotsTab units={data?.plots!} handleAddChild={handleAddChild}
-                              handleCreateUnit={() => {
-                                  setUnitType('PLOT');
-                                  setIsCreateModalOpen(true);
-                              }}/>
-                )}
+                {activeTab == 'PLOT' && (<PlotsTab units={data?.plots!}/>)}
                 {activeTab == 'GREENHOUSE' && (
                     <GreenhousesTab units={data?.greenhouses!} onAddChild={handleAddChild}/>)}
-                {activeTab == 'CONTAINER' && (
-                    <ContainersTab units={data?.containers!}/>
-                )}
+                {activeTab == 'CONTAINER' && (<ContainersTab units={data?.containers!}/>)}
                 {activeTab == 'STORAGE' && (<StorageTab units={data?.storages!} onAddChild={handleAddChild}/>)}
             </div>
             {/* Модалка создания */}

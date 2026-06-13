@@ -78,7 +78,7 @@ export const PlotsTab = ({units = []}: PlotsTabProps) => {
             <div className="lg:col-span-1">
                 <div className="text-center py-8 text-gray-500">
                     <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                    <button onClick={onCreateIfEmpty}>Добавить</button>
+                    <button onClick={onCreateIfEmpty}>Создать новый участок</button>
                 </div>
                 {selectedUnit ? (
                     <UnitDetailPanel

@@ -8,14 +8,14 @@ import {ProductionUnitType} from "@/entities/spatial";
 
 export const UnitHierarchy: Record<ProductionUnitType, ProductionUnitType[]> = {
     // Корневые элементы
-    FIELD: ['BLOCK', 'BED', 'ROW'],
-    PLOT: ['BLOCK', 'GREENHOUSE', 'CONTAINER'],
+    FIELD: [],
+
+    PLOT: ['BED', 'ROW'],
     GREENHOUSE: ['GREENHOUSE_ZONE', 'BED', 'RACK'],
     CONTAINER: [ 'RACK', 'SHELF', 'POT', 'TRAY', 'RESERVOIR', 'DWC_TANK'],
     STORAGE: [],
 
     // Полевая иерархия
-    BLOCK: ['BED', 'ROW'],
     BED: ['ROW'],
     ROW: [],
 

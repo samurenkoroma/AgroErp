@@ -7,7 +7,6 @@ export const getUnitIcon = (type: ProductionUnitType): string => {
     const icons: Record<ProductionUnitType, string> = {
         FIELD: '🌾',
         PLOT: '🏡',
-        BLOCK: '📐',
         BED: '📦',
         ROW: '📏',
         GREENHOUSE: '🌱',
@@ -32,7 +31,6 @@ export const getUnitTypeName = (type: ProductionUnitType): string => {
     const names: Record<ProductionUnitType, string> = {
         FIELD: 'Поле',
         PLOT: 'Участок',
-        BLOCK: 'Блок',
         BED: 'Грядка',
         ROW: 'Ряд',
         GREENHOUSE: 'Теплица',
@@ -102,14 +100,9 @@ export const getAvailableCapabilities = (type: ProductionUnitType): string[] => 
     const capabilities: Record<ProductionUnitType, string[]> = {
         // Полевые типы
         FIELD: ['SOIL', 'IRRIGATION', 'FERTIGATION', 'DRAINAGE', 'SENSOR_SUPPORT'],
-        PLOT: [
-            'SOIL', 'IRRIGATION', 'FERTIGATION', 'DRAINAGE',  // Полевые
-            'HYDROPONIC', 'AEROPONIC',                        // Гидропонные
-            'SENSOR_SUPPORT', 'AUTOMATION'                    // IoT
-        ],
-        BLOCK: ['SOIL', 'IRRIGATION', 'SENSOR_SUPPORT'],
-        BED: ['SOIL', 'IRRIGATION'],
-        ROW: ['SOIL', 'IRRIGATION'],
+        PLOT: ['IRRIGATION', 'FERTIGATION', 'SENSOR_SUPPORT', 'AUTOMATION'],
+        BED: ['SOIL', 'IRRIGATION', 'FERTIGATION'],
+        ROW: ['SOIL', 'IRRIGATION', 'FERTIGATION'],
 
         // Тепличные типы
         GREENHOUSE: ['HYDROPONIC', 'CLIMATE_CONTROL', 'LIGHTING', 'SENSOR_SUPPORT', 'AUTOMATION'],

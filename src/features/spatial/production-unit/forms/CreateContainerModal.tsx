@@ -59,16 +59,15 @@ export const CreateContainerModal = ({
                 selectedType === 'GREENHOUSE' ? 'GH' :
                     selectedType === 'CONTAINER' ? 'C' :
                         selectedType === 'BED' ? 'B' :
-                            selectedType === 'BLOCK' ? 'BK' :
-                                selectedType === 'RACK' ? 'R' :
-                                    selectedType === 'SHELF' ? 'SH' :
-                                        selectedType === 'SLOT' ? 'S' :
-                                            selectedType === 'POT' ? 'PT' :
-                                                selectedType === 'TRAY' ? 'TR' :
-                                                    selectedType === 'NFT_CHANNEL' ? 'NFT' :
-                                                        selectedType === 'DWC_TANK' ? 'DWC' :
-                                                            selectedType === 'AEROPONIC_CHAMBER' ? 'AERO' :
-                                                                selectedType === 'VERTICAL_TOWER' ? 'VT' : 'U';
+                            selectedType === 'RACK' ? 'R' :
+                                selectedType === 'SHELF' ? 'SH' :
+                                    selectedType === 'SLOT' ? 'S' :
+                                        selectedType === 'POT' ? 'PT' :
+                                            selectedType === 'TRAY' ? 'TR' :
+                                                selectedType === 'NFT_CHANNEL' ? 'NFT' :
+                                                    selectedType === 'DWC_TANK' ? 'DWC' :
+                                                        selectedType === 'AEROPONIC_CHAMBER' ? 'AERO' :
+                                                            selectedType === 'VERTICAL_TOWER' ? 'VT' : 'U';
         const existingCodes = units?.map(u => u.code);
         const parentCode = 'CNTR/'
         let counter = 1;
