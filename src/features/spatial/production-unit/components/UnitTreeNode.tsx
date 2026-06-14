@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {ChevronDown, ChevronRight} from 'lucide-react';
 import {getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
-import {statusLib} from "@/utils/status.ts";
+import {statusConfig} from "@/utils";
 
 export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddChild}: {
     unit: ProductionUnit;
@@ -23,6 +23,7 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
         setExpanded(!expanded);
         onSelectUnit(unit);
     };
+
     return (
         <div className="space-y-1">
             <div
@@ -42,8 +43,8 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
                             <div className="flex items-center gap-2 flex-wrap">
                                 <h3 className="font-medium text-gray-900 dark:text-white">{unit.properties.metadata?.name}</h3>
                                 <span
-                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusLib.getColor(unit.status)}`}>
-                                    {statusLib.getText(unit.status)}
+                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusConfig[unit.status].bg  }`}>
+                                    {statusConfig[unit.status].label}
                                 </span>
                                 <span className="text-xs text-gray-400 font-mono">{unit.code}</span>
 

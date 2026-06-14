@@ -8,7 +8,6 @@ import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import Dashboard from "@/pages/Dashboard.tsx";
 import ProductionUnitsPage from "@/pages/farm/ProductionUnitsPage.tsx";
-import PlotPage from "@/pages/farm/PlotPage.tsx";
 import SeasonsPage from "@/pages/planning/SeasonsPage.tsx";
 import InventoryPage from "@/pages/inventory/InventoryPage.tsx";
 import CropPlanDetailsPage from "@/pages/growing/CropPlanDetailsPage.tsx";
@@ -28,7 +27,6 @@ export const privateRoutes: RouteObject[] = [
     {path: '/', element: <Navigate to="/dashboard" replace/>},
     {path: '/dashboard', element: <Dashboard/>},
     {path: "/farm", element: <ProductionUnitsPage/>},
-    {path: "/plot/:id", element: <PlotPage/>},
     // {path: "/field/:id", element: <FieldPage/>},
     // {path: "/greenhouse/:id", element: <GreenhousePage/>},
 

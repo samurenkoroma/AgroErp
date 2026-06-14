@@ -20,22 +20,30 @@ export function generateFromName(name: string, maxLength: number = 20): string {
     return translit(name);
 }
 
-export const generateCode = (cropName: string, varietyName: string, method: string): string => {
+export const generateCode = (cropName: string, varietyName: string, method: string, started?: Date): string => {
     const varietySlug = generateFromName(varietyName, 50);
     const cropSlug = generateFromName(cropName, 50);
     if (cropSlug === "") {
         return ""
     }
-    const date = `${new Date().getMonth() + 1}/${new Date().getFullYear()}`;
-    return `${cropSlug}:${varietySlug}:${method}:${date}`.replace(/:{2,}/g, ':');
+    if (started) {
+        const date = `${started.getMonth() + 1}/${started.getFullYear()}`;
+        return `${cropSlug}:${varietySlug}:${method}:${date}`.replace(/:{2,}/g, ':');
+
+    }
+    return `${cropSlug}:${varietySlug}:${method}:-/-`.replace(/:{2,}/g, ':');
 };
 
-export const generateName = (cropName: string, varietyName: string, method: string) => {
-    const date = `${new Date().getMonth() + 1}/${new Date().getFullYear()}`;
+export const generateName = (cropName: string, varietyName: string, method: string, started?: Date) => {
     if (cropName === "") {
         return ""
     }
-    return `${cropName} ${varietyName} ${method} (${date})`
+    if (started) {
+        const date = `${started.getMonth() + 1}/${started.getFullYear()}`;
+        return `${cropName} ${varietyName} - ${method}(${date})`
+
+    }
+    return `${cropName} ${varietyName} - ${method}(-/-})`
 }
 
 /**

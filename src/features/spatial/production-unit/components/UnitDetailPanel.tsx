@@ -1,14 +1,13 @@
 import {getCapabilityIcon, getCapabilityName, getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
 import {Shield, X} from "lucide-react";
-import {statusLib} from "@/utils/status.ts";
 import {propsLib} from "@/utils/props.ts";
+import {statusConfig} from "@/utils";
 
 export const UnitDetailPanel = ({unit, onClose, actions}: {
     unit: ProductionUnit;
     onClose: () => void;
     actions: Map<string, () => void>
 }) => {
-
     return (
         <div
             className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden sticky top-6">
@@ -38,7 +37,7 @@ export const UnitDetailPanel = ({unit, onClose, actions}: {
                         </div>
                         <div>
                             <span className="text-gray-500">Статус</span>
-                            <p className="font-medium">{statusLib.getText(unit.status)}</p>
+                            <p className="font-medium">{statusConfig[unit.status].label}</p>
                         </div>
                         {unit.geometry?.area && (
                             <div>

@@ -1,4 +1,3 @@
-// pages/planning/CropPlanDetails.tsx
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
@@ -27,8 +26,8 @@ import {
     User,
     Wind
 } from 'lucide-react';
-import {statusLib} from "@/utils/status.ts";
 import {mockCropPlan, mockPhenology, mockStatistics, mockTasks} from "@/data/mock-data.ts";
+import {getStageBgColor} from "@/utils";
 
 const CropPlanDetails = () => {
     const navigate = useNavigate();
@@ -144,7 +143,7 @@ const CropPlanDetails = () => {
                                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                         {cropPlan.name}
                                     </h1>
-                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusLib.getColor(cropPlan.status)}`}>
+                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStageBgColor(cropPlan.status)}`}>
                     {cropPlan.status_text}
                   </span>
                                     {cropPlan.seedlingInfo?.isSeedling && (

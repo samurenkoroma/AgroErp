@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {ChevronDown, ChevronRight} from 'lucide-react';
 import {getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
-import {statusLib} from "@/utils/status.ts";
 
 export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddChild}: {
     unit: ProductionUnit;

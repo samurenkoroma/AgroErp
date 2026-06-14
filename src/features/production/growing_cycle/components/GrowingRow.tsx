@@ -4,13 +4,11 @@ import {dateLib} from '@/utils/date';
 import {getCropIcon} from '@/utils/cropIcons';
 import {getStageIcon} from '@/utils/stageIcons';
 import {GrowingListItem} from "@/entities/production/growing-cycle";
-import {StatusBadge} from "@/utils/statusIcons.tsx";
 
 interface GrowingRowProps {
     item: GrowingListItem;
     isExpanded: boolean;
     onToggle: () => void;
-    onRowClick: () => void;
 }
 
 const ProgressBar = ({ progress }: { progress: number }) => {
@@ -48,18 +46,18 @@ const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allo
     }
 
     // Общая статистика по всем allocations
-    const totalArea = allocations.reduce((sum, a) => sum + a.area, 0);
-    const avgProgress = allocations.reduce((sum, a) => sum + a.progress, 0) / allocations.length;
-    const earliestStart = allocations.reduce((earliest, a) => {
-        if (!a.startDate) return earliest;
-        if (!earliest) return a.startDate;
-        return new Date(a.startDate) < new Date(earliest) ? a.startDate : earliest;
-    }, '' as string);
-    const latestEnd = allocations.reduce((latest, a) => {
-        if (!a.endDate) return latest;
-        if (!latest) return a.endDate;
-        return new Date(a.endDate) > new Date(latest) ? a.endDate : latest;
-    }, '' as string);
+    // const totalArea = allocations.reduce((sum, a) => sum + a.area, 0);
+    // const avgProgress = allocations.reduce((sum, a) => sum + a.progress, 0) / allocations.length;
+    // const earliestStart = allocations.reduce((earliest, a) => {
+    //     if (!a.startDate) return earliest;
+    //     if (!earliest) return a.startDate;
+    //     return new Date(a.startDate) < new Date(earliest) ? a.startDate : earliest;
+    // }, '' as string);
+    // const latestEnd = allocations.reduce((latest, a) => {
+    //     if (!a.endDate) return latest;
+    //     if (!latest) return a.endDate;
+    //     return new Date(a.endDate) > new Date(latest) ? a.endDate : latest;
+    // }, '' as string);
 
     return (
         <div className="space-y-4">
@@ -109,7 +107,7 @@ const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allo
     );
 };
 
-export const GrowingRow = ({ item, isExpanded, onToggle, onRowClick }: GrowingRowProps) => {
+export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
     // Общая площадь из всех allocation
     const totalArea = item.allocations?.reduce((sum, a) => sum + a.area, 0) || item.allocatedArea;
 
@@ -175,7 +173,8 @@ export const GrowingRow = ({ item, isExpanded, onToggle, onRowClick }: GrowingRo
 
                 {/* Статус */}
                 <td className="px-4 py-4">
-                    <StatusBadge status={item.status} />
+
+                    <span></span>
                 </td>
 
                 {/* Действия */}
@@ -189,7 +188,7 @@ export const GrowingRow = ({ item, isExpanded, onToggle, onRowClick }: GrowingRo
             {/* Развернутая информация - теперь показывает данные из allocations */}
             {isExpanded && (
                 <tr className="bg-gray-50 dark:bg-gray-800/50 cursor-pointer">
-                    <td colSpan={7} className="px-4 py-4" onClick={onRowClick}>
+                    <td colSpan={7} className="px-4 py-4">
                         <AllocationDetails allocations={item.allocations || []} />
                     </td>
                 </tr>

@@ -1,6 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
 import {getAccessToken} from "@/stores/authStore.ts";
 import {cycleApi} from "@/features/production/growing_cycle/api/api.ts";
+import {stageConfig, statusConfig} from "@/utils";
 
 
 export const useCycles = () => {
@@ -27,11 +28,11 @@ export const useOptionHelpers = () => {
                 statuses: values.statuses,
                 stages:values.stages,
                 methods: values.methods,
-                statusesOpt: Object.entries(values.statuses).map(([value, label]) => ({
+                statusesOpt: Object.entries(values.statuses).sort((a, b) => statusConfig[a[0]].order - statusConfig[b[0]].order).map(([value, label]) => ({
                     value,
                     label
                 })),
-                stagesOpt: Object.entries(values.stages).map(([value, label]) => ({
+                stagesOpt: Object.entries(values.stages).sort((a, b) => stageConfig[a[0]].order - stageConfig[b[0]].order).map(([value, label]) => ({
                     value,
                     label
                 })),

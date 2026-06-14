@@ -1,10 +1,8 @@
-// src/pages/growing/GrowingTablePage.tsx
 import {useMemo, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import {AlertCircle, Download, MapPin, Play, Search, Settings, Sprout, TrendingUp} from 'lucide-react';
-import {GrowingListItem} from "@/entities/production/growing-cycle";
 import {GrowingRow} from "@/features/production/growing_cycle/components/GrowingRow.tsx";
-import {useCycles} from "@/features/production/growing_cycle";
+import {CreateCycleModal, useCycles, useOptionHelpers} from "@/features/production/growing_cycle";
+import {usePageActions} from "@/hooks/usePageActions.ts";
 
 // ==================== MOCK DATA ====================
 
@@ -35,13 +33,26 @@ const StatsCard = ({ title, value, unit, icon: Icon, color }: {
 // ==================== MAIN COMPONENT ====================
 
 const GrowingTablePage = () => {
-    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
+    const [isCreateModal, setIsCreateModal] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
     const [stageFilter, setStageFilter] = useState<string>('all');
     const {data: cycles = []} = useCycles();
+    const {data: helpers} = useOptionHelpers()
 
+    usePageActions({
+        actions: [
+            {
+                id: 'add-cycle',
+                label: 'Добавить посев ',
+                icon: <MapPin className="w-5 h-5"/>,
+                onClick: () => setIsCreateModal(true),
+                color: 'bg-green-500'
+            },
+
+        ],
+    });
     const toggleRow = (id: string) => {
         setExpandedRows(prev => {
             const newSet = new Set(prev);
@@ -54,9 +65,6 @@ const GrowingTablePage = () => {
         });
     };
 
-    const handleRowClick = (item: GrowingListItem) => {
-        navigate(`/growing/${item.id}`);
-    };
 
     const filteredData = useMemo(() => {
         return cycles.filter(item => {
@@ -213,10 +221,9 @@ const GrowingTablePage = () => {
                             {filteredData.map((item) => (
                                 <GrowingRow
                                     key={item.id}
-                                    item={item}
+                                    item={{...item, stage: helpers?.stages[item.stage] || '--'}}
                                     isExpanded={expandedRows.has(item.id)}
                                     onToggle={() => toggleRow(item.id)}
-                                    onRowClick={() => handleRowClick(item)}
                                 />
                             ))}
                             </tbody>
@@ -232,6 +239,9 @@ const GrowingTablePage = () => {
                     )}
                 </div>
             </div>
+            {
+                isCreateModal && <CreateCycleModal isOpen={isCreateModal} onClose={() => setIsCreateModal(false)}/>
+            }
         </div>
     );
 };

@@ -6,7 +6,7 @@ export interface GrowingListItem {
     allocatedArea: number;
 
     stage: string;
-    status: 'planned' | 'active' | 'warning' | 'completed';
+    status:string;
 
     progress: number;
     tasksCount?: number;
@@ -24,7 +24,7 @@ export interface Allocations {
     startDate?: string
     endDate?: string
 }
-export interface ProductionHelpers {
+export interface OptionHelpersResponse {
     statuses: Record<string, string>;
     stages: Record<string, string>;
     methods: Record<string, string>;
