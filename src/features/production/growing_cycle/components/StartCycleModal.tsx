@@ -78,6 +78,22 @@ export const StartCycleModal = ({
                 cropID: fieldErrors.cropID?.[0] ?? "",
                 name: fieldErrors.name?.[0] ?? "",
             });
+            setFormData({
+                name: "",
+                code: "",
+                cropID: "",
+                varietyID: undefined,
+                protocolID: undefined,
+                status: "",
+                stage: "",
+                method: "",
+                allocations: [{
+                    productionUnitID: unit.id,
+                    area: unit.area,
+                    startedAt: new Date(startedAt),
+                }],
+                plantings: []
+            })
             return;
         }
         startCycle(result.data, {
