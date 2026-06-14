@@ -54,29 +54,56 @@ export const CreatePlotModal = ({
     };
 
     const generateCode = () => {
+        if (!selectedType) {
+            setCode('');
+            return;
+        }
+
         const prefix =
             selectedType === 'PLOT' ? 'P' :
                 selectedType === 'BED' ? 'B' :
                     selectedType === 'ROW' ? 'R' : 'U';
 
-        let existingCodes = units?.map(u => u.code);
-        if (parent){
-            existingCodes = parent?.children?.map(u => u.code);
-        }
-        const parentCode = parent ? parent.code + '/' : ''
-        let counter = 1;
-        let newCode = `${parentCode}${prefix}-${counter.toString().padStart(2, '0')}`;
-        while (existingCodes?.includes(newCode)) {
-            counter++;
-            newCode = `${parentCode}${prefix}-${counter.toString().padStart(2, '0')}`;
-        }
-        setCode(newCode);
+        const parentCode = parent ? `${parent.code}/` : '';
+
+        const existingCodes = parent
+            ? (parent.children ?? []).map(u => u.code)
+            : units.map(u => u.code);
+
+        const regex = new RegExp(`^${parentCode}${prefix}-(\\d+)$`);
+
+        const maxNumber = existingCodes.reduce((max, code) => {
+            const match = code.match(regex);
+
+            if (!match) {
+                return max;
+            }
+
+            return Math.max(max, parseInt(match[1], 10));
+        }, 0);
+
+        const nextNumber = maxNumber + 1;
+
+        setCode(`${parentCode}${prefix}-${nextNumber.toString().padStart(2, '0')}`);
     };
 
-    useEffect(() => {
-        generateCode();
-        generateName()
-    }, [selectedType, dimensions]);
+    const generateName = () => {
+        setName(getUnitTypeName(selectedType || 'PLOT'))
+        switch (selectedType) {
+            case 'TRAY':
+                setName(`${getUnitTypeName(selectedType)} ${dimensions.cellCount || ''}`)
+                break;
+            case 'POT':
+                setName(`${getUnitTypeName(selectedType)} ${dimensions.diameter || ''} ${dimensions.volume ? `(${dimensions.volume} л)` : ''}`)
+                break;
+            case 'RESERVOIR':
+                setName(`${getUnitTypeName(selectedType)} ${dimensions.volume ? `${dimensions.volume} л` : ''}`)
+                break;
+            case 'RACK':
+                setName(`${getUnitTypeName(selectedType)} ${dimensions.length && dimensions.width ? dimensions.length + "x" + dimensions.width : ''} ${dimensions.levels ? `${dimensions.levels} ур` : ''}`)
+                break;
+        }
+    }
 
     const handleSubmit = () => {
         if (!selectedType) return;
@@ -117,27 +144,14 @@ export const CreatePlotModal = ({
 // Автоматический расчет площади при изменении размеров
     useEffect(() => {
         calculateAreaFromDimensions();
+        generateName()
     }, [dimensions, selectedType]);
 
-    const generateName = () => {
-        setName(getUnitTypeName(selectedType || 'PLOT'))
-        switch (selectedType) {
-            case 'TRAY':
-                setName(`${getUnitTypeName(selectedType)} ${dimensions.cellCount || ''}`)
-                break;
-            case 'POT':
-                setName(`${getUnitTypeName(selectedType)} ${dimensions.diameter || ''} ${dimensions.volume ? `(${dimensions.volume} л)` : ''}`)
-                break;
-            case 'RESERVOIR':
-                setName(`${getUnitTypeName(selectedType)} ${dimensions.volume ? `${dimensions.volume} л` : ''}`)
-                break;
-            case 'RACK':
-                setName(`${getUnitTypeName(selectedType)} ${dimensions.length && dimensions.width ? dimensions.length + "x" + dimensions.width : ''} ${dimensions.levels ? `${dimensions.levels} ур` : ''}`)
-                break;
 
+    useEffect(() => {
+        generateCode();
+    }, [selectedType, parent, units]);
 
-        }
-    }
 
     function maxLength(value: string) {
         const maxValue = parent?.properties.dimensions?.length

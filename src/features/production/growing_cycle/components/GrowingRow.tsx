@@ -1,21 +1,10 @@
-// src/components/growing/GrowingRow.tsx
-import {
-    AlertCircle,
-    Calendar,
-    CheckCircle,
-    ChevronDown,
-    ChevronRight,
-    Clock,
-    MapPin,
-    MoreVertical,
-    Play
-} from 'lucide-react';
+import {Calendar, ChevronDown, ChevronRight, MapPin, MoreVertical} from 'lucide-react';
 import {formatArea} from '@/utils/geometry';
 import {dateLib} from '@/utils/date';
-import {statusLib} from '@/utils/status';
 import {getCropIcon} from '@/utils/cropIcons';
 import {getStageIcon} from '@/utils/stageIcons';
 import {GrowingListItem} from "@/entities/production/growing-cycle";
+import {StatusBadge} from "@/utils/statusIcons.tsx";
 
 interface GrowingRowProps {
     item: GrowingListItem;
@@ -45,22 +34,7 @@ const ProgressBar = ({ progress }: { progress: number }) => {
     );
 };
 
-const StatusBadge = ({ status }: { status: GrowingListItem['status'] }) => {
-    const config = {
-        planned: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400', icon: <Clock className="w-3 h-3" />, label: statusLib.getText('planned') },
-        active: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400', icon: <Play className="w-3 h-3" />, label: statusLib.getText('active') },
-        warning: { bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-400', icon: <AlertCircle className="w-3 h-3" />, label: statusLib.getText('warning') },
-        completed: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-400', icon: <CheckCircle className="w-3 h-3" />, label: statusLib.getText('completed') }
-    };
-    const style = config[status];
 
-    return (
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${style.bg} ${style.text}`}>
-      {style.icon}
-            {style.label}
-    </span>
-    );
-};
 
 // Компонент для отображения allocation в развернутом виде
 const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allocations'] }) => {

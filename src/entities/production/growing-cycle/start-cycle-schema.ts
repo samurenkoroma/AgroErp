@@ -20,11 +20,9 @@ export const startCycleSchema = z.object({
     varietyID: z.string().optional(),
     protocolID: z.string().optional(),
 
-    status: z.string(),
-    stage: z.string(),
-    method: z.string(),
-
-    expectedHarvestAt: z.date().optional(),
+    status: z.string().min(1,"Status is required"),
+    stage: z.string().min(1,"State is required"),
+    method: z.string().min(1,"Method is required"),
 
     allocations: z.array(allocationSchema),
     plantings: z.array(plantingSchema)

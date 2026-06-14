@@ -35,7 +35,6 @@ export const UnitTreeNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
             >
                 <div className="p-3 flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                        {!hasChildren && <div className="w-5"/>}
 
                         <div className="text-2xl">{getUnitIcon(unit.type)}</div>
 

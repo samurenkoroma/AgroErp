@@ -4,7 +4,7 @@ import {useCrops} from "@/features/agronomy/crop";
 import {useVarieties} from "@/features/agronomy/variety/queries.ts";
 import {ProductionUnit} from "@/entities/spatial";
 import {useOptionHelpers} from "@/features/production/growing_cycle/queries.ts";
-import {createCycleSchema, StartCycleRequest, startCycleSchema} from "@/entities/production/growing-cycle";
+import {StartCycleRequest, startCycleSchema} from "@/entities/production/growing-cycle";
 import {generateCode, generateName} from "@/utils/translate.ts";
 import {dateLib} from "@/utils/date.ts";
 import {useStartCycle} from "@/features/production/growing_cycle";
@@ -41,7 +41,7 @@ export const StartCycleModal = ({
         }],
         plantings: []
     })
-    const validation = createCycleSchema.safeParse(formData)
+    const validation = startCycleSchema.safeParse(formData)
     const isValid = validation.success
     const {data: crops = [],} = useCrops({})
     const selectedCrop = crops.find(c => c.id === formData.cropID);
