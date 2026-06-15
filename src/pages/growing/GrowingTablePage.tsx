@@ -3,6 +3,7 @@ import {AlertCircle, Download, MapPin, Play, Search, Settings, Sprout, TrendingU
 import {GrowingRow} from "@/features/production/growing_cycle/components/GrowingRow.tsx";
 import {CreateCycleModal, useCycles, useOptionHelpers} from "@/features/production/growing_cycle";
 import {usePageActions} from "@/hooks/usePageActions.ts";
+import {formatArea} from "@/utils/geometry.ts";
 
 // ==================== MOCK DATA ====================
 
@@ -83,28 +84,9 @@ const GrowingTablePage = () => {
         const avgProgress = Math.round(cycles.reduce((sum, i) => sum + i.progress, 0) / cycles.length);
 
         return { totalArea, activeCount, warningCount, avgProgress };
-    }, []);
+    }, [cycles]);
 
-    // Уникальные стадии для фильтра
-    const stages = useMemo(() => {
-        const uniqueStages = new Set(cycles.map(i => i.stage));
-        return ['all', ...Array.from(uniqueStages)];
-    }, []);
 
-    const getStageLabelForFilter = (stage: string) => {
-        const labels: Record<string, string> = {
-            all: 'Все стадии',
-            planning: 'Планирование',
-            germination: 'Прорастание',
-            seedling: 'Рассада',
-            vegetative: 'Вегетация',
-            flowering: 'Цветение',
-            fruiting: 'Плодоношение',
-            harvesting: 'Сбор урожая',
-            completed: 'Завершен'
-        };
-        return labels[stage] || stage;
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -138,8 +120,7 @@ const GrowingTablePage = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <StatsCard
                         title="Общая площадь"
-                        value={stats.totalArea.toFixed(0)}
-                        unit="га"
+                        value={formatArea(stats.totalArea)}
                         icon={MapPin}
                         color="green"
                     />
@@ -183,19 +164,21 @@ const GrowingTablePage = () => {
                             className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                         >
                             <option value="all">Все статусы</option>
-                            <option value="active">Активные</option>
-                            <option value="warning">Требуют внимания</option>
-                            <option value="planned">Запланированные</option>
-                            <option value="completed">Завершенные</option>
+                            {helpers?.statusesOpt.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
                         </select>
                         <select
                             value={stageFilter}
                             onChange={(e) => setStageFilter(e.target.value)}
                             className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
                         >
-                            {stages.map(stage => (
-                                <option key={stage} value={stage}>
-                                    {getStageLabelForFilter(stage)}
+                            <option value="all">Все стадии</option>
+                            {helpers?.stagesOpt.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
                                 </option>
                             ))}
                         </select>
@@ -221,7 +204,7 @@ const GrowingTablePage = () => {
                             {filteredData.map((item) => (
                                 <GrowingRow
                                     key={item.id}
-                                    item={{...item, stage: helpers?.stages[item.stage] || '--'}}
+                                    item={item}
                                     isExpanded={expandedRows.has(item.id)}
                                     onToggle={() => toggleRow(item.id)}
                                 />

@@ -58,15 +58,36 @@ export const StartCycleModal = ({
     const setField = <K extends keyof StartCycleRequest>(field: K, value: StartCycleRequest[K]) => {
         setFormData(prev => ({...prev, [field]: value}));
     };
+    const reset = () => {
+        setFormData({
+            name: "",
+            code: "",
+            cropID: "",
+            varietyID: undefined,
+            protocolID: undefined,
+            status: "",
+            stage: "",
+            method: "",
+            allocations: [{
+                productionUnitID: unit.id,
+                area: unit.area,
+                startedAt: new Date(startedAt),
+            }],
+            plantings: []
+        })
+    }
 
     useEffect(() => {
         const crop = crops.find(c => c.id === formData.cropID)?.name ?? "";
         const variety = availableVarieties.find(v => v.id === formData.varietyID)?.name ?? "";
-
         setFormData(prev => ({
             ...prev,
             name: generateName(crop, variety, helpers?.methods[formData.method]!, new Date(startedAt)).trim(),
-            code: generateCode(crop, variety, formData.method, new Date(startedAt))
+            code: generateCode(crop, variety, formData.method, new Date(startedAt)),
+            allocations: [{
+                ...prev.allocations[0],
+                startedAt: new Date(startedAt),
+            }],
         }));
     }, [formData.cropID, formData.varietyID, formData.method, startedAt]);
 
@@ -78,28 +99,17 @@ export const StartCycleModal = ({
                 cropID: fieldErrors.cropID?.[0] ?? "",
                 name: fieldErrors.name?.[0] ?? "",
             });
-            setFormData({
-                name: "",
-                code: "",
-                cropID: "",
-                varietyID: undefined,
-                protocolID: undefined,
-                status: "",
-                stage: "",
-                method: "",
-                allocations: [{
-                    productionUnitID: unit.id,
-                    area: unit.area,
-                    startedAt: new Date(startedAt),
-                }],
-                plantings: []
-            })
             return;
         }
         startCycle(result.data, {
-            onSuccess: () => onClose()
+            onSuccess: () => {
+                reset()
+                onClose()
+            }
+
         });
     };
+
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={`Новый цикл выращивания ${unit.code}`} size="full">
@@ -229,6 +239,8 @@ export const StartCycleModal = ({
                             <span className="font-medium text-gray-600 dark:text-gray-400">Участок:</span>
                             <span
                                 className="col-span-3 font-semibold text-gray-900 dark:text-white">{unit.properties.metadata?.name ? unit.code : unit.properties.metadata?.name}</span>
+                            <span
+                                className="col-span-3 font-semibold text-gray-900 dark:text-white">{unit.id}</span>
                             <span className="font-medium text-gray-600 dark:text-gray-400">Название:</span>
                             <span
                                 className="col-span-3 font-semibold text-gray-900 dark:text-white">{formData.name || "—"}</span>

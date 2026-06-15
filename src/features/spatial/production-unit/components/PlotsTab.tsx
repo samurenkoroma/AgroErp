@@ -26,10 +26,12 @@ export const PlotsTab = ({units = []}: PlotsTabProps) => {
                     ["Редактирование", () => {
                         navigate(`/plot/${selectedUnit!.id}`)
                     }],
-                    ["Добавить дочерний", () => setIsCreateModalOpen(true)],
                 ])
-                if (selectedUnit?.children?.length == 0) {
+                if (selectedUnit?.children?.length == 0 && selectedUnit?.status == 'empty') {
                     act.set("Добавить посев", () => setIsCycleModalOpen(true))
+                }
+                if ( selectedUnit?.status == 'empty') {
+                    act.set("Добавить дочерний", () => setIsCreateModalOpen(true))
                 }
                 return act
             },
@@ -108,7 +110,7 @@ export const PlotsTab = ({units = []}: PlotsTabProps) => {
                 onSuccess={handleCreateUnit}
             />)}
 
-            {selectedUnit && (<StartCycleModal
+            {isCycleModalOpen && selectedUnit && (<StartCycleModal
                 unit={selectedUnit}
                 isOpen={isCycleModalOpen}
                 onClose={() => setIsCycleModalOpen(false)}

@@ -2,8 +2,8 @@ import {Calendar, ChevronDown, ChevronRight, MapPin, MoreVertical} from 'lucide-
 import {formatArea} from '@/utils/geometry';
 import {dateLib} from '@/utils/date';
 import {getCropIcon} from '@/utils/cropIcons';
-import {getStageIcon} from '@/utils/stageIcons';
 import {GrowingListItem} from "@/entities/production/growing-cycle";
+import {getEmoji, getLabel} from "@/utils";
 
 interface GrowingRowProps {
     item: GrowingListItem;
@@ -153,8 +153,8 @@ export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
                 {/* Стадия развития */}
                 <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-xl">{getStageIcon(item.stage)}</span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300">{item.stage}</span>
+                        <span className="text-xl">{getEmoji("stage",item.stage)}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{getLabel("stage",item.stage)}</span>
                     </div>
                 </td>
 

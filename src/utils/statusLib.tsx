@@ -1,7 +1,7 @@
 // src/utils/status.ts
 import {
     Play, Pause, CheckCircle, Calendar, Package, Archive, XCircle,
-    Sprout, Leaf, Trees, Flower2, Apple, Droplets, Circle
+    Sprout, Leaf, Trees, Flower2, Apple, Droplets, Circle, TrendingUp, Wrench
 } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -19,62 +19,7 @@ interface ConfigItem {
 // ==================== СТАТУСЫ (Statuses) ====================
 
 export const statusConfig: Record<string, ConfigItem> = {
-    planned: {
-        bg: 'bg-gray-100 dark:bg-gray-800',
-        text: 'text-gray-600 dark:text-gray-400',
-        icon: <Calendar className="w-3 h-3" />,
-        label: 'Запланирован',
-        emoji: '📋',
-        order: 1
-    },
-    active: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
-        icon: <Play className="w-3 h-3" />,
-        label: 'Активен',
-        emoji: '▶️',
-        order: 2
-    },
-    paused: {
-        bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-        text: 'text-yellow-700 dark:text-yellow-400',
-        icon: <Pause className="w-3 h-3" />,
-        label: 'Приостановлен',
-        emoji: '⏸️',
-        order: 3
-    },
-    harvesting: {
-        bg: 'bg-blue-100 dark:bg-blue-900/30',
-        text: 'text-blue-700 dark:text-blue-400',
-        icon: <Package className="w-3 h-3" />,
-        label: 'Сбор урожая',
-        emoji: '📦',
-        order: 4
-    },
-    completed: {
-        bg: 'bg-green-100 dark:bg-green-900/30',
-        text: 'text-green-700 dark:text-green-400',
-        icon: <CheckCircle className="w-3 h-3" />,
-        label: 'Завершен',
-        emoji: '✅',
-        order: 5
-    },
-    failed: {
-        bg: 'bg-red-100 dark:bg-red-900/30',
-        text: 'text-red-700 dark:text-red-400',
-        icon: <XCircle className="w-3 h-3" />,
-        label: 'Неудача',
-        emoji: '❌',
-        order: 6
-    },
-    archived: {
-        bg: 'bg-gray-100 dark:bg-gray-800',
-        text: 'text-gray-500 dark:text-gray-400',
-        icon: <Archive className="w-3 h-3" />,
-        label: 'Архивирован',
-        emoji: '📁',
-        order: 7
-    },
+    // Новые статусы
     empty: {
         bg: 'bg-gray-100 dark:bg-gray-800',
         text: 'text-gray-500 dark:text-gray-400',
@@ -82,6 +27,78 @@ export const statusConfig: Record<string, ConfigItem> = {
         label: 'Свободно',
         emoji: '◻️',
         order: 0
+    },
+    preparation: {
+        bg: 'bg-purple-100 dark:bg-purple-900/30',
+        text: 'text-purple-700 dark:text-purple-400',
+        icon: <Wrench className="w-3 h-3" />,
+        label: 'Подготовка',
+        emoji: '🔧',
+        order: 1
+    },
+    planned: {
+        bg: 'bg-gray-100 dark:bg-gray-800',
+        text: 'text-gray-600 dark:text-gray-400',
+        icon: <Calendar className="w-3 h-3" />,
+        label: 'Запланирован',
+        emoji: '📋',
+        order: 2
+    },
+    active: {
+        bg: 'bg-green-100 dark:bg-green-900/30',
+        text: 'text-green-700 dark:text-green-400',
+        icon: <Play className="w-3 h-3" />,
+        label: 'Активен',
+        emoji: '▶️',
+        order: 3
+    },
+    growing: {
+        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
+        text: 'text-emerald-700 dark:text-emerald-400',
+        icon: <TrendingUp className="w-3 h-3" />,
+        label: 'Растет',
+        emoji: '📈',
+        order: 4
+    },
+    paused: {
+        bg: 'bg-yellow-100 dark:bg-yellow-900/30',
+        text: 'text-yellow-700 dark:text-yellow-400',
+        icon: <Pause className="w-3 h-3" />,
+        label: 'Приостановлен',
+        emoji: '⏸️',
+        order: 5
+    },
+    harvesting: {
+        bg: 'bg-blue-100 dark:bg-blue-900/30',
+        text: 'text-blue-700 dark:text-blue-400',
+        icon: <Package className="w-3 h-3" />,
+        label: 'Сбор урожая',
+        emoji: '📦',
+        order: 6
+    },
+    completed: {
+        bg: 'bg-green-100 dark:bg-green-900/30',
+        text: 'text-green-700 dark:text-green-400',
+        icon: <CheckCircle className="w-3 h-3" />,
+        label: 'Завершен',
+        emoji: '✅',
+        order: 7
+    },
+    failed: {
+        bg: 'bg-red-100 dark:bg-red-900/30',
+        text: 'text-red-700 dark:text-red-400',
+        icon: <XCircle className="w-3 h-3" />,
+        label: 'Неудача',
+        emoji: '❌',
+        order: 8
+    },
+    archived: {
+        bg: 'bg-gray-100 dark:bg-gray-800',
+        text: 'text-gray-500 dark:text-gray-400',
+        icon: <Archive className="w-3 h-3" />,
+        label: 'Архивирован',
+        emoji: '📁',
+        order: 9
     }
 };
 
