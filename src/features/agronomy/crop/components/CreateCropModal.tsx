@@ -2,36 +2,13 @@ import {useState} from 'react';
 import {Save} from 'lucide-react';
 import {Modal} from '@/components/common/Modal';
 import {CreateCropRequest} from "@/entities/agronomy/crop/dto.ts";
+import {cropCategories, cropFamilies} from "@/entities/agronomy/crop/model.ts";
 
 interface CreateCropModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: (data: CreateCropRequest) => void;
 }
-
-const cropCategories = [
-    {value: 'Овощные', label: 'Овощные', icon: '🍅'},
-    {value: 'Зерновые', label: 'Зерновые', icon: '🌾'},
-    {value: 'Бобовые', label: 'Бобовые', icon: '🫘'},
-    {value: 'Технические', label: 'Технические', icon: '🌻'},
-    {value: 'Зеленные', label: 'Зеленные', icon: '🥬'},
-    {value: 'Пряные', label: 'Пряные', icon: '🌿'},
-    {value: 'Ягодные', label: 'Ягодные', icon: '🍓'},
-    {value: 'Плодовые', label: 'Плодовые', icon: '🍎'}
-];
-
-const cropFamilies = [
-    {value: 'solanaceae', label: 'Пасленовые (Solanaceae)', icon: '🍅'},
-    {value: 'cucurbitaceae', label: 'Тыквенные (Cucurbitaceae)', icon: '🥒'},
-    {value: 'brassicaceae', label: 'Капустные (Brassicaceae)', icon: '🥬'},
-    {value: 'apiaceae', label: 'Зонтичные (Apiaceae)', icon: '🥕'},
-    {value: 'liliaceae', label: 'Луковые (Liliaceae)', icon: '🧅'},
-    {value: 'fabaceae', label: 'Бобовые (Fabaceae)', icon: '🫘'},
-    {value: 'poaceae', label: 'Злаковые (Poaceae)', icon: '🌾'},
-    {value: 'asteraceae', label: 'Астровые (Asteraceae)', icon: '🌻'},
-    {value: 'rosaceae', label: 'Розовые (Rosaceae)', icon: '🍎'},
-    {value: 'lamiaceae', label: 'Яснотковые (Lamiaceae)', icon: '🌿'}
-];
 
 export const CreateCropModal = ({isOpen, onClose, onSuccess}: CreateCropModalProps) => {
     const [formData, setFormData] = useState({

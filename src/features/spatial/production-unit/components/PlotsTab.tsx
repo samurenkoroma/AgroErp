@@ -7,7 +7,6 @@ import {useNavigate} from "react-router-dom";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 import {CreatePlotModal} from "@/features/spatial/production-unit/forms/CreatePlotModal.tsx";
-import {CreateMultipleCyclesModal} from "@/features/production/growing_cycle/components/CreateMultipleCyclesModal.tsx";
 import {StartCycleModal} from "@/features/production/growing_cycle";
 
 interface PlotsTabProps {
