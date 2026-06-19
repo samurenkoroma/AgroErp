@@ -239,8 +239,7 @@ export const StartCycleModal = ({
                             <span className="font-medium text-gray-600 dark:text-gray-400">Участок:</span>
                             <span
                                 className="col-span-3 font-semibold text-gray-900 dark:text-white">{unit.properties.metadata?.name ? unit.code : unit.properties.metadata?.name}</span>
-                            <span
-                                className="col-span-3 font-semibold text-gray-900 dark:text-white">{unit.id}</span>
+
                             <span className="font-medium text-gray-600 dark:text-gray-400">Название:</span>
                             <span
                                 className="col-span-3 font-semibold text-gray-900 dark:text-white">{formData.name || "—"}</span>
