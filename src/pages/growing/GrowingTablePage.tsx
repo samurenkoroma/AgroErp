@@ -1,46 +1,20 @@
-import {useMemo, useState} from 'react';
-import {AlertCircle, Download, MapPin, Play, Search, Settings, Sprout, TrendingUp} from 'lucide-react';
+import {useState} from 'react';
+import {Download, MapPin, Settings, Sprout} from 'lucide-react';
 import {GrowingRow} from "@/features/production/growing_cycle/components/GrowingRow.tsx";
-import {CreateCycleModal, useCycles, useOptionHelpers} from "@/features/production/growing_cycle";
+import {CreateCycleModal, useCycles} from "@/features/production/growing_cycle";
 import {usePageActions} from "@/hooks/usePageActions.ts";
-import {formatArea} from "@/utils/geometry.ts";
 
 // ==================== MOCK DATA ====================
 
 
-// ==================== STATS CARD ====================
 
-const StatsCard = ({ title, value, unit, icon: Icon, color }: {
-    title: string;
-    value: string | number;
-    unit?: string;
-    icon: any;
-    color: string
-}) => (
-    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800">
-        <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500">{title}</span>
-            <div className={`p-1.5 rounded-lg bg-${color}-100 dark:bg-${color}-900/20`}>
-                <Icon className={`w-4 h-4 text-${color}-600 dark:text-${color}-400`} />
-            </div>
-        </div>
-        <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{value}</span>
-            {unit && <span className="text-sm text-gray-500">{unit}</span>}
-        </div>
-    </div>
-);
 
 // ==================== MAIN COMPONENT ====================
 
 const GrowingTablePage = () => {
-    const [searchTerm, setSearchTerm] = useState('');
     const [isCreateModal, setIsCreateModal] = useState(false);
-    const [statusFilter, setStatusFilter] = useState<string>('all');
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-    const [stageFilter, setStageFilter] = useState<string>('all');
     const {data: cycles = []} = useCycles();
-    const {data: helpers} = useOptionHelpers()
 
     usePageActions({
         actions: [
@@ -56,37 +30,12 @@ const GrowingTablePage = () => {
     });
     const toggleRow = (id: string) => {
         setExpandedRows(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(id)) {
-                newSet.delete(id);
-            } else {
-                newSet.add(id);
+            if (prev.has(id)) {
+                return new Set();
             }
-            return newSet;
+            return new Set([id]);
         });
     };
-
-
-    const filteredData = useMemo(() => {
-        return cycles.filter(item => {
-            const matchesSearch = item.cropName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.varietyName.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-            const matchesStage = stageFilter === 'all' || item.stage === stageFilter;
-            return matchesSearch && matchesStatus && matchesStage;
-        });
-    }, [searchTerm, statusFilter, stageFilter, cycles]);
-
-    const stats = useMemo(() => {
-        const totalArea = cycles.reduce((sum, i) => sum + i.allocatedArea, 0);
-        const activeCount = cycles.filter(i => i.status === 'active').length;
-        const warningCount = cycles.filter(i => i.status === 'warning').length;
-        const avgProgress = Math.round(cycles.reduce((sum, i) => sum + i.progress, 0) / cycles.length);
-
-        return { totalArea, activeCount, warningCount, avgProgress };
-    }, [cycles]);
-
-
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -116,74 +65,7 @@ const GrowingTablePage = () => {
             </div>
 
             <div className="max-w-7xl mx-auto px-6 py-6">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <StatsCard
-                        title="Общая площадь"
-                        value={formatArea(stats.totalArea)}
-                        icon={MapPin}
-                        color="green"
-                    />
-                    <StatsCard
-                        title="Активных циклов"
-                        value={stats.activeCount}
-                        icon={Play}
-                        color="blue"
-                    />
-                    <StatsCard
-                        title="Требуют внимания"
-                        value={stats.warningCount}
-                        icon={AlertCircle}
-                        color="yellow"
-                    />
-                    <StatsCard
-                        title="Средний прогресс"
-                        value={stats.avgProgress}
-                        unit="%"
-                        icon={TrendingUp}
-                        color="purple"
-                    />
-                </div>
 
-                {/* Filters */}
-                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 mb-6">
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Поиск по культуре или сорту..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                            />
-                        </div>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                        >
-                            <option value="all">Все статусы</option>
-                            {helpers?.statusesOpt.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            value={stageFilter}
-                            onChange={(e) => setStageFilter(e.target.value)}
-                            className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg"
-                        >
-                            <option value="all">Все стадии</option>
-                            {helpers?.stagesOpt.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
 
                 {/* Table */}
                 <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
@@ -193,27 +75,25 @@ const GrowingTablePage = () => {
                             <tr>
                                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Культура / Сорт</th>
                                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Площадь</th>
-                                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Стадия развития</th>
-                                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Прогресс</th>
+                                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Количество</th>
                                 <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Сроки</th>
-                                <th className="text-left px-4 py-3 text-sm font-medium text-gray-500">Статус</th>
                                 <th className="w-10"></th>
                             </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                            {filteredData.map((item) => (
+                            {cycles.map((item) => (
                                 <GrowingRow
-                                    key={item.id}
+                                    key={item.cropName}
                                     item={item}
-                                    isExpanded={expandedRows.has(item.id)}
-                                    onToggle={() => toggleRow(item.id)}
+                                    isExpanded={expandedRows.has(item.cropName)}
+                                    onToggle={() => toggleRow(item.cropName)}
                                 />
                             ))}
                             </tbody>
                         </table>
                     </div>
 
-                    {filteredData.length === 0 && (
+                    {cycles.length === 0 && (
                         <div className="text-center py-12">
                             <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                             <p className="text-gray-500">Нет данных по посевам</p>

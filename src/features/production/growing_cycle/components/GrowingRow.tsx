@@ -44,21 +44,6 @@ const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allo
             </div>
         );
     }
-
-    // Общая статистика по всем allocations
-    // const totalArea = allocations.reduce((sum, a) => sum + a.area, 0);
-    // const avgProgress = allocations.reduce((sum, a) => sum + a.progress, 0) / allocations.length;
-    // const earliestStart = allocations.reduce((earliest, a) => {
-    //     if (!a.startDate) return earliest;
-    //     if (!earliest) return a.startDate;
-    //     return new Date(a.startDate) < new Date(earliest) ? a.startDate : earliest;
-    // }, '' as string);
-    // const latestEnd = allocations.reduce((latest, a) => {
-    //     if (!a.endDate) return latest;
-    //     if (!latest) return a.endDate;
-    //     return new Date(a.endDate) > new Date(latest) ? a.endDate : latest;
-    // }, '' as string);
-
     return (
         <div className="space-y-4">
 
@@ -68,9 +53,9 @@ const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allo
                 <div className="space-y-2">
                     {allocations.map((allocation) => (
                         <div key={allocation.productionUnitId} className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium text-gray-900 dark:text-white">{allocation.productionUnitName}</p>
+                                    <p className="font-medium text-gray-900 dark:text-white">{allocation.cycleName} - {allocation.productionUnitName}</p>
                                     <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-500">
                                         <span>Площадь: {formatArea(allocation.area)}</span>
                                         {allocation.startDate && (
@@ -87,15 +72,26 @@ const AllocationDetails = ({ allocations }: { allocations: GrowingListItem['allo
                                         )}
                                     </div>
                                 </div>
-                                <div className="text-right">
+
+                                <td className="px-4 py-4">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{allocation.progress}%</span>
+                                        <span className="text-xl">{getEmoji("status", allocation.status)}</span>
+                                        <span
+                                            className="text-sm text-gray-700 dark:text-gray-300">{getLabel("status", allocation.status)}</span>
                                     </div>
-                                    <div className="w-24 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-1">
-                                        <div
-                                            className="h-full bg-green-500 rounded-full"
-                                            style={{ width: `${allocation.progress}%` }}
-                                        />
+                                </td>
+
+                                {/* Стадия развития */}
+                                <td className="px-4 py-4">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xl">{getEmoji("stage", allocation.stage)}</span>
+                                        <span
+                                            className="text-sm text-gray-700 dark:text-gray-300">{getLabel("stage", allocation.stage)}</span>
+                                    </div>
+                                </td>
+                                <div className="text-right">
+                                    <div className="px-4 py-4">
+                                        <ProgressBar progress={allocation.progress}/>
                                     </div>
                                 </div>
                             </div>
@@ -112,16 +108,16 @@ export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
     const totalArea = item.allocations?.reduce((sum, a) => sum + a.area, 0) || item.allocatedArea;
 
     // Начальная дата из первого allocation
-    const startDate = item.startDate || item.allocations?.[0]?.startDate;
+    const startDate = item.allocations?.[0]?.startDate;
 
     // Конечная дата из первого allocation
-    const endDate = item.endDate || item.allocations?.[0]?.endDate;
+    const endDate = item.allocations?.[0]?.endDate;
 
     return (
         <>
             <tr
                 onClick={(e) => { e.stopPropagation(); onToggle(); }}
-                className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group"
+                className={`border-b border-gray-200 dark:border-gray-800 hover:bg-green-50 dark:hover:bg-green-800/50 group ${isExpanded?'bg-green-200  hover:bg-green-200 dark:bg-green-700': ''}`}
             >
                 {/* Культура / Сорт */}
                 <td className="px-4 py-4">
@@ -137,7 +133,6 @@ export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
                                 <span className="text-xl">{getCropIcon(item.cropName)}</span>
                                 <span className="font-semibold text-gray-900 dark:text-white">{item.cropName}</span>
                             </div>
-                            <div className="text-sm text-gray-500 mt-0.5">{item.varietyName}</div>
                         </div>
                     </div>
                 </td>
@@ -146,24 +141,16 @@ export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
                 <td className="px-4 py-4">
                     <span className="text-sm text-gray-700 dark:text-gray-300">{formatArea(totalArea)}</span>
                     {item.allocations && item.allocations.length > 1 && (
-                        <div className="text-xs text-gray-400">{item.allocations.length} участка</div>
+                        <div className="text-xs text-gray-400">Участков: {item.allocations.length}</div>
                     )}
                 </td>
 
-                {/* Стадия развития */}
+
+
                 <td className="px-4 py-4">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl">{getEmoji("stage",item.stage)}</span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300">{getLabel("stage",item.stage)}</span>
-                    </div>
+                    <span>{item.count}</span>
                 </td>
 
-                {/* Прогресс */}
-                <td className="px-4 py-4">
-                    <ProgressBar progress={item.progress} />
-                </td>
-
-                {/* Сроки */}
                 <td className="px-4 py-4">
                     <div className="text-sm">
                         <div className="text-gray-700 dark:text-gray-300">{startDate ? dateLib.format(startDate) : '—'}</div>
@@ -171,11 +158,6 @@ export const GrowingRow = ({ item, isExpanded, onToggle }: GrowingRowProps) => {
                     </div>
                 </td>
 
-                {/* Статус */}
-                <td className="px-4 py-4">
-
-                    <span></span>
-                </td>
 
                 {/* Действия */}
                 <td className="px-4 py-4">

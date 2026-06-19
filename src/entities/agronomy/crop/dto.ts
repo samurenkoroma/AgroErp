@@ -16,7 +16,7 @@ export interface UpdateCropRequest {
 
 export interface CropFilters {
     search?: string;
-    category?: string;
+    categories?: string[];
     family?: string;
     archived?: boolean;
 }

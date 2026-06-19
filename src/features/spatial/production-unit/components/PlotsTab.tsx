@@ -6,8 +6,9 @@ import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTr
 import {useNavigate} from "react-router-dom";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
-import {StartCycleModal} from "@/features/production/growing_cycle";
 import {CreatePlotModal} from "@/features/spatial/production-unit/forms/CreatePlotModal.tsx";
+import {CreateMultipleCyclesModal} from "@/features/production/growing_cycle/components/CreateMultipleCyclesModal.tsx";
+import {StartCycleModal} from "@/features/production/growing_cycle";
 
 interface PlotsTabProps {
     units: ProductionUnit[]
@@ -115,6 +116,30 @@ export const PlotsTab = ({units = []}: PlotsTabProps) => {
                 isOpen={isCycleModalOpen}
                 onClose={() => setIsCycleModalOpen(false)}
             />)}
+
+            {/*{isCycleModalOpen && selectedUnit && (<CreateCycleWithContainerModal*/}
+            {/*    isOpen={isCycleModalOpen}*/}
+            {/*    onClose={() => setIsCycleModalOpen(false)} onSuccess={function (data: any): void {*/}
+            {/*    throw new Error("Function not implemented.");*/}
+            {/*}}/>)}*/}
+
+            {/*{isCycleModalOpen && selectedUnit && (<CreateMultiCycleModal*/}
+            {/*    isOpen={isCycleModalOpen}*/}
+            {/*    onClose={() => setIsCycleModalOpen(false)} onSuccess={function (data: any): void {*/}
+            {/*    throw new Error("Function not implemented.");*/}
+            {/*}}/>)}*/}
+
+            {/*{isCycleModalOpen && selectedUnit && (<CreateCycleWithItemsModal*/}
+            {/*    isOpen={isCycleModalOpen}*/}
+            {/*    onClose={() => setIsCycleModalOpen(false)} onSuccess={function (data: any): void {*/}
+            {/*    throw new Error("Function not implemented.");*/}
+            {/*}}/>)}*/}
+            {/*{isCycleModalOpen && selectedUnit && (<CreateMultipleCyclesModal*/}
+            {/*    isOpen={isCycleModalOpen}*/}
+            {/*    productionUnitName={selectedUnit.code}*/}
+            {/*    onClose={() => setIsCycleModalOpen(false)} onSuccess={function (data: any): void {*/}
+            {/*    throw new Error("Function not implemented.");*/}
+            {/*}}/>)}*/}
 
         </div>
     )

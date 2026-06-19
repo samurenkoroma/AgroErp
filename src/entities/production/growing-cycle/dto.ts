@@ -1,25 +1,21 @@
 export interface GrowingListItem {
-    id: string;
     cropName: string;
-    varietyName: string;
-
     allocatedArea: number;
-
-    stage: string;
-    status:string;
-
-    progress: number;
     tasksCount?: number;
-
-    startDate?: string;
-    endDate?: string;
+    progress: number;
+    count: number;
     allocations: Allocations[]
 }
 
 export interface Allocations {
-    productionUnitId: string
-    productionUnitName: string
-    area: number
+    cycleName: string;
+    cycleId: string;
+    varietyName?: string;
+    status:string;
+    stage: string;
+    productionUnitId?: string
+    productionUnitName?: string
+    area?: number
     progress: number
     startDate?: string
     endDate?: string
