@@ -6,7 +6,7 @@ import {useCrop} from "@/features/agronomy/crop/queries.ts";
 import {useVarieties} from "@/features/agronomy/variety/queries.ts";
 import {usePageActions} from "@/hooks/usePageActions.ts";
 import {useState} from "react";
-import {CreateVarietyModal} from "@/features/agronomy/variety/components/CreateVarietyModal.tsx";
+import {CreateVarietyModal} from "@/features/agronomy/variety/components/CreateVarietyModal2.tsx";
 import {useCreateVariety} from "@/features/agronomy/variety/mutations.ts";
 import {CreateVarietyRequest} from "@/entities/agronomy/variety/dto.ts";
 
@@ -155,12 +155,13 @@ const CropDetailsPage = () => {
                         </div>
                     </section>)}
             </div>
-            {
+            {crop &&
                 <CreateVarietyModal
                     isOpen={isOpenCreateVariety}
                     onClose={() => {
                         setIsOpenCreateVariety(false)
                     }}
+                    crop={crop}
                     onSuccess={(data: CreateVarietyRequest) => createVariety(data)}
                 />
             }

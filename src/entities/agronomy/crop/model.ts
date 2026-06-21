@@ -3,17 +3,50 @@ import {Metadata} from '@/entities/shared/types';
 export interface Crop {
     id: string;
     name: string;
+    imageUrl?: string;
     category: string;
     family: string;
-    scientificName?: string;
-    description?: string;
     metadata: Metadata;
-    createdAt: string;
-    updatedAt: string;
-    archivedAt?: string;
-
-    imageUrl?: string;
+    agronomy: AgronomyProfile
 }
+
+// src/features/catalog/types.ts
+
+export interface AgronomyProfile {
+    thermalRequirements: {
+        baseTemperature: number;
+        upperTemperature: number;
+        gddToHarvest: number;
+    };
+    tolerance: {
+        temperatureMin: number;
+        temperatureMax: number;
+        humidityMin: number;
+        humidityMax: number;
+    };
+    waterRequirement: {
+        dailyNeedMin: number;
+        dailyNeedOpt: number;
+    };
+    lightRequirement: {
+        ppfdMin: number;
+        ppfdOpt: number;
+        dayLengthMin: number;
+        dayLengthOpt: number;
+        photoperiodType: 'short_day' | 'long_day' | 'day_neutral';
+    };
+    phenophaseGDD: Array<{
+        code: string;
+        name: string;
+        gddRequired: number;
+        description: string;
+        isCritical: boolean;
+    }>;
+}
+
+
+
+
 
 
 export const cropCategories = [

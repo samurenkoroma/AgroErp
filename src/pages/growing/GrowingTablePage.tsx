@@ -3,6 +3,9 @@ import {Download, MapPin, Settings, Sprout} from 'lucide-react';
 import {GrowingRow} from "@/features/production/growing_cycle/components/GrowingRow.tsx";
 import {CreateCycleModal, useCycles} from "@/features/production/growing_cycle";
 import {usePageActions} from "@/hooks/usePageActions.ts";
+import {
+    CreateMultipleCyclesModal
+} from "@/features/production/growing_cycle/components/CreateMultipleSeedlingsModal.tsx";
 
 // ==================== MOCK DATA ====================
 
@@ -103,7 +106,7 @@ const GrowingTablePage = () => {
                 </div>
             </div>
             {
-                isCreateModal && <CreateCycleModal isOpen={isCreateModal} onClose={() => setIsCreateModal(false)}/>
+                isCreateModal && <CreateMultipleCyclesModal isOpen={isCreateModal} onClose={() => setIsCreateModal(false)}/>
             }
         </div>
     );

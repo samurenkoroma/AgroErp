@@ -2,19 +2,7 @@ export interface CreateVarietyRequest {
     cropId: string;
     name: string;
     description?: string;
-    tolerance: {
-        temperatureMin?: number;
-        temperatureMax?: number;
-
-        humidityMin?: number;
-        humidityMax?: number;
-
-        phMin?: number;
-        phMax?: number;
-
-        ecMin?: number;
-        ecMax?: number;
-    };
+    daysToMaturity: number;
 }
 
 export interface UpdateVarietyRequest {
