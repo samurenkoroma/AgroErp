@@ -67,6 +67,23 @@ export const SvgSchemeEditor = ({
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    // ===== ✅ Функция округления до 0.1 =====
+    const roundToDecimal = (value: number, decimals: number = 1): number => {
+        const factor = Math.pow(10, decimals);
+        return Math.round(value * factor) / factor;
+    };
+
+    // ===== ✅ Округление размеров элемента =====
+    const roundElementDimensions = useCallback((element: Element): Element => {
+        return {
+            ...element,
+            x: roundToDecimal(element.x, 1),
+            y: roundToDecimal(element.y, 1),
+            width: roundToDecimal(element.width, 1),
+            height: roundToDecimal(element.height, 1)
+        };
+    }, []);
+
     // ===== Расчет масштаба SVG =====
     useEffect(() => {
         if (!containerRef.current) return;
@@ -138,16 +155,17 @@ export const SvgSchemeEditor = ({
         return { valid: true };
     }, [isInsideBounds, isOverlapping, elements]);
 
-    // ===== Ограничение координат =====
+    // ===== Ограничение координат с округлением =====
     const clampPosition = useCallback((element: Element): Element => {
-        return {
+        const clamped = {
             ...element,
             x: Math.max(0, Math.min(realWidth - element.width, element.x)),
             y: Math.max(0, Math.min(realHeight - element.height, element.y)),
             width: Math.max(0.1, Math.min(realWidth - element.x, element.width)),
             height: Math.max(0.1, Math.min(realHeight - element.y, element.height))
         };
-    }, [realWidth, realHeight]);
+        return roundElementDimensions(clamped);
+    }, [realWidth, realHeight, roundElementDimensions]);
 
     // ===== Цвета =====
     const getDefaultColor = () => {
@@ -160,10 +178,10 @@ export const SvgSchemeEditor = ({
 
     // ===== Добавление грядки =====
     const handleAddBed = useCallback(() => {
-        const bedWidth = realWidth * 0.25;
-        const bedHeight = realHeight * 0.2;
-        let newX = realWidth * 0.05;
-        let newY = realHeight * 0.05;
+        const bedWidth = roundToDecimal(realWidth * 0.25);
+        const bedHeight = roundToDecimal(realHeight * 0.2);
+        let newX = roundToDecimal(realWidth * 0.05);
+        let newY = roundToDecimal(realHeight * 0.05);
         let found = false;
         let attempts = 0;
         const maxAttempts = 50;
@@ -187,14 +205,14 @@ export const SvgSchemeEditor = ({
                 break;
             }
 
-            newX = realWidth * 0.05 + Math.random() * realWidth * 0.7;
-            newY = realHeight * 0.05 + Math.random() * realHeight * 0.7;
+            newX = roundToDecimal(realWidth * 0.05 + Math.random() * realWidth * 0.7);
+            newY = roundToDecimal(realHeight * 0.05 + Math.random() * realHeight * 0.7);
             attempts++;
         }
 
         if (!found) {
-            newX = realWidth * 0.2;
-            newY = realHeight * 0.2;
+            newX = roundToDecimal(realWidth * 0.2);
+            newY = roundToDecimal(realHeight * 0.2);
         }
 
         const newBed: Element = {
@@ -230,8 +248,8 @@ export const SvgSchemeEditor = ({
         const element = elements.find(el => el.id === selectedId);
         if (!element) return;
 
-        const offsetX = realWidth * 0.02;
-        const offsetY = realHeight * 0.02;
+        const offsetX = roundToDecimal(realWidth * 0.02);
+        const offsetY = roundToDecimal(realHeight * 0.02);
         let newX = Math.min(element.x + offsetX, realWidth - element.width);
         let newY = Math.min(element.y + offsetY, realHeight - element.height);
 
@@ -251,11 +269,14 @@ export const SvgSchemeEditor = ({
             label: `${element.label} (копия)`
         };
 
-        setElements(prev => [...prev, newElement]);
-        setSelectedId(newElement.id);
-    }, [selectedId, elements, readonly, realWidth, realHeight]);
+        // ✅ Округляем размеры копии
+        const roundedElement = roundElementDimensions(newElement);
 
-    // ===== ОБРАБОТЧИКИ МЫШИ - ИСПРАВЛЕНЫ =====
+        setElements(prev => [...prev, roundedElement]);
+        setSelectedId(roundedElement.id);
+    }, [selectedId, elements, readonly, realWidth, realHeight, roundElementDimensions]);
+
+    // ===== ОБРАБОТЧИКИ МЫШИ =====
     const handleMouseDown = useCallback((e: React.MouseEvent<SVGElement>, elementId: string, handle?: string) => {
         if (readonly) return;
         e.stopPropagation();
@@ -329,7 +350,8 @@ export const SvgSchemeEditor = ({
 
             setElements(prev => prev.map(el => {
                 if (el.id === selectedId) {
-                    return { ...el, x: newX, y: newY };
+                    const updated = { ...el, x: newX, y: newY };
+                    return roundElementDimensions(updated);
                 }
                 return el;
             }));
@@ -381,19 +403,29 @@ export const SvgSchemeEditor = ({
 
             setElements(prev => prev.map(el => {
                 if (el.id === selectedId) {
-                    return { ...el, x: newX, y: newY, width: newWidth, height: newHeight };
+                    const updated = { ...el, x: newX, y: newY, width: newWidth, height: newHeight };
+                    return roundElementDimensions(updated);
                 }
                 return el;
             }));
         }
-    }, [isDragging, isResizing, selectedId, dragStart, resizeHandle, elements, svgSize, toRealX, toRealY]);
+    }, [isDragging, isResizing, selectedId, dragStart, resizeHandle, elements, svgSize, toRealX, toRealY, roundElementDimensions]);
 
     const handleMouseUp = useCallback(() => {
         if (isDragging || isResizing) {
             if (selectedId) {
                 const element = elements.find(el => el.id === selectedId);
                 if (element) {
-                    const validation = validateElement(element);
+                    // ✅ Округляем финальные размеры
+                    const rounded = roundElementDimensions(element);
+                    setElements(prev => prev.map(el => {
+                        if (el.id === selectedId) {
+                            return rounded;
+                        }
+                        return el;
+                    }));
+
+                    const validation = validateElement(rounded);
                     if (!validation.valid) {
                         setError(validation.error || 'Неверное расположение грядки');
                         setTimeout(() => setError(null), 3000);
@@ -405,7 +437,7 @@ export const SvgSchemeEditor = ({
         setIsDragging(false);
         setIsResizing(false);
         setResizeHandle(null);
-    }, [isDragging, isResizing, selectedId, elements, validateElement]);
+    }, [isDragging, isResizing, selectedId, elements, validateElement, roundElementDimensions]);
 
     // ===== Остальные обработчики =====
     const handleBedClick = useCallback((element: Element) => {
@@ -450,7 +482,7 @@ export const SvgSchemeEditor = ({
         return `${(metersPerPixel * 100).toFixed(2)} см/пикс`;
     };
 
-    // ===== Рендер элементов с размерами внутри =====
+    // ===== Рендер элементов =====
     const renderElements = useCallback(() => {
         return elements.map((element) => {
             const isSelected = selectedId === element.id;
@@ -469,7 +501,6 @@ export const SvgSchemeEditor = ({
                             className={readonly ? 'cursor-pointer' : 'cursor-move'}
                             onClick={() => handleBedClick(element)}
                         >
-                            {/* Основной прямоугольник */}
                             <rect
                                 x={svgX}
                                 y={svgY}
@@ -479,12 +510,11 @@ export const SvgSchemeEditor = ({
                                 stroke={isSelected ? '#3b82f6' : (isValid ? element.color : '#ef4444')}
                                 strokeWidth={isSelected ? 3 : (isValid ? 2 : 2)}
                                 strokeDasharray={isValid ? 'none' : '4,4'}
-                                rx={4}
+                                rx={0}
                                 style={{ opacity: element.opacity || 1 }}
                                 onMouseDown={(e) => !readonly && handleMouseDown(e, element.id)}
                             />
 
-                            {/* Содержимое грядки */}
                             <g>
                                 {element.icon && (
                                     <text
@@ -510,7 +540,7 @@ export const SvgSchemeEditor = ({
                                     {element.label}
                                 </text>
 
-                                {/* ✅ РАЗМЕРЫ ВНУТРИ ГРЯДКИ */}
+                                {/* ✅ Размеры с округлением до 0.1 */}
                                 <text
                                     x={svgX + svgW / 2}
                                     y={svgY + svgH / 2 + 14}
@@ -520,7 +550,7 @@ export const SvgSchemeEditor = ({
                                     dominantBaseline="middle"
                                     className="select-none pointer-events-none"
                                 >
-                                    {element.width.toFixed(1)}×{element.height.toFixed(1)} м
+                                    {roundToDecimal(element.width, 1)}×{roundToDecimal(element.height, 1)} м
                                 </text>
 
                                 {element.number && (
@@ -537,7 +567,6 @@ export const SvgSchemeEditor = ({
                                 )}
                             </g>
 
-                            {/* Элементы управления при выделении */}
                             {isSelected && !readonly && (
                                 <>
                                     {['nw', 'ne', 'sw', 'se'].map((corner) => {
@@ -585,7 +614,7 @@ export const SvgSchemeEditor = ({
                     return null;
             }
         });
-    }, [elements, selectedId, readonly, handleBedClick, handleMouseDown, startEditingLabel, validateElement]);
+    }, [elements, selectedId, readonly, handleBedClick, handleMouseDown, startEditingLabel, validateElement, roundToDecimal]);
 
     // ===== Информация о грядках =====
     const bedsCount = elements.filter(e => e.type === 'bed').length;
@@ -636,12 +665,6 @@ export const SvgSchemeEditor = ({
                         </button>
                         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
                         <button
-                            onClick={onCancel}
-                            className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
-                        >
-                            Отмена
-                        </button>
-                        <button
                             onClick={() => onSave(elements)}
                             className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                         >
@@ -655,7 +678,7 @@ export const SvgSchemeEditor = ({
             <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-wrap gap-2 text-sm">
                 <div className="flex items-center gap-3">
           <span className="text-gray-600 dark:text-gray-400">
-            Размер: {realWidth.toFixed(1)} × {realHeight.toFixed(1)} м
+            Размер: {roundToDecimal(realWidth, 1)} × {roundToDecimal(realHeight, 1)} м
           </span>
                     <span className="text-gray-600 dark:text-gray-400">
             📦 Грядок: {bedsCount}
@@ -729,6 +752,7 @@ export const SvgSchemeEditor = ({
                         stroke="#9ca3af"
                         strokeWidth={1}
                         strokeDasharray="8,4"
+                        rx={0}
                     />
 
                     {renderElements()}
@@ -739,7 +763,7 @@ export const SvgSchemeEditor = ({
                         fontSize={10}
                         fill="#9ca3af"
                     >
-                        Масштаб: {realWidth.toFixed(1)}м × {realHeight.toFixed(1)}м
+                        Масштаб: {roundToDecimal(realWidth, 1)}м × {roundToDecimal(realHeight, 1)}м
                     </text>
                 </svg>
             </div>

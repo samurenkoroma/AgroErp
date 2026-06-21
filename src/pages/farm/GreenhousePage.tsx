@@ -11,7 +11,6 @@ import {
     Layers,
     Plus,
     Ruler,
-    Save,
     Sprout,
     Sun,
     Thermometer,
@@ -21,11 +20,12 @@ import {Element, SvgSchemeEditor} from "@/components/svg/SvgSchemeEditor";
 import Loading from "@/components/shared/Loading";
 import Error from "@/components/shared/Error";
 import {Button} from "@/components/common/Button";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {formatArea} from "@/utils/geometry";
 import {useProductionUnit} from "@/features/spatial/production-unit/queries.ts";
 import {useCycles} from "@/features/production/growing_cycle";
 import {getBgColor} from "@/utils";
+import {useUpdateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 
 const GreenhousePage = () => {
     const {id} = useParams<{ id: string }>();
@@ -36,7 +36,7 @@ const GreenhousePage = () => {
     const [activeTab, setActiveTab] = useState('crops');
     const [editSchema, setEditSchema] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+    const {mutate: updateUnit} = useUpdateProductionUnit()
     const {data: plans} = useCycles();
 
 
@@ -109,6 +109,13 @@ const GreenhousePage = () => {
                   </span>
                                 </div>
                             </div>
+                            {/* Кнопки действий */}
+                            <div className="border-t border-gray-200 dark:border-gray-800 flex flex-row gap-2">
+                                <Button variant="primary" onClick={() => setEditSchema(!editSchema)} fullWidth>
+                                    <Wrench className="w-4 h-4"/>
+                                    {editSchema ? 'Отменить редактирование' : 'Изменить схему'}
+                                </Button>
+                            </div>
                         </div>
                     </div>
 
@@ -120,7 +127,10 @@ const GreenhousePage = () => {
                                 height={svgHeight}
                                 type="greenhouse"
                                 initialElements={schema}
-                                onSave={(elements: Element[]) => {console.log(elements)}}
+                                onSave={(elements: Element[]) => {
+                                    updateUnit({...object, schema: elements})
+                                    setEditSchema(false)
+                                }}
                                 onCancel ={() => {}}
                                 readonly={!editSchema}
                                 onBedClick={(element) => {
@@ -128,24 +138,6 @@ const GreenhousePage = () => {
                                 }}
                             />
                         </div>
-                    </div>
-
-                    {/* Кнопки действий */}
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-800 flex flex-row gap-2">
-                        <Button variant="primary" onClick={() => setEditSchema(!editSchema)} fullWidth>
-                            <Wrench className="w-4 h-4"/>
-                            {editSchema ? 'Завершить редактирование' : 'Изменить схему'}
-                        </Button>
-                        {editSchema && (
-                            <Button variant="success" onClick={() => {}} fullWidth>
-                                <Save className="w-4 h-4"/>
-                                Сохранить схему
-                            </Button>
-                        )}
-                        <Button variant="danger" onClick={() => {}} fullWidth>
-                            <Delete className="w-4 h-4"/>
-                            Удалить
-                        </Button>
                     </div>
                 </div>
             </div>

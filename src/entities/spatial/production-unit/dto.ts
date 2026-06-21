@@ -32,4 +32,5 @@ export interface UpdateProductionUnitRequest {
     name?: string;
     geometry?: unknown;
     capacity?: number;
+    schema?: any[]
 }
