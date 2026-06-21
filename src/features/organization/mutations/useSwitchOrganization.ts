@@ -22,6 +22,7 @@ export const useSwitchOrganization = () => {
             await queryClient.invalidateQueries({queryKey: ['organizations']});
             await queryClient.invalidateQueries({queryKey: ['production-units']});
             await queryClient.invalidateQueries({queryKey: ['production-units-tree']});
+            await queryClient.invalidateQueries({queryKey: ['growing-cycles']});
             await queryClient.invalidateQueries({queryKey: ['seasons']});
         },
     });
