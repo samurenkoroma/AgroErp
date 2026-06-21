@@ -15,7 +15,7 @@ import {StorageTab} from "@/features/spatial/production-unit/components/StorageT
 import {PlotsTab} from "@/features/spatial/production-unit/components/PlotsTab.tsx";
 
 const ProductionUnitsPage = () => {
-    const [activeTab, setActiveTab] = useState<RootUnits>('PLOT');
+    const [activeTab, setActiveTab] = useState<RootUnits>('GREENHOUSE');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedParentForCreate, setSelectedParentForCreate] = useState<ProductionUnit | null>(null);
     const {mutate: createUnit} = useCreateProductionUnit();

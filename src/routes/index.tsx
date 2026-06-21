@@ -13,6 +13,7 @@ import InventoryPage from "@/pages/inventory/InventoryPage.tsx";
 import CropPlanDetailsPage from "@/pages/growing/CropPlanDetailsPage.tsx";
 import GrowingTablePage from "@/pages/growing/GrowingTablePage.tsx";
 import OperationsPage from "@/pages/operations/OperationsPage.tsx";
+import GreenhousePage from "@/pages/farm/GreenhousePage.tsx";
 
 // Публичные маршруты (без авторизации)
 export const publicRoutes: RouteObject[] = [
@@ -28,7 +29,7 @@ export const privateRoutes: RouteObject[] = [
     {path: '/dashboard', element: <Dashboard/>},
     {path: "/farm", element: <ProductionUnitsPage/>},
     // {path: "/field/:id", element: <FieldPage/>},
-    // {path: "/greenhouse/:id", element: <GreenhousePage/>},
+    {path: "/greenhouse/:id", element: <GreenhousePage/>},
 
     // {path: "/draw", element: <MapDrawPage/>},
 

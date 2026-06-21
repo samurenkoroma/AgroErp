@@ -1,8 +1,12 @@
 import {UnitDetailPanel} from "@/features/spatial/production-unit/components/UnitDetailPanel.tsx";
 import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
+import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
+import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
+import {CreateGreenHouseModal} from "@/features/spatial/production-unit/forms/CreateGreenHouseModal.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface GreenhousesTabProps {
     units: ProductionUnit[]
@@ -11,15 +15,55 @@ interface GreenhousesTabProps {
 
 export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) => {
     const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
+
+    const navigate = useNavigate();
+    const {mutate: createUnit} = useCreateProductionUnit();
+
+
+    const handleCreateUnit = async (newUnit: CreateProductionUnitRequest) => {
+        setIsCreateModalOpen(false);
+        createUnit(newUnit);
+    };
+
     const handleSelectUnit = (unit: ProductionUnit) => {
+        navigate("")
         setSelectedUnit(unit);
     };
+    const onCreateIfEmpty = () => {
+        setSelectedUnit(null);
+        setIsCreateModalOpen(true)
+    }
+
+    const actions = useMemo(
+            () => {
+                const act = new Map([
+                    ["Редактирование", () => {
+                        navigate(`/greenhouse/${selectedUnit!.id}`)
+                    }],
+                ])
+                if (selectedUnit?.children?.length == 0 && selectedUnit?.status == 'empty') {
+                    act.set("Добавить посев", () => setIsCycleModalOpen(true))
+                }
+                if ( selectedUnit?.status == 'empty') {
+                    act.set("Добавить дочерний", () => setIsCreateModalOpen(true))
+                }
+                return act
+            },
+            [selectedUnit]
+        )
+    ;
+
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <div className="space-y-4">
-
+                    <div className="text-center py-8 text-gray-500">
+                        <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
+                        <button onClick={onCreateIfEmpty}>Создать новый участок</button>
+                    </div>
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
                         <div className="space-y-1">
@@ -48,9 +92,7 @@ export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) =>
                 {selectedUnit ? (
                     <UnitDetailPanel
                         unit={selectedUnit}
-                        onClose={() => setSelectedUnit(null)}
-                        onAddChild={() => onAddChild(selectedUnit)}
-                    />
+                        onClose={() => setSelectedUnit(null)} actions={actions}/>
                 ) : (
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center sticky top-6">
@@ -64,6 +106,16 @@ export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) =>
                     </div>
                 )}
             </div>
+
+            {isCreateModalOpen && (<CreateGreenHouseModal
+                units={units}
+                isOpen={isCreateModalOpen}
+                parent={selectedUnit}
+                onClose={() => {
+                    setIsCreateModalOpen(false);
+                }}
+                onSuccess={handleCreateUnit}
+            />)}
         </div>
     )
 }
