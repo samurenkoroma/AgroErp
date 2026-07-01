@@ -26,10 +26,8 @@ export const CreateGreenHouseModal = ({
                                     onClose,
                                     onSuccess,
                                     parent,
-                                    units
                                 }: CreateGreenHouseModalProps) => {
     const [selectedType, setSelectedType] = useState<ProductionUnitType | null>(parent == null ? 'GREENHOUSE' : null);
-    const [code, setCode] = useState('');
     const [dimensions, setDimensions] = useState<Dimensions>({});
     const [name, setName] = useState('');
     const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
@@ -51,40 +49,6 @@ export const CreateGreenHouseModal = ({
                 ? prev.filter(c => c !== capability)
                 : [...prev, capability]
         );
-    };
-
-    const generateCode = () => {
-        if (!selectedType) {
-            setCode('');
-            return;
-        }
-
-        const prefix =
-            selectedType === 'PLOT' ? 'P' :
-                selectedType === 'BED' ? 'B' :
-                    selectedType === 'ROW' ? 'R' : 'U';
-
-        const parentCode = parent ? `${parent.code}/` : '';
-
-        const existingCodes = parent
-            ? (parent.children ?? []).map(u => u.code)
-            : units.map(u => u.code);
-
-        const regex = new RegExp(`^${parentCode}${prefix}-(\\d+)$`);
-
-        const maxNumber = existingCodes.reduce((max, code) => {
-            const match = code.match(regex);
-
-            if (!match) {
-                return max;
-            }
-
-            return Math.max(max, parseInt(match[1], 10));
-        }, 0);
-
-        const nextNumber = maxNumber + 1;
-
-        setCode(`${parentCode}${prefix}-${nextNumber.toString().padStart(2, '0')}`);
     };
 
     const generateName = () => {
@@ -112,7 +76,6 @@ export const CreateGreenHouseModal = ({
             parentId: parent?.id,
             name,
             type: selectedType,
-            code,
             status,
             dimensions,
             capabilities: selectedCapabilities,
@@ -125,7 +88,6 @@ export const CreateGreenHouseModal = ({
     };
     const resetForm = () => {
         setSelectedType(null);
-        setCode('');
         setDimensions({});
         setSelectedCapabilities([]);
         setStatus('active');
@@ -148,9 +110,6 @@ export const CreateGreenHouseModal = ({
     }, [dimensions, selectedType]);
 
 
-    useEffect(() => {
-        generateCode();
-    }, [selectedType, parent, units]);
 
 
     function maxLength(value: string) {
@@ -215,7 +174,7 @@ export const CreateGreenHouseModal = ({
 
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Создание объекта" subtitle={code} size="full">
+        <Modal isOpen={isOpen} onClose={onClose} title="Создание объекта" subtitle="" size="full">
             <div className="space-y-5 max-h-[70vh] overflow-y-auto px-1">
 
                 {/* Выбор типа */}

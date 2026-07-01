@@ -1,6 +1,5 @@
-import {useState} from 'react';
-import {ChevronDown, ChevronRight} from 'lucide-react';
 import {getUnitIcon, getUnitTypeName, ProductionUnit} from "@/entities/spatial";
+import {statusConfig} from "@/utils";
 
 export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddChild}: {
     unit: ProductionUnit;
@@ -9,14 +8,8 @@ export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
     selectedId?: string;
     onAddChild: (unit: ProductionUnit) => void;
 }) => {
-    const [expanded, setExpanded] = useState(false);
     const hasChildren = unit.children && unit.children.length > 0;
     const isSelected = selectedId === unit.id;
-
-    const handleToggleExpand = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setExpanded(!expanded);
-    };
 
     const handleSelect = () => {
         onSelectUnit(unit);
@@ -43,9 +36,10 @@ export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
                                 <h3 className="font-semibold text-gray-900 dark:text-white">{getUnitTypeName(unit.type)}</h3>
                                 {unit.code && <span className="text-xs text-gray-400 font-mono">{unit.code}</span>}
                                 <span
-                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusLib.getColor(unit.status)}`}>{statusLib.getText(unit.status)}</span>
+                                    className={`text-xs px-1.5 py-0.5 rounded-full ${statusConfig[unit.status].bg}`}>{statusConfig[unit.status].label}</span>
                             </div>
-                            <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                            <div
+                                className="flex items-center gap-2 mt-0.5 text-xs text-grUnitTreeNodeaUnitTreeNodey-500">
                                 <span>{getUnitTypeName(unit.type)}</span>
                                 {unit.geometry?.area && (
                                     <span>• {unit.geometry.area} {unit.geometry.areaUnit === 'ha' ? 'га' : 'м²'}</span>
@@ -64,14 +58,7 @@ export const UnitListNode = ({unit, level = 0, onSelectUnit, selectedId, onAddCh
                         >
                         </button>
                     </div>
-                    {hasChildren && (
-                        <button
-                            onClick={handleToggleExpand}
-                            className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded focus:outline-none"
-                        >
-                            {expanded ? <ChevronDown className="w-4 h-4"/> : <ChevronRight className="w-4 h-4"/>}
-                        </button>
-                    )}
+
                 </div>
             </div>
         </div>

@@ -2,7 +2,11 @@ import {useMutation} from "@tanstack/react-query";
 import {productionUnitApi} from "@/features/spatial/production-unit/api/api.ts";
 import {queryClient} from "@/shared/queryClient.ts";
 import {ResponseId} from "@/entities/shared/dto.ts";
-import {CreateProductionUnitRequest, UpdateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
+import {
+    ConfigureProductionUnitRequest,
+    CreateProductionUnitRequest,
+    UpdateProductionUnitRequest
+} from "@/entities/spatial/production-unit/dto.ts";
 
 
 export const useCreateProductionUnit = () => {
@@ -29,6 +33,13 @@ export const useCreateProductionUnit = () => {
 export const useUpdateProductionUnit = () => {
     return useMutation({
         mutationFn: (data: UpdateProductionUnitRequest) => productionUnitApi.updateProductionUnit(data)
+    })
+}
+
+
+export const useConfigureProductionUnit = () => {
+    return useMutation({
+        mutationFn: (data: ConfigureProductionUnitRequest) => productionUnitApi.configureProductionUnit(data)
     })
 }
 

@@ -7,6 +7,7 @@ export const productionUnitApi = {
 
     createProductionUnit: async (data: CreateProductionUnitRequest) => apiClient.command<ResponseId>('spatial.create_production_unit', data),
     updateProductionUnit: async (data: {}) => apiClient.command('spatial.update_production_unit', data),
+    configureProductionUnit: async (data: {}) => apiClient.command('spatial.configure_production_unit', data),
     archiveProductionUnit: async (data: {}) => apiClient.command('spatial.archive_production_unit', data),
 
     getProductionUnit: async (id: string) => apiClient.query<ProductionUnit>('spatial.get_production_unit', {id}),

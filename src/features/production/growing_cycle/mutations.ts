@@ -19,7 +19,6 @@ export const useStartCycle = () => {
         mutationFn: (data: StartCycleRequest) => cycleApi.startCycle(data),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['growing-cycles']});
-            queryClient.invalidateQueries({queryKey: ['production-units']});
         }
     })
 }

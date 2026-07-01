@@ -9,10 +9,26 @@ export interface ProductionUnit {
     geometry?: Geometry;
     type: ProductionUnitType;
     code: string;
+    name: string;
     climateZoneId?: string;
     properties: Properties;
     children?: ProductionUnit[];
+    schema: Element[];
 }
+
+export interface Element {
+    status: 'growing' | 'preparation' | 'empty';
+    id: string;
+    type: string;
+    x: number;
+    y: number;
+    area: number;
+    width: number;
+    length: number;
+    name: string;
+    code: string;
+}
+
 
 export interface Properties {
     schema: any;
@@ -55,7 +71,6 @@ export type ProductionUnitType =
  * Самая крупная единица в открытом грунте.
  * Имеет геометрию (полигон), площадь в гектарах.
  * Может содержать: BLOCK, BED, ROW
- *
  * Пример: "Поле Северное", 50 га
  */
     'FIELD' |

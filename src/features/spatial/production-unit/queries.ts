@@ -1,13 +1,33 @@
 import {useQuery} from "@tanstack/react-query";
 import {productionUnitApi} from "@/features/spatial/production-unit/api/api.ts";
 import {getAccessToken} from "@/stores/authStore.ts";
-import {ProductionUnit} from "@/entities/spatial";
+import {Element, ProductionUnit} from "@/entities/spatial";
 
 
 export const useProductionUnit = (id: string) => useQuery({
-    queryKey: ['productionUnit', id],
+    queryKey: ['production-unit', id],
     enabled: !!id,
-    queryFn: () => productionUnitApi.getProductionUnit(id)
+    queryFn: () => productionUnitApi.getProductionUnit(id),
+    select: (data) => {
+        return {
+            ...data, schema: data.children?.map((child: ProductionUnit): Element => {
+                return {
+                    status: child.status,
+                    area: child.area,
+                    id: child.id,
+                    type: child.type,
+                    x: child.properties.position?.X || 0,
+                    y: child.properties.position?.Y || 0,
+                    width: child.properties.dimensions?.width || 0,
+                    length: child.properties.dimensions?.length || 0,
+                    name: child.properties.metadata?.name || child.code,
+                    code: child.code
+                }
+            }) as Element[]
+        }
+    }
+
+
 })
 
 export const useProductionUnits = () => {

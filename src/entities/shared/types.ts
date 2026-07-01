@@ -9,7 +9,6 @@ export interface Metadata {
     levels?: number;
     level?: number;
     description?: string;
-    schema?: any[];
     extra?: Record<string, unknown>;
 }
 

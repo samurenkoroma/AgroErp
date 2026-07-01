@@ -1,5 +1,6 @@
+import {Element} from "@/entities/spatial";
+
 export interface CreateProductionUnitRequest {
-    code: string;
     name?: string;
     description?: string;
     type: string;
@@ -33,4 +34,11 @@ export interface UpdateProductionUnitRequest {
     geometry?: unknown;
     capacity?: number;
     schema?: any[]
+}
+
+export interface ConfigureProductionUnitRequest {
+    id: string;
+    schema: {
+        beds: Element[]
+    }
 }

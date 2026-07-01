@@ -4,7 +4,6 @@ import {
     Calendar,
     ChevronLeft,
     ChevronRight,
-    Delete,
     Droplets,
     Factory,
     FileText,
@@ -16,27 +15,31 @@ import {
     Thermometer,
     Wrench
 } from 'lucide-react';
-import {Element, SvgSchemeEditor} from "@/components/svg/SvgSchemeEditor";
+import {SvgSchemeEditor} from "@/components/svg/SvgSchemeEditor";
 import Loading from "@/components/shared/Loading";
 import Error from "@/components/shared/Error";
 import {Button} from "@/components/common/Button";
 import {useParams} from "react-router-dom";
 import {formatArea} from "@/utils/geometry";
 import {useProductionUnit} from "@/features/spatial/production-unit/queries.ts";
-import {useCycles} from "@/features/production/growing_cycle";
+import {StartCycleModal, useCycles} from "@/features/production/growing_cycle";
 import {getBgColor} from "@/utils";
-import {useUpdateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
+import {useConfigureProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
+import {Element, ProductionUnit} from "@/entities/spatial";
 
 const GreenhousePage = () => {
     const {id} = useParams<{ id: string }>();
 
     // Используем хуки для ProductionUnit
-    const {data: object, isLoading, error} = useProductionUnit(id!);
+    const {data: object, isLoading, error, refetch} = useProductionUnit(id!);
 
     const [activeTab, setActiveTab] = useState('crops');
+    const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
+    const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
+
     const [editSchema, setEditSchema] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const {mutate: updateUnit} = useUpdateProductionUnit()
+    const {mutate: configureUnit} = useConfigureProductionUnit()
     const {data: plans} = useCycles();
 
 
@@ -52,7 +55,7 @@ const GreenhousePage = () => {
     ];
 
     // Получаем схему из metadata
-    const schema = object.properties?.metadata?.schema as Element[] || [];
+    const schema = object.schema || [];
     const areaM2 = object.properties?.capacity?.areaM2 || 0;
     const plantCapacity = object.properties?.capacity?.plantCapacity || 0;
     const waterVolume = object.properties?.capacity?.waterVolumeLiters || 0;
@@ -79,6 +82,8 @@ const GreenhousePage = () => {
     };
     let svgWidth = Math.max(object.properties.dimensions!.width!, object.properties.dimensions!.length!);
     let svgHeight = Math.min(object.properties.dimensions!.width!, object.properties.dimensions!.length!);
+
+    if (isLoading) return (<Loading text="Загрузка теплицы..."/>);
     return (
         <div className="relative h-screen w-full overflow-hidden bg-gray-50 dark:bg-gray-900">
             {/* Левая колонка - SVG схема (2/3 ширины) */}
@@ -128,13 +133,26 @@ const GreenhousePage = () => {
                                 type="greenhouse"
                                 initialElements={schema}
                                 onSave={(elements: Element[]) => {
-                                    updateUnit({...object, schema: elements})
+                                    configureUnit({
+                                        id: object?.id,
+                                        schema: {beds: elements.filter(e => e.type == 'bed')}
+                                    })
                                     setEditSchema(false)
                                 }}
                                 onCancel ={() => {}}
                                 readonly={!editSchema}
                                 onBedClick={(element) => {
-                                    console.log('Selected bed:', element);
+                                    setSelectedUnit({
+                                        ...element
+                                    })
+
+                                    if (element.status == 'empty') {
+                                        setIsCycleModalOpen(true)
+                                    }
+                                    else {
+                                    console.log("Модалка информация о посадке")
+                                    }
+                                    refetch()
                                 }}
                             />
                         </div>
@@ -336,21 +354,11 @@ const GreenhousePage = () => {
                 </div>
             </div>
 
-            {/*/!* Модалка создания плана *!/*/}
-            {/*<CreateCropPlanModal*/}
-            {/*    objectId={object.id}*/}
-            {/*    preSelectedLocationId={selectedBed?.id}*/}
-            {/*    onSuccess={() => {*/}
-            {/*        console.log("success");*/}
-            {/*        // Обновляем список планов*/}
-            {/*    }}*/}
-            {/*    onClose={() => {*/}
-            {/*        setSelectedBed(undefined);*/}
-            {/*        setIsModalOpen(false);*/}
-            {/*    }}*/}
-            {/*    crops={crops}*/}
-            {/*    isOpen={isModalOpen}*/}
-            {/*/>*/}
+            {isCycleModalOpen && object && (<StartCycleModal
+                unit={selectedUnit}
+                isOpen={isCycleModalOpen}
+                onClose={() => setIsCycleModalOpen(false)}
+            />)}
         </div>
     );
 };

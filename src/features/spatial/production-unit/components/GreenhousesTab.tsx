@@ -2,11 +2,12 @@ import {UnitDetailPanel} from "@/features/spatial/production-unit/components/Uni
 import {Box, MapPin} from "lucide-react";
 import {ProductionUnit} from "@/entities/spatial";
 import {useMemo, useState} from "react";
-import {UnitTreeNode} from "@/features/spatial/production-unit/components/UnitTreeNode.tsx";
 import {CreateProductionUnitRequest} from "@/entities/spatial/production-unit/dto.ts";
 import {useCreateProductionUnit} from "@/features/spatial/production-unit/mutations.ts";
 import {CreateGreenHouseModal} from "@/features/spatial/production-unit/forms/CreateGreenHouseModal.tsx";
 import {useNavigate} from "react-router-dom";
+import {UnitListNode} from "@/features/spatial/production-unit/components/UnitListNode.tsx";
+import {usePageActions} from "@/hooks/usePageActions.ts";
 
 interface GreenhousesTabProps {
     units: ProductionUnit[]
@@ -16,12 +17,25 @@ interface GreenhousesTabProps {
 export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) => {
     const [selectedUnit, setSelectedUnit] = useState<ProductionUnit | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const {mutate: createUnit} = useCreateProductionUnit();
 
+    usePageActions({
+        actions:  [
+            {
+                id: 'add-crop',
+                label: 'Добавить теплицу ',
+                icon: <MapPin className="w-5 h-5"/>,
+                onClick: () => {
+                    setSelectedUnit(null);
+                    setIsCreateModalOpen(true)
+                },
+                color: 'bg-green-500'
+            },
 
+        ],
+    });
     const handleCreateUnit = async (newUnit: CreateProductionUnitRequest) => {
         setIsCreateModalOpen(false);
         createUnit(newUnit);
@@ -31,10 +45,6 @@ export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) =>
         navigate("")
         setSelectedUnit(unit);
     };
-    const onCreateIfEmpty = () => {
-        setSelectedUnit(null);
-        setIsCreateModalOpen(true)
-    }
 
     const actions = useMemo(
             () => {
@@ -43,9 +53,7 @@ export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) =>
                         navigate(`/greenhouse/${selectedUnit!.id}`)
                     }],
                 ])
-                if (selectedUnit?.children?.length == 0 && selectedUnit?.status == 'empty') {
-                    act.set("Добавить посев", () => setIsCycleModalOpen(true))
-                }
+
                 if ( selectedUnit?.status == 'empty') {
                     act.set("Добавить дочерний", () => setIsCreateModalOpen(true))
                 }
@@ -60,16 +68,12 @@ export const GreenhousesTab = ({units = [], onAddChild}: GreenhousesTabProps) =>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
                 <div className="space-y-4">
-                    <div className="text-center py-8 text-gray-500">
-                        <Box className="w-12 h-12 mx-auto mb-3 opacity-50"/>
-                        <button onClick={onCreateIfEmpty}>Создать новый участок</button>
-                    </div>
                     <div
                         className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
                         <div className="space-y-1">
                             {units.length > 0 ? (
                                 units.map((unit) => (
-                                    <UnitTreeNode
+                                    <UnitListNode
                                         key={unit.id}
                                         unit={unit}
                                         onSelectUnit={handleSelectUnit}
